@@ -35,7 +35,9 @@
 
     --radius: 0.5rem;
   }
-
+  .data-active {
+    --background: 222.2 84% 4.9%;
+  }
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -70,9 +72,16 @@
 .map-container {
   /* Adjust the size as needed */
   width: 100%;
-  max-width: 600px; /* Example size */
-  height: 400px; /* Example height */
+  max-width: 900px; /* Example size */
+  height: 600px; /* Example height */
   border-radius: 20px; /* Rounded corners */
+
+}
+
+
+
+.activeLink {
+  color: #ffb65f; /* Active link color - adjust as needed */
 }
 
 @layer base {
