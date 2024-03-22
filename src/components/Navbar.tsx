@@ -1,5 +1,5 @@
 import  { useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut,  UserButton } from "@clerk/clerk-react";
 import {
   Navbar,
   NavbarBrand,
@@ -7,7 +7,6 @@ import {
   NavbarItem,
   NavbarMenuToggle,
   NavbarMenu,
-  Link,
   Button,
   Popover,
   PopoverTrigger,
@@ -31,7 +30,7 @@ export default function AppNavbar() {
     { name: "Spanish", flag: "🇪🇸" },
   ];
 
-  const handleLanguageChange = (language) => {
+  const handleLanguageChange = (language: string) => {
     console.log("Language selected:", language);
     // Update the currentLanguage state based on selection
     const selectedLanguage = languages.find((lang) => lang.name === language);
@@ -40,7 +39,7 @@ export default function AppNavbar() {
     }
     // Here, you would also handle the logic to change the website's language
   };
-  const getPathForMenuItem = (item) => {
+  const getPathForMenuItem = (item: string) => {
     if (item === "Home") {
       return "/";
     } else {
@@ -85,7 +84,7 @@ export default function AppNavbar() {
               <NavbarItem key={lang.name}>
                 <Button
                   variant={
-                    lang.name !== currentLanguage.name ? "solid    " : "flat"
+                    lang.name !== currentLanguage.name ? "solid" : "flat"
                   }
                   onClick={() => handleLanguageChange(lang.name)}
                 >

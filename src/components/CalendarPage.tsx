@@ -1,4 +1,3 @@
-import React from "react";
 import FullCalendar from "@fullcalendar/react"; // Main calendar component
 import dayGridPlugin from "@fullcalendar/daygrid"; // Plugin for day grid view
 

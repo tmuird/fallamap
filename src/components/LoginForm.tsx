@@ -1,39 +1,44 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-function LoginForm({ onLogin }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+// Define an interface for the props
+interface LoginFormProps {
+    onLogin: (email: string, password: string) => void; // Assuming onLogin doesn't return anything
+}
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    onLogin(email, password);
-  };
+function LoginForm({ onLogin }: LoginFormProps) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  );
+    const handleSubmit = async (event: { preventDefault: () => void; }) => {
+        event.preventDefault();
+        onLogin(email, password);
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                    type="email"
+                    id="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+            </div>
+            <div>
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    );
 }
 
 export default LoginForm;

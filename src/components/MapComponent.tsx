@@ -7,6 +7,7 @@ if (!MapboxAccessToken) {
 }
 
 const MapComponent: React.FC = () => {
+  
   const mapContainerRef = useRef<HTMLDivElement>(null); // This ref is potentially null
   mapboxgl.accessToken = MapboxAccessToken;
   useEffect(() => {
