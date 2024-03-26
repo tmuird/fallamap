@@ -79,6 +79,35 @@
 }
 
 
+.marker {
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.map-container .mapboxgl-popup-content {
+  line-height: 1.5;
+  color: black;
+  background: white;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+
+}
+.mapboxgl-popup-close-button {
+  background-color: indianred !important;
+  top: -5px !important;
+  right: -5px !important;
+  border-radius: 20px 20px 20px 20px!important;
+  cursor: pointer;
+  padding-inline-start: 10px;
+  padding-inline-end: 10px;
+  padding-block: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+
 
 .activeLink {
   color: #ffb65f; /* Active link color - adjust as needed */

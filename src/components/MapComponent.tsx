@@ -1,35 +1,54 @@
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
+import fallasData from "./fallas.json"; // Adjust the import path as needed
 
-const  MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+const MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 if (!MapboxAccessToken) {
   throw new Error("Missing Mapbox Access Token");
 }
 
+mapboxgl.accessToken = MapboxAccessToken;
+
 const MapComponent: React.FC = () => {
-  
-  const mapContainerRef = useRef<HTMLDivElement>(null); // This ref is potentially null
-  mapboxgl.accessToken = MapboxAccessToken;
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    // Check that the ref is not null before using it
     if (mapContainerRef.current !== null) {
-      // Now TypeScript knows mapContainerRef.current is not null
       const map = new mapboxgl.Map({
-        container: mapContainerRef.current, // Safe to use here
+        container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [-0.37739, 39.46975],
-        zoom: 9,
+        center: [-0.37739, 39.46975], // Centering the map on Valencia
+        zoom: 13,
       });
 
-      // Additional map setup (events, markers, etc.)
+      map.on("load", () => {
+        fallasData.forEach((falla: any) => {
+          console.log(falla);
+          // Check if coordinates are valid (not 0.0 for both lat and lng)
+          if (falla.coordinates.lat !== 0.0 && falla.coordinates.lng !== 0.0) {
+            const el = document.createElement("div");
+            el.className = "marker";
+            el.innerHTML = "📍";
+            // Popup for displaying the name and time
+            const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+              `<h3>${falla.name}</h3><p>Time: ${falla.time}</p>`,
+            );
 
-      // Cleanup function to remove map on component unmount
+            // Create a marker and add it to the map
+            new mapboxgl.Marker(el)
+              .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
+              .setPopup(popup)
+              .addTo(map);
+          }
+        });
+      });
+
       return () => map.remove();
     }
-  }, []); // Dependency array is empty, so this effect runs once after initial render
+  }, []);
 
   return (
-    <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+    <div ref={mapContainerRef} style={{ width: "100%", height: "100vh" }} />
   );
 };
 

@@ -1,0 +1,722 @@
+[
+  {
+    "number": "1",
+    "name": "PLAZA DOCTOR COLLADO",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.377771,
+      "lat": 39.474337
+    }
+  },
+  {
+    "number": "3",
+    "name": "PORTAL DE VALLDIGNA - SALINAS",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.37902271681433,
+      "lat": 39.4771259563227
+    }
+  },
+  {
+    "number": "4",
+    "name": "LINTERNA - NA ROVELLA - AV. BARÓN DE CÁRCER",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.367091,
+      "lat": 39.452959
+    }
+  },
+  {
+    "number": "6",
+    "name": "BORRULL - TURIA",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.414219,
+      "lat": 39.51144
+    }
+  },
+  {
+    "number": "7",
+    "name": "MURILLO - PALOMAR",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.362283,
+      "lat": 39.461079
+    }
+  },
+  {
+    "number": "8",
+    "name": "PLAZA NA JORDANA (PORTAL NUEVO)",
+    "time": "22:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "9",
+    "name": "AVENIDA DEL OESTE",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.379820053426075,
+      "lat": 39.4707932754981
+    }
+  },
+  {
+    "number": "10",
+    "name": "PLAZA DE LA MERCED",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.377793,
+      "lat": 39.472603
+    }
+  },
+  {
+    "number": "11",
+    "name": "CONVENTO JERUSALÉN - MATEMÁTICO MARZAL",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.379541,
+      "lat": 39.466676
+    }
+  },
+  {
+    "number": "12",
+    "name": "ALMIRANTE CADARSO - CONDE ALTEA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.36779700813449,
+      "lat": 39.4651617933929
+    }
+  },
+  {
+    "number": "14",
+    "name": "BOLSERÍA - TROS ALT",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.375419,
+      "lat": 39.468434
+    }
+  },
+  {
+    "number": "15",
+    "name": "QUART - PALOMAR (PZA. SANTA ÚRSULA)",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.383761893019357,
+      "lat": 39.4752234718028
+    }
+  },
+  {
+    "number": "17",
+    "name": "PLAZA SANT BULT",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.370446106706085,
+      "lat": 39.4750186420453
+    }
+  },
+  {
+    "number": "19",
+    "name": "BORRULL - SOCORS",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.386817,
+      "lat": 39.47433
+    }
+  },
+  {
+    "number": "21",
+    "name": "EXPOSICIÓN - MICER MASCÓ- A. BACA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.360972,
+      "lat": 39.477429
+    }
+  },
+  {
+    "number": "22",
+    "name": "CUBA - LITERATO AZORÍN",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.374979302818991,
+      "lat": 39.4598975141965
+    }
+  },
+  {
+    "number": "28",
+    "name": "DOCTOR SERRANO - CARLOS CERVERA",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.372721545095952,
+      "lat": 39.4622646860751
+    }
+  },
+  {
+    "number": "32",
+    "name": "PLAZA DEL PILAR",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.382792,
+      "lat": 39.471309000000005
+    }
+  },
+  {
+    "number": "34",
+    "name": "J. DE AGUILÓ - GASPAR AGUILAR",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.3697,
+      "lat": 39.466539
+    }
+  },
+  {
+    "number": "35",
+    "name": "ALTA - SANTO TOMÁS",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.379570342501419,
+      "lat": 39.4782675590427
+    }
+  },
+  {
+    "number": "37",
+    "name": "MAESTRO GOZALBO - CONDE ALTEA",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.369072910786373,
+      "lat": 39.4650852820936
+    }
+  },
+  {
+    "number": "44",
+    "name": "GRAN VÍA FDO. EL CATOLICO - A.GUIMERÁ",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.370675,
+      "lat": 39.464685
+    }
+  },
+  {
+    "number": "79",
+    "name": "SAN VICENTE - PERIODISTA AZZATI",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.378253011842222,
+      "lat": 39.4696010084574
+    }
+  },
+  {
+    "number": "89",
+    "name": "ARZOBISPO OLAECHEA - S.MARCELINO",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.390633021085852,
+      "lat": 39.4436885031083
+    }
+  },
+  {
+    "number": "100",
+    "name": "PLAZA ROJAS CLEMENTE",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.385406241269241,
+      "lat": 39.47322002406
+    }
+  },
+  {
+    "number": "104",
+    "name": "AV. MALVARROSA - A. PONZ-CAVITE",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.327947917151144,
+      "lat": 39.4797484598224
+    }
+  },
+  {
+    "number": "112",
+    "name": "ACACIAS - PICAYO",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.388346179886914,
+      "lat": 39.4911594223214
+    }
+  },
+  {
+    "number": "118",
+    "name": "CERVANTES - PADRE JOFRE",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.38165701363835,
+      "lat": 39.4677598170149
+    }
+  },
+  {
+    "number": "122",
+    "name": "L´ALGUER - INGENIERO R. JANNINI",
+    "time": "00:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "123",
+    "name": "BARÓN S. PETRILLO - L. JOVANI",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.3603042,
+      "lat": 39.4865474
+    }
+  },
+  {
+    "number": "125",
+    "name": "RAMIRO DE MAEZTU - LEONES",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.3476384,
+      "lat": 39.4672342
+    }
+  },
+  {
+    "number": "129",
+    "name": "GLORIA - FELICIDAD - TREMOLAR",
+    "time": "22:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "132",
+    "name": "REINA - VICENTE GUILLOT",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.3282665,
+      "lat": 39.4731933
+    }
+  },
+  {
+    "number": "140",
+    "name": "PROGRESO - TEATRO LA MARINA",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.327886,
+      "lat": 39.472209500000005
+    }
+  },
+  {
+    "number": "144",
+    "name": "DUQUE DE GAETA - PUEBLA DE FARNALS",
+    "time": "22:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "145",
+    "name": "PLAZA VIRGEN DEL LEPANTO (CASTELLAR)",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.3749680360696,
+      "lat": 39.4762489576006
+    }
+  },
+  {
+    "number": "147",
+    "name": "CONDE SALVATIERRA - C.AMORÓS",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.368042274321906,
+      "lat": 39.4696222846215
+    }
+  },
+  {
+    "number": "149",
+    "name": "DOCTOR MANUEL CANDELA - AV. PUERTO",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.349494120614475,
+      "lat": 39.4690603660742
+    }
+  },
+  {
+    "number": "150",
+    "name": "JUSTO VILAR - PLAZA MERCADO CABANYAL",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.331275221017698,
+      "lat": 39.4671716107491
+    }
+  },
+  {
+    "number": "151",
+    "name": "BARRACA - TRAV.IGLESIA ROSARIO",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.329005522339249,
+      "lat": 39.4690612646769
+    }
+  },
+  {
+    "number": "155",
+    "name": "GENERAL PANDO - SERRANO FLORES",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.359822579482475,
+      "lat": 39.4718055010489
+    }
+  },
+  {
+    "number": "156",
+    "name": "SAN IGNACIO DE LOYOLA - JESÚS Y MARIA",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.386817,
+      "lat": 39.454878
+    }
+  },
+  {
+    "number": "160",
+    "name": "EN PLOM - GUILLÉM DE CASTRO",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.4095778,
+      "lat": 39.5044035
+    }
+  },
+  {
+    "number": "167",
+    "name": "JOSE BENLLIURE - TEATRO DE LA MARINA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.329790602326681,
+      "lat": 39.4662130048018
+    }
+  },
+  {
+    "number": "168",
+    "name": "AV. REGNE VALENCIA - S. VALERO",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.42232864999999997,
+      "lat": 39.519100449999996
+    }
+  },
+  {
+    "number": "170",
+    "name": "RAMON DE ROCAFULL - CONDE ALACUÁS",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.3322128,
+      "lat": 39.4742953
+    }
+  },
+  {
+    "number": "171",
+    "name": "PINTOR S. ABRIL - AV. PERIS Y VALERO",
+    "time": "00:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "174",
+    "name": "SUECA - LITERATO AZORÍN",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.376019,
+      "lat": 39.460409
+    }
+  },
+  {
+    "number": "177",
+    "name": "ISLAS CANARIAS - TRAFALGAR - SAMUEL ROS",
+    "time": "00:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "178",
+    "name": "HIERROS - JUAN BTA. PERALES",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.339503865977588,
+      "lat": 39.4641777993649
+    }
+  },
+  {
+    "number": "179",
+    "name": "BARRIO DEL BETERO",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.334923,
+      "lat": 39.472579
+    }
+  },
+  {
+    "number": "181",
+    "name": "ISLAS CANARIAS - DAMA DE ELCHE",
+    "time": "23:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "183",
+    "name": "AVENIDA REGNE VALENCIA - DUQUE CALABRIA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.366155,
+      "lat": 39.4624856
+    }
+  },
+  {
+    "number": "187",
+    "name": "AVENIDA PRIMADO REIG - VINAROZ",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.364644987787511,
+      "lat": 39.4849437431414
+    }
+  },
+  {
+    "number": "188",
+    "name": "GUILLÉM SOROLLA - RECADERO",
+    "time": "01:00",
+    "coordinates": {
+      "lng": -0.382539311883991,
+      "lat": 39.4726364055155
+    }
+  },
+  {
+    "number": "196",
+    "name": "MONESTIR DE POBLET - A.ALBIÑANA",
+    "time": "22:30",
+    "coordinates": {
+      "lng": -0.3932716,
+      "lat": 39.4856853
+    }
+  },
+  {
+    "number": "197",
+    "name": "ESPARTERO - G.V. RAMÓN Y CAJAL",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.381865782834099,
+      "lat": 39.4663893918203
+    }
+  },
+  {
+    "number": "204",
+    "name": "ARTES Y OFICIOS - ACTOR LLORENS",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.353905543854483,
+      "lat": 39.4681833045079
+    }
+  },
+  {
+    "number": "212",
+    "name": "PLAZA DEL AYUNTAMIENTO",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.375757,
+      "lat": 39.4702
+    }
+  },
+  {
+    "number": "219",
+    "name": "BENICADELL - SAN ROQUE",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.365931665951376,
+      "lat": 39.5078730481091
+    }
+  },
+  {
+    "number": "223",
+    "name": "PLAÇA LA SEQUIOTA - EL PALMAR",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.3502027,
+      "lat": 39.493463
+    }
+  },
+  {
+    "number": "224",
+    "name": "G.LLUCH - DR. M.MERENCIANO",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.345679,
+      "lat": 39.461506
+    }
+  },
+  {
+    "number": "227",
+    "name": "ARQUITECTO ALFARO - FRANCISCO CUBELLS",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.3350811,
+      "lat": 39.4642624
+    }
+  },
+  {
+    "number": "228",
+    "name": "MAESTRO BELLVER - MARIANO RIBERA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.3924704,
+      "lat": 39.4648629
+    }
+  },
+  {
+    "number": "240",
+    "name": "RIBERA - CVTO.SANTA CLARA",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.370049015936527,
+      "lat": 39.5086639582324
+    }
+  },
+  {
+    "number": "242",
+    "name": "CÁDIZ - DENIA",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.375502584964659,
+      "lat": 39.4627890738486
+    }
+  },
+  {
+    "number": "250",
+    "name": "CAMPAMENTO - LA YESA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.426228314123549,
+      "lat": 39.499174820123
+    }
+  },
+  {
+    "number": "262",
+    "name": "PLAZA MOSÉN MILA",
+    "time": "01:00",
+    "coordinates": {
+      "lng": -0.373449,
+      "lat": 39.4756233
+    }
+  },
+  {
+    "number": "271",
+    "name": "CARRERA MALILLA - ISLA CABRERA",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.376696713233778,
+      "lat": 39.4488452760908
+    }
+  },
+  {
+    "number": "276",
+    "name": "JOAQUÍN COSTA - CONDE ALTEA",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.367707,
+      "lat": 39.465991
+    }
+  },
+  {
+    "number": "278",
+    "name": "PERIODISTA GIL SUMBIELA-AZUCENA-ALAMO",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.386560246453531,
+      "lat": 39.4919661653273
+    }
+  },
+  {
+    "number": "309",
+    "name": "DOCTOR GIL Y MORTE - DR. VILA BARBERÁ",
+    "time": "00:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "310",
+    "name": "ESC.GARCÍA MÁS - PTO.STA.MARIA",
+    "time": "23:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "321",
+    "name": "MAESTRO RODRIGO - AV.GENERAL AVILÉS",
+    "time": "00:00",
+    "coordinates": {
+      "lng": -0.402624421540168,
+      "lat": 39.4841117852701
+    }
+  },
+  {
+    "number": "325",
+    "name": "GRUP PEIXCADORS - EL PERELLONET",
+    "time": "00:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "329",
+    "name": "EMBARCADERO - HISTORIADOR BETI (SALER)",
+    "time": "20:00",
+    "coordinates": {
+      "lng": -0.395478551813369,
+      "lat": 39.4952440993398
+    }
+  },
+  {
+    "number": "338",
+    "name": "A. PILES IVARS - SALVADOR TUSET",
+    "time": "23:00",
+    "coordinates": {
+      "lng": -0.3948182,
+      "lat": 39.4954893
+    }
+  },
+  {
+    "number": "358",
+    "name": "PASEO ALAMEDA - AV. FRANCIA",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.3456036,
+      "lat": 39.4591896
+    }
+  },
+  {
+    "number": "375",
+    "name": "PINTOR MAELLA-AVENIDA DE FRANCIA - MENORCA",
+    "time": "00:00",
+    "coordinates": {
+      "lat": 0.0,
+      "lng": 0.0
+    }
+  },
+  {
+    "number": "380",
+    "name": "SANTA GENOVEVA TORRES - ARQUITECTO TOLSA - ALFAHUIR",
+    "time": "22:00",
+    "coordinates": {
+      "lng": -0.362314733382849,
+      "lat": 39.494047314108
+    }
+  }
+]
