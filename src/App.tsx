@@ -51,7 +51,7 @@ export default function App() {
             timeout={300}
           >
             <Routes location={location}>
-              <Route path="/" element={<HomePage darkMode={darkMode} />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/sign-in" element={<SignInPage />} />
