@@ -1,8 +1,7 @@
-import { NextUIProvider } from "@nextui-org/react";
 import "@/styles/globals.css";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import HomePage from "./components/HomePage";
-import CalendarPage from "./components/CalendarPage.tsx"; // Assuming this is the component for calendar
+import SchedulePage from "./components/SchedulePage.tsx"; // Assuming this is the component for calendar
 import AppNavbar from "@/components/Navbar.tsx";
 import { Link } from "@nextui-org/link"; // Assuming this is the layout component in src
 import ContactPage from "@/components/ContactPage.tsx";
@@ -19,21 +18,31 @@ const PUBLISHABLE_KEY =
 if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");
 }
+import useDarkMode from "use-dark-mode";
+import { useEffect } from "react";
 
 export default function App() {
+  const darkMode = useDarkMode(false);
+  useEffect(() => {
+    const classList = document.documentElement.classList;
+    darkMode.value ? classList.add("dark") : classList.remove("dark");
+  }, [darkMode.value]);
+
   const navigate = useNavigate();
   const location = useLocation();
   // Use type assertion here to tell TypeScript that you expect the location object to have a 'key' property.
   const locationWithKey = location as unknown as Location & { key: string };
   return (
-    <ClerkProvider
-      navigate={navigate}
-      publishableKey={PUBLISHABLE_KEY}
-      appearance={{
-        baseTheme: neobrutalism,
-      }}
+    <main
+      className={`${darkMode.value ? "dark" : ""} text-foreground bg-background`}
     >
-      <NextUIProvider>
+      <ClerkProvider
+        navigate={navigate}
+        publishableKey={PUBLISHABLE_KEY}
+        appearance={{
+          baseTheme: neobrutalism,
+        }}
+      >
         <AppNavbar />
         <TransitionGroup>
           <CSSTransition
@@ -42,8 +51,8 @@ export default function App() {
             timeout={300}
           >
             <Routes location={location}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/" element={<HomePage darkMode={darkMode} />} />
+              <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/sign-in" element={<SignInPage />} />
               <Route path="/sign-up" element={<SignUpPage />} />
@@ -62,7 +71,7 @@ export default function App() {
             <span className="text-primary">Fallamap</span>
           </Link>
         </footer>
-      </NextUIProvider>
-    </ClerkProvider>
+      </ClerkProvider>
+    </main>
   );
 }

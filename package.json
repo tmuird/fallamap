@@ -19,6 +19,9 @@
     "@next/font": "^14.1.4",
     "@nextui-org/react": "^2.2.10",
     "@radix-ui/react-slot": "^1.0.2",
+    "@tsparticles/engine": "^3.3.0",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.3.0",
     "@types/mapbox-gl": "^3.1.0",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
@@ -28,7 +31,6 @@
     "google-fonts": "^1.0.0",
     "lucide-react": "^0.244.0",
     "mapbox-gl": "^3.2.0",
-    "next-themes": "^0.3.0",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -38,7 +40,8 @@
     "react-transition-group": "^4.4.5",
     "storybook": "^8.0.4",
     "tailwind-variants": "^0.2.1",
-    "tailwindcss-animate": "^1.0.6"
+    "tailwindcss-animate": "^1.0.6",
+    "use-dark-mode": "^2.3.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.2.25",
@@ -66,7 +69,7 @@
     "google": "link:next/font/google",
     "postcss": "^8.4.24",
     "prettier-plugin-tailwindcss": "0.2.5",
-    "tailwind-merge": "^1.12.0",
+    "tailwind-merge": "^1.14.0",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"

@@ -1,6 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root {
+  /* Light mode variables */
+  --background: #ffffff; /* Example: white background for light mode */
+  --foreground: #000000; /* Example: black text for light mode */
+  /* Add other variables for light mode */
+  transition: background-color 0.5s, color 0.5s;
+}
+
+.dark {
+  /* Dark mode variables */
+  --background: #282c34; /* Darker background for dark mode */
+  --foreground: #c7c7c7; /* Lighter text for dark mode */
+  /* Override other variables for dark mode as needed */
+}
+:root {
+  --particle-color-light: #000000; /* Black particles for light mode */
+  --gradient-color-light: #FFFFFF; /* White gradient for light mode */
+
+  --particle-color-dark: #FFFFFF; /* White particles for dark mode */
+  --gradient-color-dark: #000000; /* Black gradient for dark mode */
+}
 
 @layer base {
   :root {

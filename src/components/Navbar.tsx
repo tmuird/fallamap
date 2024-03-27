@@ -1,5 +1,5 @@
-import  { useState } from "react";
-import { SignedIn, SignedOut,  UserButton } from "@clerk/clerk-react";
+import { useState } from "react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import {
   Navbar,
   NavbarBrand,
@@ -13,6 +13,7 @@ import {
   PopoverContent,
 } from "@nextui-org/react";
 import { NavLink } from "react-router-dom";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher.tsx";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,7 +24,7 @@ export default function AppNavbar() {
     flag: "🇬🇧",
   });
 
-  const menuItems = ["Home", "Calendar", "About", "Contact"];
+  const menuItems = ["Home", "Schedule", "About", "Contact"];
 
   const languages = [
     { name: "English", flag: "🇬🇧" },
@@ -72,7 +73,11 @@ export default function AppNavbar() {
           </NavbarItem>
         ))}
       </NavbarContent>
+
       <NavbarContent justify="end">
+        <NavbarItem>
+          <ThemeSwitcher></ThemeSwitcher>
+        </NavbarItem>
         <Popover isOpen={visible} onOpenChange={setVisible}>
           <PopoverTrigger>
             <Button variant="light">
@@ -94,15 +99,15 @@ export default function AppNavbar() {
             ))}
           </PopoverContent>
         </Popover>
-       <NavbarItem>
-         <SignedIn>
-           <UserButton afterSignOutUrl='/sign-in' />
-         </SignedIn>
-         <SignedOut>
-           <NavLink to="/sign-in">Sign In</NavLink>
-         </SignedOut>
-         
-       </NavbarItem>
+
+        <NavbarItem>
+          <SignedIn>
+            <UserButton afterSignOutUrl="/sign-in" />
+          </SignedIn>
+          <SignedOut>
+            <NavLink to="/sign-in">Sign In</NavLink>
+          </SignedOut>
+        </NavbarItem>
         <NavbarItem>
           <SignedOut>
             <NavLink to="/sign-up">Sign Up</NavLink>
