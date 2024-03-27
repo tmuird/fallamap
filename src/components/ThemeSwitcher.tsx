@@ -1,19 +1,12 @@
 // components/ThemeSwitcher.tsx
-
-import useDarkMode from "use-dark-mode";
+import { useTheme } from "../context/ThemeContext"; // Adjust the import path as needed
 
 export const ThemeSwitcher = () => {
-  const darkMode = useDarkMode(false);
-
-  // Toggle function to switch between dark and light mode
-  const toggleTheme = () => {
-    darkMode.value ? darkMode.disable() : darkMode.enable();
-  };
+  const { isDarkMode, toggleTheme } = useTheme();
 
   return (
     <button onClick={toggleTheme} style={{ cursor: "pointer" }}>
-      {/* Dynamically changing icon or text */}
-      {darkMode.value ? "🌙" : "☀️"}
+      {isDarkMode ? "🌙" : "☀️"}
     </button>
   );
 };

@@ -1,16 +1,24 @@
+// main.tsx or index.tsx
+
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
-import "@/styles/globals.css";
+import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
+import { ThemeProvider } from "./context/ThemeContext";
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement,
+);
+root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <NextUIProvider>
-        <App />
-      </NextUIProvider>
+      <ThemeProvider>
+        {" "}
+        {/* Ensure ThemeProvider wraps the entire app */}
+        <NextUIProvider>
+          <App />
+        </NextUIProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
