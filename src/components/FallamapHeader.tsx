@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { title } from "@/components/primitives.ts";
 import "../styles/globals.css";
-
-export function FallamapHeader({ isVisible }) {
+interface FallamapHeaderProps {
+  isVisible: boolean;
+}
+export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
   // Animation variants
   const headerVariants = {
     visible: { opacity: 1, y: 0 },
