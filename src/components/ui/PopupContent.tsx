@@ -1,3 +1,4 @@
+import { Image } from "@nextui-org/react";
 interface Falla {
   number: string;
   name: string;
@@ -14,9 +15,15 @@ interface PopupContentProps {
 
 export const PopupContent: React.FC<PopupContentProps> = ({ falla }) => {
   return (
-    <div>
+    <>
       <h3>{falla.name}</h3>
       <p>Time: {falla.time}</p>
-    </div>
+      <Image
+        isBlurred
+        className="falla-image"
+        src="https://www.laprimera.es/images/blog/original/1647014852las-fallas-in-spain-1.jpg"
+        alt="No image"
+      />
+    </>
   );
 };

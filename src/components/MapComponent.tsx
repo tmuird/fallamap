@@ -3,7 +3,8 @@ import mapboxgl from "mapbox-gl";
 import fallasData from "./fallas.json";
 import { ThemeContext } from "../context/ThemeContext";
 import { PopupContent } from "./ui/PopupContent";
-import ReactDOM from "react-dom";
+import AnimatedPopup from "mapbox-gl-animated-popup";
+import { createRoot } from "react-dom/client";
 
 const MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -65,10 +66,12 @@ const MapComponent = () => {
             el.style.backgroundImage = `url('https://img.icons8.com/color/48/000000/marker.png')`;
 
             const popupNode = document.createElement("div");
-            const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(
+            const popup = new AnimatedPopup({ offset: 25 }).setDOMContent(
               popupNode,
             );
-            ReactDOM.render(<PopupContent falla={falla} />, popupNode);
+            const root = createRoot(popupNode);
+            root.render(<PopupContent falla={falla} />);
+
             new mapboxgl.Marker(el)
               .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
               .setPopup(popup)

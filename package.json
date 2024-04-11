@@ -67,6 +67,7 @@
     "eslint-plugin-storybook": "^0.8.0",
     "font": "link:next/font",
     "google": "link:next/font/google",
+    "mapbox-gl-animated-popup": "^0.4.0",
     "postcss": "^8.4.38",
     "prettier-plugin-tailwindcss": "0.2.5",
     "tailwind-merge": "^1.14.0",
