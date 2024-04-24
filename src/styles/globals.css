@@ -105,16 +105,21 @@ body {
   }
 }
 .map-container {
-  width: 100%;
-  max-width: 900px; /* Adjust based on your design needs */
-  height: auto; /* Ensure the height is set to auto */
   max-height: 80vh; /* Prevent the map from being taller than 80% of the viewport height */
-  aspect-ratio: 16 / 9; /* Adjust the aspect ratio if needed */
   margin: auto; /* Center the map container horizontally */
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
+.map-flex{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+}
+
 
 
 .marker {
@@ -137,7 +142,31 @@ body {
   background: var(--background-color);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   border-radius: 20px;
+  flex-direction: column;
+  width: 250%;
+  max-height: 450px;
+}
+.flex-container {
+  display: flex;
+  flex-direction: row; /* Adjust based on your layout preference */
+  align-items: start; /* Aligns items to the start of the flex container */
+  padding: 4px;
+  gap: 20px; /* Adds space between the flex items */
+}
 
+.flex-item {
+  flex: 1; /* Each flex item grows equally */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+}
+
+.scroll-area {
+  overflow-y: auto; /* Ensures scrolling within the component */
+  max-height: 265px; /* Adjust based on your preference */
+}
+
+.carousel {
+  flex-grow: 1; /* Allows the carousel to fill the space */
 }
 
 

@@ -1,6 +1,5 @@
-import { useEffect, useRef, useContext } from "react";
+import {useEffect, useRef, useContext, useState} from "react";
 import mapboxgl from "mapbox-gl";
-import fallasData from "./fallas.json";
 import { ThemeContext } from "../context/ThemeContext";
 import { PopupContent } from "./ui/PopupContent";
 import AnimatedPopup from "mapbox-gl-animated-popup";
@@ -28,6 +27,18 @@ const MapComponent = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   // @ts-ignore
   const { isDarkMode } = useContext(ThemeContext);
+  const [fallasData, setFallasData] = useState([]);
+  useEffect(() => {
+    // Fetch the Falla data from the API
+    fetch("http://localhost:3000/api/fallas") // Update the API URL if needed
+        .then((response) => response.json())
+        .then((data) => {
+          setFallasData(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching Falla data:", error);
+        });
+  }, []);
 
   useEffect(() => {
     if (mapContainerRef.current) {
@@ -66,9 +77,8 @@ const MapComponent = () => {
             el.style.backgroundImage = `url('https://img.icons8.com/color/48/000000/marker.png')`;
 
             const popupNode = document.createElement("div");
-            const popup = new AnimatedPopup({ offset: 25 }).setDOMContent(
-              popupNode,
-            );
+            const popup = new AnimatedPopup({ offset: 25, className: 'custom-popup' }).setDOMContent(popupNode);
+
             const root = createRoot(popupNode);
             root.render(<PopupContent falla={falla} />);
 
@@ -83,12 +93,12 @@ const MapComponent = () => {
       // Cleanup function to remove the map instance when the component unmounts
       return () => map.remove();
     }
-  }, [isDarkMode]); // Dependency array includes isDarkMode to reinitialize map on theme change
+  }, [isDarkMode, fallasData]); // Dependency array includes isDarkMode to reinitialize map on theme change
 
   return (
-    <>
+    <div className="map-flex flex">
       <div ref={mapContainerRef} style={{ width: "100%", height: "100vh" }} />
-    </>
+    </div>
   );
 };
 
