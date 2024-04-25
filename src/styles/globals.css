@@ -104,12 +104,30 @@ body {
     --ring: 217.2 32.6% 17.5%;
   }
 }
+
+/* Apply rounded corners and full height to the map container */
 .map-container {
   max-height: 80vh; /* Prevent the map from being taller than 80% of the viewport height */
   margin: auto; /* Center the map container horizontally */
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  min-width: 80%;
+  z-index: 1; /* Ensure the map is above the modal */
+  width: 200%;
+  height: 100vh; /* Adjust based on your layout */
+  box-sizing: border-box;
+
+  /* Transition for the map's background color change */
+  transition: background-color 0.5s;
+  /* If your map background is transparent, you might need to apply a background here */
+  background-color: var(--background); /* Adjust as needed */
+}
+.custom-width-2 {
+  width: 240px; /* Adjust the width as needed */
+}
+.custom-width-3 {
+  width: 140px; /* Adjust the width as needed */
 }
 .map-flex{
     display: flex;
@@ -117,9 +135,9 @@ body {
     justify-content: center;
     align-items: center;
     height: 100%;
-
+    margin: auto;
+    width: 200%;
 }
-
 
 
 .marker {
@@ -265,16 +283,4 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Apply rounded corners and full height to the map container */
-.map-container {
-  position: relative;
-  z-index: 1; /* Ensure the map is above the modal */
-  width: 100%;
-  height: 100vh; /* Adjust based on your layout */
-  box-sizing: border-box;
-  border-radius: 20px; /* Adjust as needed */
-  /* Transition for the map's background color change */
-  transition: background-color 0.5s;
-  /* If your map background is transparent, you might need to apply a background here */
-  background-color: var(--background); /* Adjust as needed */
-}
+

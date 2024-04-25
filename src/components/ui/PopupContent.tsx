@@ -2,6 +2,7 @@
 import { cn } from "@/utils/cn";
 import React from "react";
 import { BentoGrid, BentoGridItem } from "../ui/bento-grid";
+import {HeartIcon} from './HeartIcon.tsx';
 import {
     IconBoxAlignRightFilled,
     IconClipboardCopy,
@@ -10,6 +11,20 @@ import {
     IconTableColumn,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+import {Button, Image, Input, Textarea, TextArea} from "@nextui-org/react";
+import {TracingBeam} from "@/components/ui/tracing-beam.tsx";
+import {twMerge} from "tailwind-merge";
+import {ScrollArea} from "@/components/ui/scroll-area.tsx";
+import {Separator} from "@radix-ui/react-separator";
+import {CardContent, Card} from "@/components/ui/card.tsx";
+import {ArrowBigRight, ArrowRightCircle} from "lucide-react";
 interface Falla {
     number: string;
     name: string;
@@ -24,7 +39,7 @@ interface PopupContentProps {
 }
 export function PopupContent({ falla }: PopupContentProps) {
     return (
-        <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
+        <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem] md:grid-cols-5">
             {items(falla).map((item, i) => (
                 <BentoGridItem
                     key={i}
@@ -36,6 +51,8 @@ export function PopupContent({ falla }: PopupContentProps) {
                 />
             ))}
         </BentoGrid>
+
+
     );
 }
 const Skeleton = () => (
@@ -132,7 +149,9 @@ const SkeletonTwo = () => {
                         maxWidth: Math.random() * (100 - 40) + 40 + "%",
                     }}
                     className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-2  items-center space-x-2 bg-neutral-100 dark:bg-black w-full h-4"
+
                 ></motion.div>
+
             ))}
         </motion.div>
     );
@@ -147,7 +166,10 @@ const SkeletonThree = () => {
         },
     };
     return (
+
         <motion.div
+
+
             initial="initial"
             animate="animate"
             variants={variants}
@@ -163,10 +185,32 @@ const SkeletonThree = () => {
                 backgroundSize: "400% 400%",
             }}
         >
-            <motion.div className="h-full w-full rounded-lg"></motion.div>
+
+            <motion.div className="h-full w-full rounded-lg">
+                <Carousel className="w-full max-w-xs">
+                    <CarouselContent>
+                        {Array.from({ length: 5 }).map((_, index) => (
+                            <CarouselItem key={index}>
+                                <div className="p-1">
+                                    <Image
+                                        width={300}
+                                        alt="NextUI hero Image"
+                                        src="https://nextui-docs-v2.vercel.app/images/hero-card-complete.jpeg"
+                                        radius="md"
+                                        className="h-[12rem]"
+                                    />
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
+            </motion.div>
         </motion.div>
     );
 };
+
 const SkeletonFour = () => {
     const first = {
         initial: {
@@ -274,37 +318,65 @@ const SkeletonFive = () => {
             },
         },
     };
-
+    const tags = Array.from({ length: 50 }).map(
+        (_, i, a) => `v1.2.0-beta.${a.length - i}`
+    )
     return (
 
         <motion.div
+
             initial="initial"
             whileHover="animate"
             className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col space-y-2"
         >
-            <motion.div
-                variants={variants}
-                className="flex flex-row rounded-2xl border border-neutral-100 dark:border-white/[0.2] p-2  items-start space-x-2 bg-white dark:bg-black"
-            >
-                <img
-                    src="https://pbs.twimg.com/profile_images/1417752099488636931/cs2R59eW_400x400.jpg"
-                    alt="avatar"
-                    height="100"
-                    width="100"
-                    className="rounded-full h-10 w-10"
-                />
-                <p className="text-xs text-neutral-500">
-                    There are a lot of cool framerworks out there like React, Angular,
-                    Vue, Svelte that can make your life ....
-                </p>
-            </motion.div>
-            <motion.div
-                variants={variantsSecond}
-                className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-2 items-center justify-end space-x-2 w-3/4 ml-auto bg-white dark:bg-black"
-            >
-                <p className="text-xs text-neutral-500">Use PHP.</p>
-                <div className="h-6 w-6 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />
-            </motion.div>
+            <ScrollArea>
+                <div className="">
+                    <h4 className="mb-4 text-sm font-medium leading-none">Comments</h4>
+                    {tags.map((tag) => (
+                        <>
+                            <motion.div key={tag}
+                                        variants={variants}
+                                        className="flex flex-row rounded-2xl border border-neutral-100 dark:border-white/[0.2] p-2  items-center space-x-2 bg-white dark:bg-black"
+                            >
+                                <div
+                                    className="h-3 w-3 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0"/>
+                                <span>
+                                       Lorem ipsum
+                                </span>
+
+
+                            </motion.div>
+                            <Separator className="my-2"/>
+                        </>
+                    ))}
+                </div>
+            </ScrollArea>
+            {/*<motion.div*/}
+            {/*    variants={variants}*/}
+            {/*    className="flex flex-row rounded-2xl border border-neutral-100 dark:border-white/[0.2] p-2  items-start space-x-2 bg-white dark:bg-black">*/}
+
+            {/*    <img*/}
+            {/*        src="https://pbs.twimg.com/profile_images/1417752099488636931/cs2R59eW_400x400.jpg"*/}
+            {/*        alt="avatar"*/}
+            {/*        height="100"*/}
+            {/*        width="100"*/}
+            {/*        className="rounded-full h-10 w-10"*/}
+            {/*    />*/}
+            {/*    <p className="text-xs text-neutral-500">*/}
+    {/*        There are a lot of cool framerworks out there like React, Angular,*/}
+    {/*        Vue, Svelte that can make your life ....*/}
+
+    {/*    </p>*/}
+
+    {/*</motion.div>*/}
+    {/*<motion.div*/}
+
+    {/*    variants={variantsSecond}*/}
+    {/*    className="flex flex-row rounded-full border border-neutral-100 dark:border-white/[0.2] p-2 items-center justify-end space-x-2 w-3/4 ml-auto bg-white dark:bg-black"*/}
+    {/*        >*/}
+    {/*            <p className="text-xs text-neutral-500">Use PHP.</p>*/}
+    {/*            <div className="h-6 w-6 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 flex-shrink-0" />*/}
+    {/*        </motion.div>*/}
         </motion.div>
     );
 };
@@ -312,26 +384,31 @@ const items = (falla: Falla) => [
     {
         title: falla.name,
         description: (
-            <span className="text-sm">
-                Falla number: {falla.number}<br />
-                Time: {falla.time}
-            </span>
+            <div className="flex items-center justify-between">
+                <span className="text-sm">Time: {falla.time}</span>
+                <div className="flex space-x-2">
+                    <Button>Get Directions</Button>
+                    <Button isIconOnly color="danger" aria-label="Like">
+                        <HeartIcon />
+                    </Button>
+                </div>
+            </div>
         ),
         header: <SkeletonThree />,
-        className: "md:col-span-2",
-        icon: <IconTableColumn className="h-4 w-4 text-neutral-500" />,
+        className: "md:col-span-3",
     },
     {
-        title: "Coordinates",
         description: (
-            <span className="text-sm">
-                Latitude: {falla.coordinates.lat}<br />
-                Longitude: {falla.coordinates.lng}
-            </span>
+            <div className="flex items-center justify-between" >
+                <Textarea minRows={1} placeholder="Enter your comment" />
+                <Button isIconOnly size="sm" radius="Large" color="success" aria-label="Like">
+
+                </Button>
+            </div>
         ),
         header: <SkeletonFive />,
-        className: "md:col-span-1",
-        icon: <IconSignature className="h-4 w-4 text-neutral-500" />,
+        className: "md:col-span-2",
     },
 ];
+
 
