@@ -30,7 +30,7 @@ const MapComponent = () => {
   const [fallasData, setFallasData] = useState([]);
   useEffect(() => {
     // Fetch the Falla data from the API
-    fetch("https://fallamap-a3ec81f024e4.herokuapp.com/api/fallas") // Update the API URL if needed
+    fetch("https://fallamap-server-60dbf97d25c4.herokuapp.com/api/fallas") // Update the API URL if needed
       .then((response) => response.json())
       .then((data) => {
         setFallasData(data);
