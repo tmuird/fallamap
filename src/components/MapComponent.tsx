@@ -1,4 +1,4 @@
-import {useEffect, useRef, useContext, useState} from "react";
+import { useEffect, useRef, useContext, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { ThemeContext } from "../context/ThemeContext";
 import { PopupContent } from "./ui/PopupContent";
@@ -30,14 +30,14 @@ const MapComponent = () => {
   const [fallasData, setFallasData] = useState([]);
   useEffect(() => {
     // Fetch the Falla data from the API
-    fetch("http://localhost:3000/api/fallas") // Update the API URL if needed
-        .then((response) => response.json())
-        .then((data) => {
-          setFallasData(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching Falla data:", error);
-        });
+    fetch("https://fallamap-a3ec81f024e4.herokuapp.com/api/fallas") // Update the API URL if needed
+      .then((response) => response.json())
+      .then((data) => {
+        setFallasData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching Falla data:", error);
+      });
   }, []);
 
   useEffect(() => {
@@ -77,7 +77,10 @@ const MapComponent = () => {
             el.style.backgroundImage = `url('https://img.icons8.com/color/48/000000/marker.png')`;
 
             const popupNode = document.createElement("div");
-            const popup = new AnimatedPopup({ offset: 25, className: 'custom-popup' }).setDOMContent(popupNode);
+            const popup = new AnimatedPopup({
+              offset: 25,
+              className: "custom-popup",
+            }).setDOMContent(popupNode);
 
             const root = createRoot(popupNode);
             root.render(<PopupContent falla={falla} />);
