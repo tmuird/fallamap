@@ -269,6 +269,44 @@ body {
   .map-parent {
     padding: 0 16px;
   }
+
+  .map-container .mapboxgl-popup-content {
+    line-height: 1.5;
+    color: var(--text-color);
+    background: var(--background-color);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    flex-direction: column;
+    width: 150%;
+    max-height: 140vw;
+  }
+
+   .comment-scroll
+   {
+    max-height: 30vw;
+   }
+  .flex-container {
+    display: flex;
+    flex-direction: row; /* Adjust based on your layout preference */
+    align-items: start; /* Aligns items to the start of the flex container */
+    padding: 4px;
+    gap: 20px; /* Adds space between the flex items */
+  }
+
+  .flex-item {
+    flex: 1; /* Each flex item grows equally */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+  }
+
+  .scroll-area {
+    overflow-y: auto; /* Ensures scrolling within the component */
+    max-height: 265px; /* Adjust based on your preference */
+  }
+
+  .carousel {
+    flex-grow: 1; /* Allows the carousel to fill the space */
+  }
 }
 @media (max-width: 600px) { /* Adjust the breakpoint as needed */
   .title {

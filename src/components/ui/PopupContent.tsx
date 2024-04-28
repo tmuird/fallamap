@@ -309,7 +309,7 @@ const SkeletonFive = () => {
       className="flex flex-1 w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex-col space-y-2"
     >
       <ScrollArea>
-        <div className="">
+        <div className="comment-scroll">
           <h4 className="mb-4 text-sm font-medium leading-none">Comments</h4>
           {tags.map((tag) => (
             <>
