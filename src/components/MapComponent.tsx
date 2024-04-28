@@ -25,6 +25,7 @@ interface Falla {
 
 const MapComponent = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const { isDarkMode } = useContext(ThemeContext);
   const [fallasData, setFallasData] = useState([]);
