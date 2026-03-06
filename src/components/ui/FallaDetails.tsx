@@ -98,79 +98,67 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
       transition={{ duration: 0.3 }}
       className={cn("flex flex-col w-full h-full bg-[#FAF7F2]", className)}
     >
-      <header className="p-6 md:p-8 pb-6 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 shadow-sm">
+      <header className="p-4 md:p-8 pb-4 md:pb-6 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 shadow-sm">
         {/* Top Control Bar */}
-        <div className="flex items-center justify-between mb-6 gap-2">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-black text-falla-ink/40 bg-falla-ink/5 px-3 py-1.5 rounded-full whitespace-nowrap ink-border">
-              Monument #{falla.number}
+        <div className="flex items-center justify-between mb-4 md:mb-6 gap-2">
+          <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
+            <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-black text-falla-ink/40 bg-falla-ink/5 px-2.5 py-1 rounded-full whitespace-nowrap ink-border">
+              #{falla.number}
             </span>
             <div className="flex items-center gap-1">
-              <Button 
-                isIconOnly 
-                variant="neutral" 
-                size="sm" 
-                onClick={onPrev} 
-                className="w-9 h-9 rounded-xl border-2"
-              >
-                <CaretLeft size={20} weight="bold" />
+              <Button isIconOnly variant="neutral" size="sm" onClick={onPrev} className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl border-2">
+                <CaretLeft className="w-4 h-4 md:w-5 md:h-5" weight="bold" />
               </Button>
-              <Button 
-                isIconOnly 
-                variant="neutral" 
-                size="sm" 
-                onClick={onNext} 
-                className="w-9 h-9 rounded-xl border-2"
-              >
-                <CaretRight size={20} weight="bold" />
+              <Button isIconOnly variant="neutral" size="sm" onClick={onNext} className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl border-2">
+                <CaretRight className="w-4 h-4 md:w-5 md:h-5" weight="bold" />
               </Button>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2">
             <Button 
               isIconOnly 
               variant="neutral" 
               size="sm"
-              className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-falla-fire border-falla-fire")}
+              className={cn("w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl border-2 transition-colors", liked && "text-falla-fire border-falla-fire")}
               onClick={() => setLiked(!liked)}
             >
-              <Heart size={20} weight={liked ? "fill" : "bold"} />
+              <Heart className="w-4 h-4 md:w-5 md:h-5" weight={liked ? "fill" : "bold"} />
             </Button>
             <Button 
               isIconOnly 
               variant="neutral" 
               size="sm"
-              className="w-9 h-9 rounded-xl border-2"
+              className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl border-2"
               onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })}
             >
-              <ShareNetwork size={20} weight="bold" />
+              <ShareNetwork className="w-4 h-4 md:w-5 md:h-5" weight="bold" />
             </Button>
             {onClose && (
               <Button 
                 isIconOnly 
                 variant="neutral" 
                 size="sm"
-                className="w-9 h-9 rounded-xl border-2 bg-falla-ink text-white shadow-none hover:bg-falla-ink/90 ml-2"
+                className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl border-2 bg-falla-ink text-white shadow-none hover:bg-falla-ink/90 ml-1 md:ml-2"
                 onClick={onClose}
               >
-                <X size={20} weight="bold" />
+                <X className="w-4 h-4 md:w-5 md:h-5" weight="bold" />
               </Button>
             )}
           </div>
         </div>
         
         {/* Title */}
-        <h2 className="text-4xl md:text-6xl font-display text-falla-ink leading-[1.1] mb-8 tracking-tight">
+        <h2 className="text-2xl md:text-6xl font-display text-falla-ink leading-tight mb-4 md:mb-8 tracking-tight">
           {falla.name}
         </h2>
         
         {/* Main Actions */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2 md:gap-3">
           <Button 
             variant="outline"
-            className="flex-1 h-14 min-w-[140px] rounded-2xl border-2"
-            startContent={<MapPin size={20} weight="bold" className="text-falla-fire" />}
+            className="flex-1 h-10 md:h-14 min-w-[100px] md:min-w-[140px] rounded-xl md:rounded-2xl border-2 text-[9px] md:text-[10px]"
+            startContent={<MapPin className="w-4 h-4 md:w-5 md:h-5 text-falla-fire" weight="bold" />}
             onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${falla.coordinates.lat},${falla.coordinates.lng}`)}
           >
             Locate
@@ -184,9 +172,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
             disabled={uploading}
           />
           <Button 
-            className="flex-1 h-14 min-w-[140px] rounded-2xl border-2"
+            className="flex-1 h-10 md:h-14 min-w-[100px] md:min-w-[140px] rounded-xl md:rounded-2xl border-2 text-[9px] md:text-[10px]"
             isLoading={uploading}
-            startContent={<Camera size={20} weight="bold" />}
+            startContent={<Camera className="w-4 h-4 md:w-5 md:h-5" weight="bold" />}
             onClick={() => document.getElementById(`image-upload-${falla.number}`)?.click()}
           >
             Upload
@@ -208,36 +196,36 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
               </CarouselContent>
               {images.length > 1 && (
                 <>
-                  <CarouselPrevious className="left-6 bg-white ink-border shadow-none border-2" />
-                  <CarouselNext className="right-6 bg-white ink-border shadow-none border-2" />
+                  <CarouselPrevious className="left-4 md:left-6 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 ink-border shadow-none border-2" />
+                  <CarouselNext className="right-6 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 ink-border shadow-none border-2" />
                 </>
               )}
             </Carousel>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-white/30">
-              <Camera size={64} weight="thin" className="mb-6 opacity-5" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Archive empty</span>
+            <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-8 md:p-12 text-center bg-white/30">
+              <Camera size={48} weight="thin" className="mb-4 opacity-5" />
+              <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Archive empty</span>
             </div>
           )}
         </div>
 
         {/* Conversation Hub */}
-        <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col bg-[#FAF7F2] relative overflow-hidden">
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
-                <ChatCircleDots size={24} weight="bold" />
+        <div className="w-full md:w-1/2 p-4 md:p-10 flex flex-col bg-[#FAF7F2] relative overflow-hidden min-h-[300px]">
+          <div className="flex items-center justify-between mb-6 md:mb-10">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
+                <ChatCircleDots className="w-5 h-5 md:w-6 md:h-6" weight="bold" />
               </div>
-              <span className="font-display font-black uppercase tracking-widest text-sm">Community Notes</span>
+              <span className="font-display font-black uppercase tracking-widest text-[10px] md:text-sm">Notes</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-falla-ink/40 tracking-widest whitespace-nowrap">
-              <Clock size={14} weight="bold" /> {falla.time}
+            <div className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-black uppercase text-falla-ink/40 tracking-widest whitespace-nowrap">
+              <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" weight="bold" /> {falla.time}
             </div>
           </div>
           
-          <ScrollArea className="flex-1 pr-4 scrollbar-hide">
+          <ScrollArea className="flex-1 pr-2 md:pr-4 scrollbar-hide">
             <AnimatePresence initial={false}>
-              <div className="space-y-10 pb-40">
+              <div className="space-y-6 md:space-y-10 pb-32">
                 {comments.length > 0 ? (
                   comments.map((comment, i) => (
                     <motion.div 
@@ -246,42 +234,42 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
                       animate={{ opacity: 1, y: 0 }}
                       className="group/comment"
                     >
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="font-black text-[10px] text-falla-fire uppercase tracking-widest">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-black text-[8px] md:text-[9px] text-falla-fire uppercase tracking-widest">
                           {comment.user_id ? "Citizen verified" : "Guest contributor"}
                         </span>
-                        <span className="text-[9px] text-falla-ink/20 font-bold uppercase">
+                        <span className="text-[7px] md:text-[8px] text-falla-ink/20 font-bold uppercase">
                           {new Date(comment.created_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-xl text-falla-ink font-medium leading-tight tracking-tight">
+                      <p className="text-sm md:text-xl text-falla-ink font-medium leading-tight tracking-tight">
                         {comment.text}
                       </p>
                     </motion.div>
                   ))
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-24 text-center opacity-10">
-                    <ChatCircleDots size={64} weight="thin" className="mb-4" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em]">Be the first to speak</p>
+                  <div className="flex flex-col items-center justify-center py-12 md:py-24 text-center opacity-10">
+                    <ChatCircleDots size={48} weight="thin" className="mb-4" />
+                    <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em]">Be the first to speak</p>
                   </div>
                 )}
               </div>
             </AnimatePresence>
           </ScrollArea>
 
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2] to-transparent pt-16 z-20">
-            <div className="flex gap-4">
-              <div className="flex-1 bg-white ink-border rounded-[2rem] shadow-solid hover:shadow-none transition-all overflow-hidden focus-within:shadow-none translate-y-[-2px] hover:translate-y-0 active:translate-y-0 border-2">
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-10 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2] to-transparent pt-8 md:pt-16 z-20">
+            <div className="flex gap-2 md:gap-4">
+              <div className="flex-1 bg-white ink-border rounded-xl md:rounded-[2rem] shadow-solid hover:shadow-none transition-all overflow-hidden focus-within:shadow-none translate-y-[-2px] hover:translate-y-0 active:translate-y-0 border-2">
                 <Textarea 
                   variant="flat"
                   placeholder="Share a story..." 
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   minRows={1}
-                  maxRows={5}
+                  maxRows={3}
                   className="w-full"
                   classNames={{
-                    input: "text-lg p-5 font-bold bg-transparent placeholder:text-falla-ink/20",
+                    input: "text-xs md:text-lg p-3 md:p-5 font-bold bg-transparent placeholder:text-falla-ink/20",
                     inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent",
                   }}
                 />
@@ -290,9 +278,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
                 isIconOnly
                 onClick={handleCommentSubmit}
                 disabled={!newComment.trim()}
-                className="w-16 h-16 rounded-[1.5rem] shrink-0 border-2"
+                className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-[1.5rem] shrink-0 border-2"
               >
-                <PaperPlaneRight size={28} weight="bold" />
+                <PaperPlaneRight className="w-5 h-5 md:w-7 md:h-7" weight="bold" />
               </Button>
             </div>
           </div>
