@@ -4,12 +4,11 @@ import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { ArrowRight, Flame, Camera, ChatCircleDots, MapTrifold } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BackgroundBeams } from "@/components/ui/background-beams";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-falla-paper flex flex-col items-center relative overflow-hidden">
-      <BackgroundBeams className="opacity-40" />
+      {/* BackgroundBeams removed as per feedback - keeping it minimalist and premium */}
       
       <div className="z-10 w-full flex flex-col items-center">
         <FallamapHeader isVisible={true} />
@@ -43,7 +42,7 @@ export default function HomePage() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
               <div className="absolute bottom-10 left-10 text-white hidden md:block">
-                <p className="font-display text-3xl italic drop-shadow-md">Valencia, 2026</p>
+                <p className="font-display text-3xl italic drop-shadow-md tracking-normal">Valencia, 2026</p>
                 <p className="font-sans font-bold uppercase tracking-[0.3em] opacity-80 text-xs">The world's most flammable stage</p>
               </div>
             </motion.div>
@@ -51,7 +50,7 @@ export default function HomePage() {
           
           <div className="w-full relative py-20">
             <div className="flex flex-col items-center mb-20 text-center">
-              <div className="brutal-pill mb-8 bg-white">
+              <div className="brutal-pill mb-8 bg-white shadow-none border-falla-ink/20">
                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire">Features</span>
               </div>
               <h2 className="text-4xl md:text-6xl font-display text-falla-ink">The Digital <span className="text-falla-fire">Flame</span></h2>
@@ -87,13 +86,11 @@ export default function HomePage() {
             className="mt-40 p-20 w-full rounded-[5rem] bg-falla-ink text-falla-paper text-center relative overflow-hidden flex flex-col items-center border-[3px] border-falla-ink shadow-solid-lg"
           >
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/felt.png')] opacity-10" />
-            <div className="absolute -top-20 -left-20 w-64 h-64 bg-falla-fire/20 rounded-full blur-[100px]" />
-            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-falla-fire/20 rounded-full blur-[100px]" />
             
-            <h2 className="text-6xl md:text-9xl font-display text-falla-paper mb-10 relative z-10 leading-none">
+            <h2 className="text-5xl md:text-9xl font-display text-falla-paper mb-10 relative z-10 leading-none tracking-normal">
               Burn it <span className="text-falla-fire">All.</span>
             </h2>
-            <p className="max-w-3xl text-xl md:text-3xl font-medium opacity-80 mb-16 relative z-10 tracking-tight leading-relaxed italic">
+            <p className="max-w-3xl text-xl md:text-3xl font-medium opacity-80 mb-16 relative z-10 tracking-normal leading-relaxed italic">
               Experience the end of winter and the birth of spring through fire, art, and satirical craftsmanship.
             </p>
             <Button 

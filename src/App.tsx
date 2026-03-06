@@ -11,8 +11,9 @@ import { ClerkProvider } from "@clerk/react";
 import SignUpPage from "@/components/SignUpPage.tsx";
 import { motion, AnimatePresence } from "framer-motion";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext.tsx";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -38,13 +39,25 @@ export default function App() {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.body.className = isDarkMode ? "dark" : "light";
+    
+    // Simulate initial load
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+    
+    return () => clearTimeout(timer);
   }, [isDarkMode]);
 
   return (
     <div className={`flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans`}>
+      <AnimatePresence>
+        {loading && <LoadingScreen key="loading" />}
+      </AnimatePresence>
+
       <ClerkProvider
         routerPush={(to: string) => navigate(to)}
         routerReplace={(to: string) => navigate(to, { replace: true })}
