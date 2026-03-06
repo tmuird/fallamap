@@ -8,17 +8,17 @@ export const LoadingScreen = () => {
         {/* Flamenco Dancer Placeholder - You can replace this with your AI generated SVG */}
         <motion.div
           animate={{
-            rotateY: [0, 180, 360],
-            y: [0, -20, 0],
+            scale: [1, 1.2, 1],
+            rotate: [0, 5, -5, 0],
           }}
           transition={{
-            duration: 2,
+            duration: 1.5,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="text-8xl mb-8 select-none"
+          className="text-8xl mb-8 select-none drop-shadow-[0_0_30px_rgba(255,95,31,0.5)]"
         >
-          💃
+          🔥
         </motion.div>
 
         {/* Loading Bar */}
