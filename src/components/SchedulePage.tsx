@@ -63,7 +63,6 @@ export default function SchedulePage() {
   return (
     <div className="min-h-screen bg-falla-paper py-20 px-4 md:px-8">
       <div className="max-w-6xl mx-auto antialiased relative">
-        {/* Header Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,23 +75,12 @@ export default function SchedulePage() {
             Festival Timeline
           </h1>
           <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">
-            Follow the central flame to discover the must-see events for the 2026 Falles season.
+            Discover the must-see events for the 2026 Falles season.
           </p>
         </motion.div>
 
-        {/* Timeline Container */}
-        <div className="relative">
-          {/* Central Tracing Beam - desktop only */}
-          <div className="absolute left-1/2 top-0 bottom-0 -translate-x-1/2 hidden md:block w-full pointer-events-none">
-            <TracingBeam>
-              <div className="h-full w-px" />
-            </TracingBeam>
-          </div>
-
-          {/* Simple line for mobile */}
-          <div className="absolute left-4 top-0 bottom-0 w-[2.5px] bg-falla-ink/10 md:hidden" />
-
-          <div className="space-y-24">
+        <TracingBeam>
+          <div className="space-y-32 pb-32">
             {events.map((event, index) => (
               <motion.div
                 key={index}
@@ -105,15 +93,15 @@ export default function SchedulePage() {
                   index % 2 === 0 ? "md:flex-row-reverse" : ""
                 )}
               >
-                {/* Dot indicator */}
+                {/* Dot indicator - perfectly centered on desktop line */}
                 <div className="absolute left-[-9px] md:left-1/2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-[3px] border-falla-fire shadow-solid md:-translate-x-1/2 z-30" />
                 
                 {/* Content Card Side */}
-                <div className="w-full md:w-[42%]">
+                <div className="w-full md:w-[42%] relative z-20">
                   <Card className="hover:translate-y-[-4px] transition-all duration-300">
                     <CardBody className="p-8">
                       <div className="flex items-center justify-between mb-8">
-                        <p className="text-falla-fire font-black uppercase tracking-widest text-xl">{event.date}</p>
+                        <p className="text-falla-fire font-black uppercase tracking-widest text-2xl">{event.date}</p>
                         <Chip 
                           variant="flat" 
                           color={event.color as any} 
@@ -130,7 +118,7 @@ export default function SchedulePage() {
                         <h3 className="text-3xl md:text-4xl font-display text-falla-ink leading-tight italic">{event.title}</h3>
                       </div>
                       
-                      <p className="text-falla-ink/70 font-medium leading-relaxed mb-10 text-base">
+                      <p className="text-falla-ink/70 font-medium leading-relaxed mb-10 text-base text-left">
                         {event.description}
                       </p>
 
@@ -162,7 +150,7 @@ export default function SchedulePage() {
               </motion.div>
             ))}
           </div>
-        </div>
+        </TracingBeam>
       </div>
     </div>
   );
