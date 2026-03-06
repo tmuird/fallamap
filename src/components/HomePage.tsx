@@ -78,7 +78,7 @@ export default function HomePage() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
               <div className="absolute bottom-10 left-10 text-white hidden md:block">
-                <p className="font-display text-3xl italic drop-shadow-md tracking-normal">Valencia, 2026</p>
+                <p className="font-display text-3xl italic drop-shadow-md tracking-normal">València, 2026</p>
                 <p className="font-sans font-bold uppercase tracking-[0.3em] opacity-80 text-xs">The world's most flammable stage</p>
               </div>
             </motion.div>
@@ -96,7 +96,7 @@ export default function HomePage() {
             <BentoGrid className="max-w-6xl mx-auto">
               <BentoGridItem
                 title="Live Discovery"
-                description="Navigate Valencia's ephemeral landscape with real-time tracking of every major monument and neighborhood ninot."
+                description="Navigate València's ephemeral landscape with real-time tracking of every major monument and neighborhood ninot."
                 header={<div className="h-48 w-full bg-falla-fire/5 rounded-3xl flex items-center justify-center border-2 border-falla-fire/10"><MapTrifold size={64} weight="thin" className="text-falla-fire/40" /></div>}
                 icon={<Flame size={28} weight="bold" className="text-falla-fire" />}
                 className="md:col-span-2"

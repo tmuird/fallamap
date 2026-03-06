@@ -109,7 +109,7 @@ export default function App() {
               </span>
             </div>
             <p className="text-[10px] font-bold tracking-[0.3em] text-falla-ink/30 uppercase">
-              © 2026 Valencia, Spain
+              © 2026 València
             </p>
           </footer>
         )}

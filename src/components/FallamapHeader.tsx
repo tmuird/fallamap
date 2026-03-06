@@ -22,8 +22,8 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
      FallaMap
     </h1>
     
-    <p className="text-lg md:text-xl text-falla-ink/50 mt-6 max-w-lg mx-auto font-bold tracking-normal italic">
-     A friendly, minimalist guide to Valencia's street art heritage.
+    <p className="text-lg md:text-xl text-falla-ink/50 mt-6 max-w-lg mx-auto font-bold tracking-normal">
+     A friendly, minimalist guide to València's ephemeral heritage.
     </p>
    </motion.div>
 

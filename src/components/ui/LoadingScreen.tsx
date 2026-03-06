@@ -5,7 +5,7 @@ export const LoadingScreen = () => {
   return (
     <div className="fixed inset-0 z-[200] bg-falla-paper flex flex-col items-center justify-center">
       <div className="relative w-64 h-64 flex flex-col items-center justify-center">
-        {/* Flamenco Dancer Placeholder - You can replace this with your AI generated SVG */}
+        {/* Fire Emoji Placeholder - Represents the heart of Falles */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],

@@ -29,7 +29,7 @@ export default function ContactPage() {
           <div className="md:col-span-5 space-y-8">
             <Card className="bg-falla-fire text-falla-paper border-falla-ink">
               <CardBody className="p-8">
-                <h3 className="text-3xl font-display mb-6 leading-none">Valencia, ES</h3>
+                <h3 className="text-3xl font-display mb-6 leading-none">València</h3>
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
@@ -46,7 +46,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Location</p>
-                      <p className="font-bold">Ciutat Vella, Valencia</p>
+                      <p className="font-bold">Ciutat Vella, València</p>
                     </div>
                   </div>
                 </div>

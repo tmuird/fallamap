@@ -11,8 +11,8 @@ const events = [
     date: "March 1 - 19",
     time: "14:00",
     title: "La Mascletà",
-    location: "Plaza del Ayuntamiento",
-    description: "The daily rhythmic explosion of firecrackers that shakes the ground and the hearts of Valencia.",
+    location: "Plaça de l'Ajuntament",
+    description: "The daily rhythmic explosion of firecrackers that shakes the ground and the hearts of València.",
     type: "Daily",
     icon: <Flame size={24} weight="bold" />,
     color: "danger"
@@ -30,9 +30,9 @@ const events = [
   {
     date: "March 17 - 18",
     time: "15:30",
-    title: "Ofrenda de Flores",
-    location: "Plaza de la Virgen",
-    description: "A two-day procession of thousands of Falleros offering flowers to the Virgin Mary.",
+    title: "L'Ofrena",
+    location: "Plaça de la Mare de Déu",
+    description: "A two-day procession of thousands of Fallers offering flowers to the Mare de Déu.",
     type: "Procession",
     icon: <MusicNotes size={24} weight="bold" />,
     color: "secondary"
@@ -41,7 +41,7 @@ const events = [
     date: "March 18",
     time: "01:30",
     title: "Nit del Foc",
-    location: "Turia Gardens",
+    location: "Jardí del Túria",
     description: "The biggest fireworks display of the festival, illuminating the night sky.",
     type: "Night",
     icon: <Flame size={24} weight="bold" />,
@@ -51,7 +51,7 @@ const events = [
     date: "March 19",
     time: "22:00",
     title: "La Cremà",
-    location: "Every corner of Valencia",
+    location: "Every corner of València",
     description: "The dramatic burning of all monuments, marking the end of the festival and the birth of spring.",
     type: "The Finale",
     icon: <Flame size={24} weight="bold" />,
@@ -76,7 +76,7 @@ export default function SchedulePage() {
             Festival Timeline
           </h1>
           <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">
-            Follow the central flame to discover the must-see events for the 2026 Fallas season.
+            Follow the central flame to discover the must-see events for the 2026 Falles season.
           </p>
         </motion.div>
 
