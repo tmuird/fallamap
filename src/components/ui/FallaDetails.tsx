@@ -14,7 +14,18 @@ import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
 import { supabase } from "@/lib/supabase";
-import { MapPin, Clock, Camera, Send, MessageCircle, Heart, Share2, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { 
+  MapPin, 
+  Clock, 
+  Camera, 
+  PaperPlaneRight, 
+  ChatCircleDots, 
+  Heart, 
+  ShareNetwork, 
+  CaretLeft, 
+  CaretRight, 
+  X 
+} from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Falla {
@@ -88,18 +99,30 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
       className={cn("flex flex-col w-full h-full bg-[#FAF7F2]", className)}
     >
       <header className="p-6 md:p-8 pb-6 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 shadow-sm">
-        {/* Row 1: Badge, Nav, Actions */}
+        {/* Top Control Bar */}
         <div className="flex items-center justify-between mb-6 gap-2">
           <div className="flex items-center gap-3">
             <span className="text-[10px] uppercase tracking-[0.2em] font-black text-falla-ink/40 bg-falla-ink/5 px-3 py-1.5 rounded-full whitespace-nowrap ink-border">
               Monument #{falla.number}
             </span>
             <div className="flex items-center gap-1">
-              <Button isIconOnly variant="neutral" size="sm" onClick={onPrev} className="w-9 h-9 rounded-xl border-2">
-                <ChevronLeft className="w-5 h-5" />
+              <Button 
+                isIconOnly 
+                variant="neutral" 
+                size="sm" 
+                onClick={onPrev} 
+                className="w-9 h-9 rounded-xl border-2"
+              >
+                <CaretLeft size={20} weight="bold" />
               </Button>
-              <Button isIconOnly variant="neutral" size="sm" onClick={onNext} className="w-9 h-9 rounded-xl border-2">
-                <ChevronRight className="w-5 h-5" />
+              <Button 
+                isIconOnly 
+                variant="neutral" 
+                size="sm" 
+                onClick={onNext} 
+                className="w-9 h-9 rounded-xl border-2"
+              >
+                <CaretRight size={20} weight="bold" />
               </Button>
             </div>
           </div>
@@ -109,10 +132,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
               isIconOnly 
               variant="neutral" 
               size="sm"
-              className={cn("w-9 h-9 rounded-xl border-2", liked && "text-falla-fire")}
+              className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-falla-fire border-falla-fire")}
               onClick={() => setLiked(!liked)}
             >
-              <Heart className={cn("w-5 h-5", liked && "fill-current")} />
+              <Heart size={20} weight={liked ? "fill" : "bold"} />
             </Button>
             <Button 
               isIconOnly 
@@ -121,7 +144,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
               className="w-9 h-9 rounded-xl border-2"
               onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })}
             >
-              <Share2 className="w-5 h-5" />
+              <ShareNetwork size={20} weight="bold" />
             </Button>
             {onClose && (
               <Button 
@@ -131,23 +154,23 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
                 className="w-9 h-9 rounded-xl border-2 bg-falla-ink text-white shadow-none hover:bg-falla-ink/90 ml-2"
                 onClick={onClose}
               >
-                <X className="w-5 h-5" />
+                <X size={20} weight="bold" />
               </Button>
             )}
           </div>
         </div>
         
-        {/* Row 2: Title */}
+        {/* Title */}
         <h2 className="text-4xl md:text-6xl font-display text-falla-ink leading-[1.1] mb-8 tracking-tight">
           {falla.name}
         </h2>
         
-        {/* Row 3: Main Actions */}
+        {/* Main Actions */}
         <div className="flex flex-wrap gap-3">
           <Button 
             variant="outline"
             className="flex-1 h-14 min-w-[140px] rounded-2xl border-2"
-            startContent={<MapPin className="w-5 h-5 text-falla-fire" />}
+            startContent={<MapPin size={20} weight="bold" className="text-falla-fire" />}
             onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${falla.coordinates.lat},${falla.coordinates.lng}`)}
           >
             Locate
@@ -163,7 +186,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
           <Button 
             className="flex-1 h-14 min-w-[140px] rounded-2xl border-2"
             isLoading={uploading}
-            startContent={<Camera className="w-5 h-5" />}
+            startContent={<Camera size={20} weight="bold" />}
             onClick={() => document.getElementById(`image-upload-${falla.number}`)?.click()}
           >
             Upload
@@ -192,7 +215,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
             </Carousel>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-white/30">
-              <Camera className="w-20 h-20 mb-6 opacity-5" />
+              <Camera size={64} weight="thin" className="mb-6 opacity-5" />
               <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Archive empty</span>
             </div>
           )}
@@ -203,12 +226,12 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
-                <MessageCircle className="w-6 h-6" />
+                <ChatCircleDots size={24} weight="bold" />
               </div>
               <span className="font-display font-black uppercase tracking-widest text-sm">Community Notes</span>
             </div>
             <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-falla-ink/40 tracking-widest whitespace-nowrap">
-              <Clock className="w-4 h-4" /> {falla.time}
+              <Clock size={14} weight="bold" /> {falla.time}
             </div>
           </div>
           
@@ -238,8 +261,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center py-24 text-center opacity-10">
-                    <p className="font-display text-6xl font-black uppercase tracking-widest">Quiet</p>
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] mt-4">Be the first to speak</p>
+                    <ChatCircleDots size={64} weight="thin" className="mb-4" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em]">Be the first to speak</p>
                   </div>
                 )}
               </div>
@@ -269,7 +292,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
                 disabled={!newComment.trim()}
                 className="w-16 h-16 rounded-[1.5rem] shrink-0 border-2"
               >
-                <Send className="w-7 h-7" />
+                <PaperPlaneRight size={28} weight="bold" />
               </Button>
             </div>
           </div>

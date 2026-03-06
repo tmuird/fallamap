@@ -11,17 +11,17 @@ import {
   Button,
 } from "@heroui/react";
 import { NavLink, Link } from "react-router-dom";
-import { LayoutDashboard, Menu, X } from "lucide-react";
+import { House, MapTrifold, CalendarBlank, ChatCircleText, SquaresFour, List, X } from "@phosphor-icons/react";
 import { cn } from "@/utils/cn";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    { label: "Home", path: "/" },
-    { label: "Map", path: "/map" },
-    { label: "Schedule", path: "/schedule" },
-    { label: "Contact", path: "/contact" },
+    { label: "Home", path: "/", icon: <House size={20} weight="bold" /> },
+    { label: "Map", path: "/map", icon: <MapTrifold size={20} weight="bold" /> },
+    { label: "Schedule", path: "/schedule", icon: <CalendarBlank size={20} weight="bold" /> },
+    { label: "Contact", path: "/contact", icon: <ChatCircleText size={20} weight="bold" /> },
   ];
 
   return (
@@ -36,17 +36,17 @@ export default function AppNavbar() {
     >
       <NavbarContent className="gap-4">
         <NavbarMenuToggle
-          icon={isMenuOpen ? <X className="w-5 h-5 text-falla-ink" /> : <Menu className="w-5 h-5 text-falla-ink" />}
+          icon={isMenuOpen ? <X size={24} weight="bold" className="text-falla-ink" /> : <List size={24} weight="bold" className="text-falla-ink" />}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
         <NavbarBrand>
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-falla-fire rounded-full ink-border flex items-center justify-center soft-shadow group-hover:translate-x-[1px] group-hover:translate-y-[1px] group-hover:shadow-none transition-all">
-              <span className="text-lg">🔥</span>
+              <span className="text-lg text-white">🔥</span>
             </div>
-            <p className="font-display text-2xl text-falla-ink hidden md:block leading-none tracking-tight">
-              Falla<span className="text-falla-fire">Map</span>
+            <p className="font-display text-2xl text-falla-ink hidden md:block leading-none tracking-tight text-falla-fire">
+              FallaMap
             </p>
           </Link>
         </NavbarBrand>
@@ -59,11 +59,12 @@ export default function AppNavbar() {
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-falla-fire",
+                  "text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-falla-fire flex items-center gap-2",
                   isActive ? "text-falla-fire" : "text-falla-ink/60"
                 )
               }
             >
+              {item.icon}
               {item.label}
             </NavLink>
           </NavbarItem>
@@ -79,11 +80,11 @@ export default function AppNavbar() {
               variant="flat" 
               size="sm" 
               className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
-              startContent={<LayoutDashboard className="w-3.5 h-3.5" />}
+              startContent={<SquaresFour size={16} weight="bold" />}
             >
               Admin
             </Button>
-            <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2">
+            <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2 overflow-hidden">
               <UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8" } }} />
             </div>
           </Show>
@@ -116,12 +117,13 @@ export default function AppNavbar() {
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all",
+                  "w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all flex items-center gap-4",
                   isActive ? "text-falla-fire translate-x-2" : "text-falla-ink opacity-60"
                 )
               }
               onClick={() => setIsMenuOpen(false)}
             >
+              {item.icon}
               {item.label}
             </NavLink>
           </NavbarMenuItem>
