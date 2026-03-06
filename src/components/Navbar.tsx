@@ -42,8 +42,22 @@ export default function AppNavbar() {
         />
         <NavbarBrand>
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-falla-fire rounded-full ink-border flex items-center justify-center soft-shadow group-hover:translate-x-[1px] group-hover:translate-y-[1px] group-hover:shadow-none transition-all">
-              <span className="text-lg text-white">🔥</span>
+            {/* Custom SVG Flame Logo */}
+            <div className="w-10 h-10 flex items-center justify-center relative group-hover:scale-110 transition-transform">
+              <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path 
+                  d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
+                  fill="#FF5F1F" 
+                  stroke="#1A1A1A" 
+                  strokeWidth="8"
+                />
+                <path 
+                  d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z" 
+                  fill="#FFB600" 
+                  stroke="#1A1A1A" 
+                  strokeWidth="6"
+                />
+              </svg>
             </div>
             <p className="font-display text-2xl text-falla-ink hidden md:block leading-none tracking-tight text-falla-fire">
               FallaMap
@@ -59,7 +73,7 @@ export default function AppNavbar() {
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-falla-fire flex items-center gap-2",
+                  "text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-falla-fire flex items-center gap-2",
                   isActive ? "text-falla-fire" : "text-falla-ink/60"
                 )
               }

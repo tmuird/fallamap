@@ -5,20 +5,35 @@ export const LoadingScreen = () => {
   return (
     <div className="fixed inset-0 z-[200] bg-falla-paper flex flex-col items-center justify-center">
       <div className="relative w-64 h-64 flex flex-col items-center justify-center">
-        {/* Fire Emoji Placeholder - Represents the heart of Falles */}
+        {/* Custom Brutalist Flame Logo */}
         <motion.div
           animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 5, -5, 0],
+            scale: [1, 1.1, 1],
+            rotate: [0, 2, -2, 0],
           }}
           transition={{
-            duration: 1.5,
+            duration: 2,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="text-8xl mb-8 select-none drop-shadow-[0_0_30px_rgba(255,95,31,0.5)]"
+          className="mb-12 relative"
         >
-          🔥
+          <svg width="120" height="140" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-solid">
+            <path 
+              d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
+              fill="#FF5F1F" 
+              stroke="#1A1A1A" 
+              strokeWidth="4"
+            />
+            <path 
+              d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z" 
+              fill="#FFB600" 
+              stroke="#1A1A1A" 
+              strokeWidth="3"
+            />
+            <circle cx="55" cy="75" r="4" fill="#1A1A1A" />
+            <circle cx="65" cy="75" r="4" fill="#1A1A1A" />
+          </svg>
         </motion.div>
 
         {/* Loading Bar */}
@@ -35,8 +50,8 @@ export const LoadingScreen = () => {
           />
         </div>
         
-        <p className="mt-6 font-display text-xl text-falla-fire animate-pulse uppercase tracking-widest">
-          Igniting Fallamap...
+        <p className="mt-8 font-display text-2xl text-falla-ink tracking-tight uppercase">
+          Igniting <span className="text-falla-fire">Falla</span>Map
         </p>
       </div>
     </div>
