@@ -4,17 +4,53 @@ import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { ArrowRight, Flame, Camera, ChatCircleDots, MapTrifold } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { SparklesCore } from "@/components/ui/sparkles";
+import { InfiniteMovingCards } from "@/components/ui/infinite-moving-cards";
+
+const communitySightings = [
+  {
+    quote: "The monument at Plaza del Ayuntamiento is absolutely breathtaking this year. The detail on the main Ninot is insane!",
+    name: "Marc V.",
+    title: "Verified Citizen",
+  },
+  {
+    quote: "Just uploaded a high-res shot of the Falla in Ruzafa. The lighting at night is magical. Don't miss it!",
+    name: "Elena G.",
+    title: "Photographer",
+  },
+  {
+    quote: "Found a hidden gem Ninot in a small alley near El Carmen. This map is a lifesaver for tourists!",
+    name: "James L.",
+    title: "Visitor",
+  },
+  {
+    quote: "The satirical message behind the Falla in Campanar is so sharp. Truly the heart of Valencian culture.",
+    name: "Sofia R.",
+    title: "Local Guide",
+  },
+];
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-falla-paper flex flex-col items-center relative overflow-hidden">
-      {/* BackgroundBeams removed as per feedback - keeping it minimalist and premium */}
+      {/* Subtle Sparkle Background */}
+      <div className="w-full absolute inset-0 h-screen pointer-events-none">
+        <SparklesCore
+          id="tsparticlesfullpage"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={100}
+          className="w-full h-full"
+          particleColor="#FF5F1F"
+        />
+      </div>
       
       <div className="z-10 w-full flex flex-col items-center">
         <FallamapHeader isVisible={true} />
 
         <main className="w-full max-w-[1400px] px-4 md:px-8 pb-32 flex flex-col items-center">
-          {/* Launch Map Hero Section - Refined for "Above the Fold" visibility */}
+          {/* Launch Map Hero Section */}
           <div className="w-full flex flex-col gap-10 mb-32 items-center">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -48,6 +84,7 @@ export default function HomePage() {
             </motion.div>
           </div>
           
+          {/* Features Bento Grid */}
           <div className="w-full relative py-20">
             <div className="flex flex-col items-center mb-20 text-center">
               <div className="brutal-pill mb-8 bg-white shadow-none border-falla-ink/20">
@@ -80,6 +117,22 @@ export default function HomePage() {
             </BentoGrid>
           </div>
 
+          {/* Community Sightings Section */}
+          <div className="w-full py-20 overflow-hidden">
+            <div className="flex flex-col items-center mb-16 text-center">
+              <div className="brutal-pill mb-8 bg-white shadow-none border-falla-ink/20">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire">Activity</span>
+              </div>
+              <h2 className="text-4xl md:text-6xl font-display text-falla-ink italic">Street <span className="text-falla-fire">Talk</span></h2>
+            </div>
+            <InfiniteMovingCards
+              items={communitySightings}
+              direction="right"
+              speed="slow"
+            />
+          </div>
+
+          {/* CTA Section */}
           <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -90,12 +143,12 @@ export default function HomePage() {
             <h2 className="text-5xl md:text-9xl font-display text-falla-paper mb-10 relative z-10 leading-none tracking-normal">
               Burn it <span className="text-falla-fire">All.</span>
             </h2>
-            <p className="max-w-3xl text-xl md:text-3xl font-medium opacity-80 mb-16 relative z-10 tracking-normal leading-relaxed italic">
+            <p className="max-w-3xl text-xl md:text-3xl font-medium opacity-80 mb-12 relative z-10 tracking-normal leading-relaxed italic">
               Experience the end of winter and the birth of spring through fire, art, and satirical craftsmanship.
             </p>
             <Button 
               size="lg"
-              className="bg-falla-fire text-white h-20 px-16 rounded-full text-2xl shadow-solid hover:translate-y-[-4px] active:translate-y-0 transition-all relative z-10 border-3 border-falla-ink"
+              className="bg-falla-fire text-white h-20 px-16 rounded-full text-2xl shadow-solid hover:translate-y-[-2px] active:translate-y-0 transition-all relative z-10 border-3 border-falla-ink"
             >
               <Link to="/sign-up">Start Your Journey</Link>
             </Button>

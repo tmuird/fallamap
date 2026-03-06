@@ -5,9 +5,10 @@ import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass, Target } from "@phosphor-icons/react";
 import { Input } from "@heroui/react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 const MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -99,6 +100,28 @@ const MapComponent = () => {
     flyToFalla(nextFalla);
   };
 
+  const handleGeolocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: [position.coords.longitude, position.coords.latitude],
+            zoom: 15,
+            essential: true
+          });
+          
+          // Add a temporary marker for the user
+          new mapboxgl.Marker({ color: "#FF5F1F", scale: 0.8 })
+            .setLngLat([position.coords.longitude, position.coords.latitude])
+            .addTo(mapRef.current);
+        }
+      }, (error) => {
+        console.error("Error getting location:", error);
+        alert("Could not access your location. Please check your browser settings.");
+      });
+    }
+  };
+
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -170,6 +193,18 @@ const MapComponent = () => {
           }}
         />
       </motion.div>
+
+      {/* Map Controls */}
+      <div className="absolute top-24 left-6 z-10 flex flex-col gap-3 hidden md:flex">
+        <Button 
+          isIconOnly 
+          variant="outline" 
+          onClick={handleGeolocation}
+          className="w-12 h-12 bg-white/90 backdrop-blur-md ink-border soft-shadow rounded-2xl hover:bg-falla-paper"
+        >
+          <Target size={24} weight="bold" className="text-falla-ink" />
+        </Button>
+      </div>
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={setIsDrawerOpen} shouldScaleBackground>
         <Drawer.Portal>

@@ -13,14 +13,14 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Bricolage Grotesque", "sans-serif"],
-        display: ["Bricolage Grotesque", "sans-serif"], // Placeholder until you get GT Maru
+        display: ["MatzyFood", "cursive"],
       },
       colors: {
         falla: {
-          paper: "#FAF7F2", 
+          paper: "#FDFBF7", 
           ink: "#1A1A1A",
-          fire: "#FF5F1F",
-          sage: "#6B705C",
+          fire: "#FF7043",
+          sage: "#8B9467",
           sand: "#E9E5D6",
         },
       },
@@ -28,8 +28,18 @@ export default {
         '2.5': '2.5px',
       },
       boxShadow: {
-        'solid': '4px 4px 0px 0px #1A1A1A',
-        'solid-lg': '8px 8px 0px 0px #1A1A1A',
+        'solid': '3px 3px 0px 0px #1A1A1A',
+        'solid-lg': '5px 5px 0px 0px #1A1A1A',
+      },
+      animation: {
+        scroll: "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+      },
+      keyframes: {
+        scroll: {
+          to: {
+            transform: "translate(calc(-50% - 0.5rem))",
+          },
+        },
       },
     },
   },
@@ -40,13 +50,17 @@ export default {
       themes: {
         light: {
           colors: {
-            background: "#FAF7F2",
+            background: "#FDFBF7",
             foreground: "#1A1A1A",
             primary: {
-              DEFAULT: "#FF5F1F",
-              foreground: "#FAF7F2",
+              DEFAULT: "#FF7043",
+              foreground: "#FDFBF7",
             },
-            focus: "#FF5F1F",
+            secondary: {
+              DEFAULT: "#8B9467",
+              foreground: "#FDFBF7",
+            },
+            focus: "#FF7043",
           },
           layout: {
             borderWidth: {
