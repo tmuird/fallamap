@@ -1,12 +1,13 @@
-import { useEffect, useRef, useContext, useState } from "react";
+import { useEffect, useRef, useContext, useState, useMemo } from "react";
 import mapboxgl from "mapbox-gl";
 import { ThemeContext } from "../context/ThemeContext";
 import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { X } from "lucide-react";
-import { Button } from "@heroui/react";
+import { Search } from "lucide-react";
+import { Input } from "@heroui/react";
+import { motion } from "framer-motion";
 
 const MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -30,13 +31,22 @@ interface Falla {
 const MapComponent = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const { isDarkMode } = useContext(ThemeContext);
   const [fallasData, setFallasData] = useState<Falla[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const filteredFallas = useMemo(() => {
+    return fallasData.filter(f => 
+      f.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      f.number.includes(searchQuery)
+    );
+  }, [fallasData, searchQuery]);
 
   useEffect(() => {
     const fetchFallas = async () => {
@@ -47,19 +57,47 @@ const MapComponent = () => {
           .order("number");
 
         if (error || !data || data.length === 0) {
-          console.warn("Using local fallas data as fallback");
           setFallasData(localFallas as Falla[]);
         } else {
           setFallasData(data as Falla[]);
         }
       } catch (err) {
-        console.error("Error fetching fallas from Supabase:", err);
         setFallasData(localFallas as Falla[]);
       }
     };
-
     fetchFallas();
   }, []);
+
+  const flyToFalla = (falla: Falla) => {
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [falla.coordinates.lng, falla.coordinates.lat],
+        zoom: 16,
+        pitch: 60,
+        essential: true
+      });
+    }
+  };
+
+  const handleSelectFalla = (falla: Falla) => {
+    setSelectedFalla(falla);
+    setIsDrawerOpen(true);
+    flyToFalla(falla);
+  };
+
+  const navigateFalla = (direction: 'next' | 'prev') => {
+    if (!selectedFalla) return;
+    const currentIndex = fallasData.findIndex(f => f.number === selectedFalla.number);
+    let nextIndex;
+    if (direction === 'next') {
+      nextIndex = (currentIndex + 1) % fallasData.length;
+    } else {
+      nextIndex = (currentIndex - 1 + fallasData.length) % fallasData.length;
+    }
+    const nextFalla = fallasData[nextIndex];
+    setSelectedFalla(nextFalla);
+    flyToFalla(nextFalla);
+  };
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -77,80 +115,83 @@ const MapComponent = () => {
     mapRef.current = map;
 
     map.on("load", () => {
+      // Clear existing markers
+      Object.values(markersRef.current).forEach(m => m.remove());
+      markersRef.current = {};
+
       fallasData.forEach((falla: Falla) => {
-        if (
-          falla.coordinates &&
-          falla.coordinates.lat !== 0.0 &&
-          falla.coordinates.lng !== 0.0
-        ) {
+        if (falla.coordinates?.lat && falla.coordinates?.lng) {
           const el = document.createElement("div");
-          el.className = "marker"; // Styled in globals.css as a refined circle
+          el.className = "marker";
+          el.addEventListener('click', () => handleSelectFalla(falla));
 
-          el.addEventListener('click', () => {
-            setSelectedFalla(falla);
-            setIsDrawerOpen(true);
-            
-            map.flyTo({
-              center: [falla.coordinates.lng, falla.coordinates.lat],
-              zoom: 15,
-              essential: true
-            });
-          });
-
-          new mapboxgl.Marker(el)
+          const marker = new mapboxgl.Marker(el)
             .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
             .addTo(map);
+          
+          markersRef.current[falla.number] = marker;
         }
       });
     });
 
-    return () => {
-      map.remove();
-      mapRef.current = null;
-    };
+    return () => map.remove();
   }, [isDarkMode, fallasData]);
 
+  // Handle marker visibility during search
+  useEffect(() => {
+    fallasData.forEach(f => {
+      const marker = markersRef.current[f.number];
+      if (!marker) return;
+      
+      const isVisible = filteredFallas.some(ff => ff.number === f.number);
+      marker.getElement().style.display = isVisible ? "block" : "none";
+    });
+  }, [filteredFallas, fallasData]);
+
   return (
-    <div className="w-full h-full relative group font-sans">
+    <div className="w-full h-full relative group font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      <Drawer.Root open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+      {/* Search Overlay */}
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="absolute top-6 left-6 right-6 md:left-6 md:right-auto md:w-80 z-10"
+      >
+        <Input 
+          placeholder="Find a monument..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          variant="flat"
+          startContent={<Search className="w-4 h-4 text-falla-ink/40" />}
+          classNames={{
+            inputWrapper: "bg-white/95 backdrop-blur-md ink-border soft-shadow h-14 rounded-2xl",
+            input: "text-sm font-bold",
+          }}
+        />
+      </motion.div>
+
+      <Drawer.Root open={isDrawerOpen} onOpenChange={setIsDrawerOpen} shouldScaleBackground>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[100]" />
-          <Drawer.Content className="bg-background flex flex-col rounded-t-[2.5rem] h-[85vh] fixed bottom-0 left-0 right-0 z-[101] outline-none max-w-5xl mx-auto border-x-2 border-t-2 border-falla-ink shadow-solid">
-            <div className="mx-auto w-12 h-1 flex-shrink-0 rounded-full bg-falla-ink/10 my-4" />
+          <Drawer.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[100]" />
+          <Drawer.Content className="bg-falla-paper flex flex-col rounded-t-[3rem] h-[85vh] fixed bottom-0 left-0 right-0 z-[101] outline-none max-w-5xl mx-auto border-x-2 border-t-2 border-falla-ink shadow-solid">
+            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-6" />
             
             <div className="flex-1 overflow-hidden relative">
-              <Button 
-                isIconOnly 
-                variant="light" 
-                className="absolute right-6 top-2 z-50 rounded-full hover:bg-falla-ink/5"
-                onClick={() => setIsDrawerOpen(false)}
-              >
-                <X className="w-5 h-5 text-falla-ink/40" />
-              </Button>
-              
               {selectedFalla && (
                 <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-hide">
-                  <FallaDetails falla={selectedFalla} />
+                  <FallaDetails 
+                    falla={selectedFalla} 
+                    onNext={() => navigateFalla('next')}
+                    onPrev={() => navigateFalla('prev')}
+                    onClose={() => setIsDrawerOpen(false)}
+                  />
                 </div>
               )}
             </div>
           </Drawer.Content>
         </Drawer.Portal>
       </Drawer.Root>
-
-      {/* Minimal Floating Info */}
-      <div className="absolute top-6 left-6 z-10 hidden md:block">
-        <div className="bg-falla-paper ink-border px-5 py-2.5 rounded-2xl soft-shadow flex items-center gap-3">
-          <div className="w-2.5 h-2.5 bg-falla-fire rounded-full animate-pulse" />
-          <span className="text-sm font-black uppercase tracking-tight text-falla-ink">
-            Falla<span className="text-falla-fire">Map</span>
-          </span>
-          <div className="w-[1px] h-4 bg-falla-ink/10" />
-          <span className="text-[10px] font-black text-falla-ink/40 uppercase tracking-widest">Valencia 2026</span>
-        </div>
-      </div>
     </div>
   );
 };

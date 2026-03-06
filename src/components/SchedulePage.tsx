@@ -1,6 +1,9 @@
+import { cn } from "@/utils/cn";
 import { motion } from "framer-motion";
-import { Card, CardBody, Button, Chip } from "@heroui/react";
-import { Clock, MapPin, Flame, Music, Camera } from "lucide-react";
+import { Card, CardBody } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Chip } from "@heroui/react";
+import { Clock, MapPin, Flame, Music, Camera, Bell } from "lucide-react";
 
 const events = [
   {
@@ -57,76 +60,92 @@ const events = [
 
 export default function SchedulePage() {
   return (
-    <div className="min-h-screen bg-background py-12 px-4 md:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-falla-paper py-20 px-4 md:px-8">
+      <div className="max-w-5xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-24"
         >
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-4 italic">
-            Festival <span className="falla-text-gradient">Timeline</span>
+          <div className="brutal-pill inline-block mb-6 bg-falla-fire/5 border-falla-fire/20 shadow-none px-4 py-1">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire">The Agenda</span>
+          </div>
+          <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight">
+            Festival Timeline
           </h1>
-          <p className="text-muted-foreground font-medium text-lg max-w-lg mx-auto">
-            Don't miss a single spark. Here are the must-see events for Fallas 2026.
+          <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">
+            Don't miss a single spark. Here are the must-see events for the 2026 Fallas season.
           </p>
         </motion.div>
 
-        <div className="relative border-l-2 border-primary/20 ml-4 md:ml-0 md:pl-0">
+        <div className="relative space-y-16">
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2.5px] bg-falla-ink/10 md:-translate-x-1/2 hidden md:block" />
+          
           {events.map((event, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="mb-12 relative pl-10 md:pl-0"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.5, ease: "circOut" }}
+              className={cn(
+                "relative flex flex-col md:flex-row items-center justify-between w-full gap-8",
+                index % 2 === 0 ? "md:flex-row-reverse" : ""
+              )}
             >
               {/* Dot on the line */}
-              <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(255,107,0,0.5)] z-10" />
+              <div className="absolute left-[-9px] md:left-1/2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-falla-paper border-[3px] border-falla-fire shadow-solid md:-translate-x-1/2 z-20" />
               
-              <div className="md:grid md:grid-cols-12 gap-8 items-start">
-                {/* Date/Time Column */}
-                <div className="md:col-span-3 mb-2 md:mb-0 md:text-right">
-                  <p className="text-primary font-black uppercase tracking-tighter text-xl">{event.date}</p>
-                  <div className="flex items-center md:justify-end gap-1 text-muted-foreground font-bold">
-                    <Clock className="w-3 h-3" />
-                    <span>{event.time}</span>
-                  </div>
-                </div>
+              {/* Content Card */}
+              <div className="w-full md:w-[45%]">
+                <Card className="hover:translate-y-[-4px] transition-all duration-300">
+                  <CardBody className="p-8">
+                    <div className="flex items-center justify-between mb-8">
+                      <p className="text-falla-fire font-black uppercase tracking-widest text-xl">{event.date}</p>
+                      <Chip 
+                        variant="flat" 
+                        color={event.color as any} 
+                        className="font-black text-[9px] tracking-[0.2em] px-3 border border-current/20 uppercase"
+                      >
+                        {event.type}
+                      </Chip>
+                    </div>
 
-                {/* Content Column */}
-                <div className="md:col-span-9">
-                  <Card className="border-none bg-muted/30 backdrop-blur-sm hover:bg-muted/50 transition-colors shadow-none">
-                    <CardBody className="p-6">
-                      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-xl bg-${event.color}/10 text-${event.color}`}>
-                            {event.icon}
-                          </div>
-                          <h3 className="text-2xl font-black uppercase tracking-tight">{event.title}</h3>
-                        </div>
-                        <Chip variant="flat" color={event.color as any} className="font-bold uppercase text-[10px]">
-                          {event.type}
-                        </Chip>
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 rounded-2xl bg-falla-ink text-falla-paper flex items-center justify-center soft-shadow">
+                        {event.icon}
                       </div>
-                      
-                      <p className="text-muted-foreground font-medium leading-relaxed mb-6">
-                        {event.description}
-                      </p>
+                      <h3 className="text-3xl md:text-4xl font-display text-falla-ink leading-tight">{event.title}</h3>
+                    </div>
+                    
+                    <p className="text-falla-ink/70 font-medium leading-relaxed mb-10 text-base">
+                      {event.description}
+                    </p>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-xs font-bold text-foreground opacity-60">
-                          <MapPin className="w-3.5 h-3.5" />
+                    <div className="flex flex-wrap items-center justify-between pt-8 border-t-2 border-falla-ink/5 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2 text-[10px] font-black uppercase text-falla-ink/30 tracking-widest">
+                          <Clock className="w-3.5 h-3.5 text-falla-fire" /> {event.time}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs font-bold text-falla-ink">
+                          <MapPin className="w-4 h-4 text-falla-fire" />
                           <span>{event.location}</span>
                         </div>
-                        <Button size="sm" variant="flat" color="primary" className="font-bold uppercase tracking-tighter">
-                          Remind Me
-                        </Button>
                       </div>
-                    </CardBody>
-                  </Card>
-                </div>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="h-11 px-6 rounded-2xl"
+                        startContent={<Bell className="w-4 h-4" />}
+                      >
+                        Remind Me
+                      </Button>
+                    </div>
+                  </CardBody>
+                </Card>
               </div>
+
+              <div className="hidden md:block md:w-[45%]" />
             </motion.div>
           ))}
         </div>

@@ -1,4 +1,3 @@
-import { cn } from "@/utils/cn";
 import { useState } from "react";
 import { Show, UserButton } from "@clerk/react";
 import {
@@ -10,63 +9,57 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   Button,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
 } from "@heroui/react";
 import { NavLink, Link } from "react-router-dom";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Menu, X } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState({
-    name: "English",
-    flag: "🇬🇧",
-  });
 
   const menuItems = [
-    { label: "Map", path: "/" },
+    { label: "Home", path: "/" },
+    { label: "Map", path: "/map" },
     { label: "Schedule", path: "/schedule" },
     { label: "Contact", path: "/contact" },
-  ];
-
-  const languages = [
-    { name: "English", flag: "🇬🇧" },
-    { name: "Spanish", flag: "🇪🇸" },
   ];
 
   return (
     <Navbar 
       onMenuOpenChange={setIsMenuOpen} 
       maxWidth="xl" 
-      className="bg-falla-paper/90 backdrop-blur-sm border-b-2 border-falla-ink sticky top-0"
+      className="bg-[#FAF7F2] border-b-2 border-falla-ink sticky top-0 h-20"
+      classNames={{
+        wrapper: "px-4 md:px-8 max-w-full",
+        toggle: "w-10 h-10 flex items-center justify-center rounded-xl ink-border bg-white soft-shadow active:shadow-none transition-all p-0",
+      }}
     >
-      <NavbarContent>
+      <NavbarContent className="gap-4">
         <NavbarMenuToggle
+          icon={isMenuOpen ? <X className="w-5 h-5 text-falla-ink" /> : <Menu className="w-5 h-5 text-falla-ink" />}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
         <NavbarBrand>
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-falla-fire rounded-full ink-border flex items-center justify-center">
-              <span className="text-sm">🔥</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-falla-fire rounded-full ink-border flex items-center justify-center soft-shadow group-hover:translate-x-[1px] group-hover:translate-y-[1px] group-hover:shadow-none transition-all">
+              <span className="text-lg">🔥</span>
             </div>
-            <p className="font-black text-xl tracking-tight text-falla-ink">
-              FALLA<span className="text-falla-fire">MAP</span>
+            <p className="font-display text-2xl text-falla-ink hidden md:block leading-none tracking-tight">
+              Falla<span className="text-falla-fire">Map</span>
             </p>
           </Link>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-8" justify="center">
+      <NavbarContent className="hidden sm:flex gap-10" justify="center">
         {menuItems.map((item, index) => (
           <NavbarItem key={index}>
             <NavLink
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "text-xs font-bold uppercase tracking-widest transition-all hover:text-falla-fire",
+                  "text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-falla-fire",
                   isActive ? "text-falla-fire" : "text-falla-ink/60"
                 )
               }
@@ -77,43 +70,22 @@ export default function AppNavbar() {
         ))}
       </NavbarContent>
 
-      <NavbarContent justify="end" className="gap-2">
-        <NavbarItem>
-          <Dropdown placement="bottom-end">
-            <DropdownTrigger>
-              <Button variant="light" size="sm" isIconOnly className="font-bold">
-                {currentLanguage.flag}
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu 
-              aria-label="Language selection"
-              onAction={(key) => {
-                const lang = languages.find(l => l.name === key);
-                if (lang) setCurrentLanguage(lang);
-              }}
-            >
-              {languages.map((lang) => (
-                <DropdownItem key={lang.name} startContent={<span>{lang.flag}</span>} className="font-bold">
-                  {lang.name}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        </NavbarItem>
-
-        <NavbarItem className="gap-2 flex">
+      <NavbarContent justify="end" className="gap-4">
+        <NavbarItem className="gap-3 flex items-center">
           <Show when="signed-in">
             <Button 
               as={Link} 
               to="/dashboard" 
               variant="flat" 
               size="sm" 
-              className="bg-falla-ink text-falla-paper font-bold uppercase tracking-tighter text-[10px] rounded-xl px-4"
-              startContent={<LayoutDashboard className="w-3 h-3" />}
+              className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+              startContent={<LayoutDashboard className="w-3.5 h-3.5" />}
             >
               Admin
             </Button>
-            <UserButton />
+            <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2">
+              <UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8" } }} />
+            </div>
           </Show>
           <Show when="signed-out">
             <Button 
@@ -121,7 +93,7 @@ export default function AppNavbar() {
               to="/sign-in" 
               variant="light" 
               size="sm" 
-              className="text-falla-ink font-bold uppercase tracking-tighter text-[10px]"
+              className="text-falla-ink font-bold uppercase tracking-widest text-[10px] h-10"
             >
               Sign In
             </Button>
@@ -129,7 +101,7 @@ export default function AppNavbar() {
               as={Link} 
               to="/sign-up" 
               size="sm" 
-              className="bg-falla-ink text-falla-paper font-bold uppercase tracking-tighter text-[10px] rounded-xl px-4 ink-border soft-shadow hover:translate-y-[1px] hover:translate-x-[1px] hover:shadow-none transition-all"
+              className="bg-falla-fire text-white font-bold uppercase tracking-widest text-[10px] rounded-xl px-6 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
             >
               Join
             </Button>
@@ -137,15 +109,15 @@ export default function AppNavbar() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu className="pt-10 bg-falla-paper">
+      <NavbarMenu className="pt-12 bg-[#FAF7F2]/98 backdrop-blur-xl border-t-2 border-falla-ink">
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item.label}-${index}`}>
+          <NavbarMenuItem key={`${item.label}-${index}`} className="px-4">
             <NavLink
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "w-full text-3xl font-black uppercase tracking-tight py-4 block",
-                  isActive ? "text-falla-fire" : "text-falla-ink"
+                  "w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all",
+                  isActive ? "text-falla-fire translate-x-2" : "text-falla-ink opacity-60"
                 )
               }
               onClick={() => setIsMenuOpen(false)}

@@ -13,13 +13,13 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Bricolage Grotesque", "sans-serif"],
-        display: ["Bricolage Grotesque", "sans-serif"],
+        display: ["Bricolage Grotesque", "sans-serif"], // Placeholder until you get GT Maru
       },
       colors: {
         falla: {
-          paper: "#FDFBF7", 
+          paper: "#FAF7F2", 
           ink: "#1A1A1A",
-          fire: "#FF5F1F",  // Brighter, tonal fire orange
+          fire: "#FF5F1F",
           sage: "#6B705C",
           sand: "#E9E5D6",
         },
@@ -28,8 +28,8 @@ export default {
         '2.5': '2.5px',
       },
       boxShadow: {
-        'solid': '3px 3px 0px 0px #1A1A1A',
-        'solid-lg': '5px 5px 0px 0px #1A1A1A',
+        'solid': '4px 4px 0px 0px #1A1A1A',
+        'solid-lg': '8px 8px 0px 0px #1A1A1A',
       },
     },
   },
@@ -40,15 +40,11 @@ export default {
       themes: {
         light: {
           colors: {
-            background: "#FDFBF7",
+            background: "#FAF7F2",
             foreground: "#1A1A1A",
             primary: {
               DEFAULT: "#FF5F1F",
-              foreground: "#FDFBF7",
-            },
-            secondary: {
-              DEFAULT: "#6B705C",
-              foreground: "#FDFBF7",
+              foreground: "#FAF7F2",
             },
             focus: "#FF5F1F",
           },
@@ -59,9 +55,9 @@ export default {
               large: "3px",
             },
             radius: {
-              small: "8px",
-              medium: "14px",
-              large: "28px",
+              small: "12px",
+              medium: "20px",
+              large: "9999px", 
             },
           }
         },

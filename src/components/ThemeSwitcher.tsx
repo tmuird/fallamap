@@ -2,11 +2,11 @@
 import { useTheme } from "../context/ThemeContext"; // Adjust the import path as needed
 
 export const ThemeSwitcher = () => {
-  const { isDarkMode, toggleTheme } = useTheme();
+ const { isDarkMode, toggleTheme } = useTheme();
 
-  return (
-    <button onClick={toggleTheme} style={{ cursor: "pointer" }}>
-      {isDarkMode ? "🌙" : "☀️"}
-    </button>
-  );
+ return (
+  <button onClick={toggleTheme} style={{ cursor: "pointer" }}>
+   {isDarkMode ? "🌙" : "☀️"}
+  </button>
+ );
 };

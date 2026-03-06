@@ -2,31 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'MilkyShine';
+  src: url('/fonts/MilkyShine.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MatzyFood';
+  src: url('/fonts/MatzyFood.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BuhunRetro';
+  src: url('/fonts/BuhunRetro.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --font-display: 'MatzyFood', cursive;
   --font-sans: 'Bricolage Grotesque', sans-serif;
 }
 
 body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  background-color: #FDFBF7;
+  background-color: #FAF7F2;
   color: #1A1A1A;
-  font-optical-sizing: auto;
+  letter-spacing: 0.01em;
+  font-style: normal !important;
 }
 
 h1, h2, h3, h4, .font-display {
-  font-family: var(--font-sans);
-  letter-spacing: -0.05em;
-  font-weight: 800;
-  line-height: 0.95;
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  font-style: normal !important;
 }
 
-/* Minimalist Soft Brutalist Utilities */
+/* --- Brutalist Core Utilities --- */
+
 .ink-border {
-  border: 2px solid #1A1A1A !important;
+  border: 2.5px solid #1A1A1A !important;
 }
 
 .soft-shadow {
+  box-shadow: 4px 4px 0px 0px #1A1A1A !important;
+}
+
+.soft-shadow-lg {
+  box-shadow: 8px 8px 0px 0px #1A1A1A !important;
+}
+
+.brutal-pill {
+  @apply rounded-full ink-border bg-white px-6 py-2.5 soft-shadow transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px];
+}
+
+/* --- Interactive Elements --- */
+
+.marker {
+  width: 22px !important;
+  height: 22px !important;
+  @apply ink-border;
+  background-color: #FF5F1F;
+  border-radius: 50%;
+  box-shadow: 2px 2px 0px 0px #1A1A1A;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.marker:hover {
+  transform: scale(1.3) translate(-2px, -2px);
   box-shadow: 4px 4px 0px 0px #1A1A1A;
 }
 
@@ -41,41 +94,23 @@ h1, h2, h3, h4, .font-display {
   display: none !important;
 }
 
-/* Marker Styling - Refined Circles */
-.marker {
-  width: 20px !important;
-  height: 20px !important;
-  border: 2px solid #1A1A1A;
-  background-color: #FF5F1F;
-  border-radius: 50%;
-  box-shadow: 2px 2px 0px 0px #1A1A1A;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  cursor: pointer;
-}
-
-.marker:hover {
-  transform: scale(1.4);
-  box-shadow: 3px 3px 0px 0px #1A1A1A;
-  background-color: #ff7a45;
-}
-
-/* Page Transitions */
-.fade-enter { opacity: 0; }
-.fade-enter-active { opacity: 1; transition: opacity 200ms ease-out; }
-.fade-exit { opacity: 1; }
-.fade-exit-active { opacity: 0; transition: opacity 200ms ease-in; }
-
-/* HeroUI & Global Component Refinements */
+/* HeroUI & Custom Component Overrides */
 button, .heroui-button {
-  @apply rounded-xl transition-all duration-200 active:scale-95;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  @apply ink-border soft-shadow transition-all duration-200 active:scale-95;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.heroui-button:hover:not(:disabled) {
+  @apply translate-x-[1px] translate-y-[1px];
+  box-shadow: 2px 2px 0px 0px #1A1A1A !important;
 }
 
 .activeLink {
-  @apply text-falla-fire font-extrabold border-b-2 border-falla-fire pb-1;
+  @apply text-falla-fire font-bold;
 }
 
+/* Falla Theme Accents */
 .falla-text-gradient {
   background: linear-gradient(135deg, #FF5F1F 0%, #FFB600 100%);
   -webkit-background-clip: text;

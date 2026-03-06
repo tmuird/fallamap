@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface Props {
-  className?: string;
+ className?: string;
 }
 
 export default function CountBtn({ className }: Props) {
-  const [count, setCount] = useState(0);
+ const [count, setCount] = useState(0);
 
-  return (
-    <Button onClick={() => setCount((count) => count + 1)} className={cn('', className)}>
-      Count is: {count}
-    </Button>
-  );
+ return (
+  <Button onClick={() => setCount((count) => count + 1)} className={cn('', className)}>
+   Count is: {count}
+  </Button>
+ );
 }
