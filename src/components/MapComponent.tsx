@@ -5,7 +5,7 @@ import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { Search } from "lucide-react";
+import { Search, MagnifyingGlass } from "@phosphor-icons/react";
 import { Input } from "@heroui/react";
 import { motion } from "framer-motion";
 
@@ -163,7 +163,7 @@ const MapComponent = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           variant="flat"
-          startContent={<Search className="w-4 h-4 text-falla-ink/40" />}
+          startContent={<MagnifyingGlass size={20} weight="bold" className="text-falla-ink/40" />}
           classNames={{
             inputWrapper: "bg-white/95 backdrop-blur-md ink-border soft-shadow h-14 rounded-2xl",
             input: "text-sm font-bold",

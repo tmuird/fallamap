@@ -51,9 +51,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isLoading || props.disabled}
         {...props}
       >
-        {isLoading ? <Spinner size="sm" color="current" /> : startContent}
-        {!isIconOnly && children}
-        {!isLoading && endContent}
+        {isLoading ? <Spinner size="sm" color="current" /> : (
+          <>
+            {startContent}
+            {children}
+            {endContent}
+          </>
+        )}
       </Comp>
     )
   }
