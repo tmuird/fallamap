@@ -23,4 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-*storybook.log
+*storybook.log.env
+node_modules
+dist

@@ -1,91 +1,80 @@
 import tailwindAnimate from "tailwindcss-animate";
-import { nextui } from "@nextui-org/react";
-const defaultTheme = require("tailwindcss/defaultTheme");
-const colors = require("tailwindcss/colors");
-const {
-  default: flattenColorPalette,
-} = require("tailwindcss/lib/util/flattenColorPalette");
+import { heroui } from "@heroui/react";
+import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
+      fontFamily: {
+        sans: ["Bricolage Grotesque", "sans-serif"],
+        display: ["Bricolage Grotesque", "sans-serif"],
+      },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+        falla: {
+          paper: "#FDFBF7", 
+          ink: "#1A1A1A",
+          fire: "#FF5F1F",  // Brighter, tonal fire orange
+          sage: "#6B705C",
+          sand: "#E9E5D6",
         },
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+      borderWidth: {
+        '2.5': '2.5px',
       },
-      keyframes: {
-        "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+      boxShadow: {
+        'solid': '3px 3px 0px 0px #1A1A1A',
+        'solid-lg': '5px 5px 0px 0px #1A1A1A',
       },
     },
   },
-  darkmode: "class",
-  plugins: [tailwindAnimate, nextui(),  addVariablesForColors],
+  darkMode: "class",
+  plugins: [
+    tailwindAnimate,
+    heroui({
+      themes: {
+        light: {
+          colors: {
+            background: "#FDFBF7",
+            foreground: "#1A1A1A",
+            primary: {
+              DEFAULT: "#FF5F1F",
+              foreground: "#FDFBF7",
+            },
+            secondary: {
+              DEFAULT: "#6B705C",
+              foreground: "#FDFBF7",
+            },
+            focus: "#FF5F1F",
+          },
+          layout: {
+            borderWidth: {
+              small: "1.5px",
+              medium: "2.5px",
+              large: "3px",
+            },
+            radius: {
+              small: "8px",
+              medium: "14px",
+              large: "28px",
+            },
+          }
+        },
+      },
+    }),
+    addVariablesForColors,
+  ],
 };
-// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
-function addVariablesForColors({ addBase, theme }: any) {
+
+function addVariablesForColors({ addBase, theme }) {
   let allColors = flattenColorPalette(theme("colors"));
   let newVars = Object.fromEntries(
-      Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
   );
 
   addBase({

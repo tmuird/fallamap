@@ -1,324 +1,92 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* globals.css or similar */
-:root {
-  --text-color-light: #000000;
-  --text-color-dark: #ffffff;
-  --background-color-light: #ffffff;
-  --background-color-dark: #000000;
-  --background: #f9f9f9;
-
-}
 
 :root {
-  transition: background-color 0.3s ease, color 0.3s ease;
-  /* Add other properties as needed */
+  --font-sans: 'Bricolage Grotesque', sans-serif;
 }
 
-/* Ensure the transition applies to all elements that might change */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-.light {
-  --text-color: var(--text-color-light);
-  --background-color: var(--background-color-light);
-  --background: --background-color-light;
-  --primary: #0e0e0e;
-}
-
-.dark {
-  --text-color: var(--text-color-dark);
-  --background-color: var(--background-color-dark);
-  --background: --background-color-dark;
-  --primary: #ffffff;
-}
 body {
-  color: var(--text-color);
-  background-color: var(--background-color);
-}
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: ;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 215 20.2% 65.1%;
-
-    --radius: 0.5rem;
-  }
-  .data-active {
-    --background: 222.2 84% 4.9%;
-  }
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: ;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
-
-    --ring: 217.2 32.6% 17.5%;
-  }
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-color: #FDFBF7;
+  color: #1A1A1A;
+  font-optical-sizing: auto;
 }
 
-/* Apply rounded corners and full height to the map container */
-.map-container {
-  max-height: 80vh; /* Prevent the map from being taller than 80% of the viewport height */
-  margin: auto; /* Center the map container horizontally */
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  min-width: 80%;
-  z-index: 1; /* Ensure the map is above the modal */
-  width: 200%;
-  height: 100vh; /* Adjust based on your layout */
-  box-sizing: border-box;
-
-  /* Transition for the map's background color change */
-  transition: background-color 0.5s;
-  /* If your map background is transparent, you might need to apply a background here */
-  background-color: var(--background); /* Adjust as needed */
-}
-.custom-width-2 {
-  width: 240px; /* Adjust the width as needed */
-}
-.custom-width-3 {
-  width: 140px; /* Adjust the width as needed */
-}
-.map-flex{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    margin: auto;
-    width: 200%;
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-sans);
+  letter-spacing: -0.05em;
+  font-weight: 800;
+  line-height: 0.95;
 }
 
-
-.marker {
-  background-size: cover;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-/* Apply padding to the parent container */
-.map-parent {
-  padding: 0 16px;
-  /* Ensure the parent container takes the full height */
-  height: 100%;
-  box-sizing: border-box;
-}
-.map-container .mapboxgl-popup-content {
-  line-height: 1.5;
-  color: var(--text-color);
-  background: var(--background-color);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  flex-direction: column;
-  width: 250%;
-  max-height: 450px;
-}
-.flex-container {
-  display: flex;
-  flex-direction: row; /* Adjust based on your layout preference */
-  align-items: start; /* Aligns items to the start of the flex container */
-  padding: 4px;
-  gap: 20px; /* Adds space between the flex items */
+/* Minimalist Soft Brutalist Utilities */
+.ink-border {
+  border: 2px solid #1A1A1A !important;
 }
 
-.flex-item {
-  flex: 1; /* Each flex item grows equally */
-  display: flex;
-  flex-direction: column; /* Stack children vertically */
+.soft-shadow {
+  box-shadow: 4px 4px 0px 0px #1A1A1A;
 }
 
-.scroll-area {
-  overflow-y: auto; /* Ensures scrolling within the component */
-  max-height: 265px; /* Adjust based on your preference */
-}
-
-.carousel {
-  flex-grow: 1; /* Allows the carousel to fill the space */
-}
-
-
-.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
-  align-self:center;
-  border-bottom-color:var(--background-color) !important;
-  border-top:none
-}
-.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip {
-  align-self:flex-start;
-  border-bottom-color:var(--background-color) !important;
-  border-left:none;
-  border-top:none
-}
-.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
-  align-self:flex-end;
-  border-bottom-color:var(--background-color) !important;
-  border-right:none;
-  border-top:none
-}
-.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  align-self:center;
-  border-bottom:none;
-  border-top-color:var(--background-color) !important;
-}
-.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip {
-  align-self:flex-start;
-  border-bottom:none;
-  border-left:none;
-  border-top-color:var(--background-color) !important;
-}
-.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
-  align-self:flex-end;
-  border-bottom:none;
-  border-right:none;
-  border-top-color:var(--background-color) !important;
-}
-.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
-  align-self:center;
-  border-left:none;
-  border-right-color:var(--background-color) !important;
-}
-.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
-  align-self:center;
-  border-left-color:var(--background-color) !important;
-  border-right:none
+/* Mapbox Minimal Overrides */
+.mapboxgl-popup-content {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .mapboxgl-popup-close-button {
-  background-color: indianred !important;
-  top: -5px !important;
-  right: -5px !important;
-  border-radius: 20px 20px 20px 20px!important;
-  cursor: pointer;
-  padding-inline-start: 10px;
-  padding-inline-end: 10px;
-  padding-block: 5px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  display: none !important;
 }
 
+/* Marker Styling - Refined Circles */
+.marker {
+  width: 20px !important;
+  height: 20px !important;
+  border: 2px solid #1A1A1A;
+  background-color: #FF5F1F;
+  border-radius: 50%;
+  box-shadow: 2px 2px 0px 0px #1A1A1A;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
 
+.marker:hover {
+  transform: scale(1.4);
+  box-shadow: 3px 3px 0px 0px #1A1A1A;
+  background-color: #ff7a45;
+}
+
+/* Page Transitions */
+.fade-enter { opacity: 0; }
+.fade-enter-active { opacity: 1; transition: opacity 200ms ease-out; }
+.fade-exit { opacity: 1; }
+.fade-exit-active { opacity: 0; transition: opacity 200ms ease-in; }
+
+/* HeroUI & Global Component Refinements */
+button, .heroui-button {
+  @apply rounded-xl transition-all duration-200 active:scale-95;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
 
 .activeLink {
-  color: #ffb65f; /* Active link color - adjust as needed */
+  @apply text-falla-fire font-extrabold border-b-2 border-falla-fire pb-1;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-  }
-}
-/* Responsive padding for mobile devices */
-@media (max-width: 600px) {
-  .map-parent {
-    padding: 0 16px;
-  }
-
-  .map-container .mapboxgl-popup-content {
-    line-height: 1.5;
-    color: var(--text-color);
-    background: var(--background-color);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    border-radius: 20px;
-    flex-direction: column;
-    width: 150%;
-    max-height: 140vw;
-  }
-
-   .comment-scroll
-   {
-    max-height: 30vw;
-   }
-  .flex-container {
-    display: flex;
-    flex-direction: row; /* Adjust based on your layout preference */
-    align-items: start; /* Aligns items to the start of the flex container */
-    padding: 4px;
-    gap: 20px; /* Adds space between the flex items */
-  }
-
-  .flex-item {
-    flex: 1; /* Each flex item grows equally */
-    display: flex;
-    flex-direction: column; /* Stack children vertically */
-  }
-
-  .scroll-area {
-    overflow-y: auto; /* Ensures scrolling within the component */
-    max-height: 265px; /* Adjust based on your preference */
-  }
-
-  .carousel {
-    flex-grow: 1; /* Allows the carousel to fill the space */
-  }
-}
-@media (max-width: 600px) { /* Adjust the breakpoint as needed */
-  .title {
-    font-size: 80vw;
-  }
+.falla-text-gradient {
+  background: linear-gradient(135deg, #FF5F1F 0%, #FFB600 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-
-
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

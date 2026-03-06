@@ -6,7 +6,7 @@ import AppNavbar from "@/components/Navbar.tsx";
 import ContactPage from "@/components/ContactPage.tsx";
 import SignInPage from "@/components/SignInPage.tsx";
 import { neobrutalism } from "@clerk/themes";
-import { ClerkProvider } from "@clerk/clerk-react";
+import { ClerkProvider } from "@clerk/react";
 import SignUpPage from "@/components/SignUpPage.tsx";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import "./styles/transition-styles.css";
@@ -32,7 +32,8 @@ export default function App() {
   return (
     <div className={`App ${isDarkMode ? "dark" : "light"}`}>
       <ClerkProvider
-        navigate={navigate}
+        routerPush={(to: string) => navigate(to)}
+        routerReplace={(to: string) => navigate(to, { replace: true })}
         publishableKey={PUBLISHABLE_KEY}
         appearance={{
           baseTheme: neobrutalism,
