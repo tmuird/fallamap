@@ -86,7 +86,6 @@ export default function HomePage() {
             Be part of the flame. Start exploring and documenting the most incredible festival on earth.
           </p>
           <Button 
-            asChild
             size="lg"
             className="bg-falla-fire text-white h-16 px-12 rounded-full text-xl shadow-solid hover:translate-y-[-2px] transition-all relative z-10 border-2 border-falla-ink"
           >
