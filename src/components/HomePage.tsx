@@ -11,7 +11,7 @@ export default function HomePage() {
       <FallamapHeader isVisible={true} />
 
       <main className="w-full max-w-[1400px] px-4 md:px-8 pb-32 flex flex-col items-center">
-        {/* Launch Map Hero Section - Refined for "Above the Fold" visibility */}
+        {/* Launch Map Hero Section - Optimized for immediate visibility */}
         <div className="w-full flex flex-col gap-10 mb-32 items-center">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -22,6 +22,7 @@ export default function HomePage() {
               Explore the city.
             </h2>
             <Button 
+              size="lg"
               className="bg-falla-fire text-white h-14 px-10 rounded-full text-base shadow-solid hover:translate-y-[-2px] active:translate-y-0 transition-all border-2 border-falla-ink"
             >
               <Link to="/map" className="flex items-center gap-3">

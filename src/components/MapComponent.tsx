@@ -5,7 +5,7 @@ import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { Search, MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Input } from "@heroui/react";
 import { motion } from "framer-motion";
 
