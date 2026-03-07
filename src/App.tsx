@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext.tsx";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Toaster } from "sonner";
+import ModerationDashboard from "./components/admin/ModerationDashboard";
+import UserProfile from "./components/profile/UserProfile";
+import ArchivePage from "./components/ArchivePage";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -107,7 +110,9 @@ export default function App() {
               <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
               <Route path="/map" element={<MapPage />} />
               <Route path="/schedule" element={<PageWrapper><SchedulePage /></PageWrapper>} />
+              <Route path="/archive" element={<PageWrapper><ArchivePage /></PageWrapper>} />
               <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
+              <Route path="/profile" element={<PageWrapper><UserProfile /></PageWrapper>} />
               <Route path="/sign-in" element={<PageWrapper><SignInPage /></PageWrapper>} />
               <Route path="/sign-up" element={<PageWrapper><SignUpPage /></PageWrapper>} />
               <Route path="/dashboard" element={<PageWrapper><ModerationDashboard /></PageWrapper>} />
@@ -133,5 +138,3 @@ export default function App() {
     </div>
   );
 }
-
-import ModerationDashboard from "./components/admin/ModerationDashboard";

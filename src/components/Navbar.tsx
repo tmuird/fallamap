@@ -11,7 +11,7 @@ import {
   Button,
 } from "@heroui/react";
 import { NavLink, Link } from "react-router-dom";
-import { House, MapTrifold, CalendarBlank, ChatCircleText, SquaresFour, List, X } from "@phosphor-icons/react";
+import { House, MapTrifold, CalendarBlank, SquaresFour, List, X, Archive, User } from "@phosphor-icons/react";
 import { cn } from "@/utils/cn";
 
 export default function AppNavbar() {
@@ -24,7 +24,7 @@ export default function AppNavbar() {
     { label: "Home", path: "/", icon: <House size={20} weight="bold" /> },
     { label: "Map", path: "/map", icon: <MapTrifold size={20} weight="bold" /> },
     { label: "Schedule", path: "/schedule", icon: <CalendarBlank size={20} weight="bold" /> },
-    { label: "Contact", path: "/contact", icon: <ChatCircleText size={20} weight="bold" /> },
+    { label: "Archive", path: "/archive", icon: <Archive size={20} weight="bold" /> },
   ];
 
   return (
@@ -68,7 +68,7 @@ export default function AppNavbar() {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-10" justify="center">
+      <NavbarContent className="hidden sm:flex gap-8" justify="center">
         {menuItems.map((item, index) => (
           <NavbarItem key={index}>
             <NavLink
@@ -90,18 +90,29 @@ export default function AppNavbar() {
       <NavbarContent justify="end" className="gap-4">
         <NavbarItem className="gap-3 flex items-center">
           <Show when="signed-in">
-            {isAdmin && (
+            <div className="flex items-center gap-2">
               <Button 
                 as={Link} 
-                to="/dashboard" 
-                variant="flat" 
-                size="sm" 
-                className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
-                startContent={<SquaresFour size={16} weight="bold" />}
+                to="/profile" 
+                variant="ghost" 
+                isIconOnly
+                className="h-10 w-10 rounded-xl border-2 border-falla-ink/10 text-falla-ink/60"
               >
-                Admin
+                <User size={20} weight="bold" />
               </Button>
-            )}
+              {isAdmin && (
+                <Button 
+                  as={Link} 
+                  to="/dashboard" 
+                  variant="flat" 
+                  size="sm" 
+                  className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                  startContent={<SquaresFour size={16} weight="bold" />}
+                >
+                  Admin
+                </Button>
+              )}
+            </div>
             <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2 overflow-hidden">
               <UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8" } }} />
             </div>
@@ -146,6 +157,15 @@ export default function AppNavbar() {
             </NavLink>
           </NavbarMenuItem>
         ))}
+        <NavbarMenuItem className="px-4 border-t border-falla-ink/5 mt-4 pt-4">
+          <NavLink
+            to="/profile"
+            className="w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all flex items-center gap-4 text-falla-ink opacity-60"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <User size={40} weight="bold" /> Profile
+          </NavLink>
+        </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   );

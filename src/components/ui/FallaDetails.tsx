@@ -60,7 +60,25 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
     // Check if this falla was visited from local storage
     const visitedFallas = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
     setVisited(visitedFallas.includes(falla.number));
+
+    // Check if liked
+    const likedFallas = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
+    setLiked(likedFallas.includes(falla.number));
   }, [falla.number]);
+
+  const toggleLiked = () => {
+    const likedFallas = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
+    let newLiked;
+    if (liked) {
+      newLiked = likedFallas.filter((n: string) => n !== falla.number);
+      toast.info("Removed from collection");
+    } else {
+      newLiked = [...likedFallas, falla.number];
+      toast.success("Added to your collection! ❤️");
+    }
+    localStorage.setItem("liked_fallas", JSON.stringify(newLiked));
+    setLiked(!liked);
+  };
 
   const toggleVisited = () => {
     const visitedFallas = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
@@ -153,8 +171,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
               isIconOnly 
               variant="neutral" 
               size="sm"
-              className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-red-500 border-red-500")}
-              onClick={() => setLiked(!liked)}
+              className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-red-500 border-red-500 bg-red-50")}
+              onClick={toggleLiked}
             >
               <Heart size={20} weight={liked ? "fill" : "bold"} />
             </Button>
