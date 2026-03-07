@@ -14,7 +14,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext.tsx";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
-import ModerationDashboard from "./components/admin/ModerationDashboard";
+import { Toaster } from "sonner";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -55,6 +55,20 @@ export default function App() {
 
   return (
     <div className={`flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans`}>
+      <Toaster 
+        position="top-center" 
+        expand={false} 
+        richColors 
+        toastOptions={{
+          className: "ink-border soft-shadow-sm font-sans font-bold",
+          style: {
+            background: "#FAF7F2",
+            border: "2px solid #1A1A1A",
+            borderRadius: "16px"
+          }
+        }}
+      />
+      
       <AnimatePresence>
         {loading && <LoadingScreen key="loading" />}
       </AnimatePresence>
@@ -119,3 +133,5 @@ export default function App() {
     </div>
   );
 }
+
+import ModerationDashboard from "./components/admin/ModerationDashboard";

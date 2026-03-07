@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/utils/cn";
 import {
   Carousel,
@@ -15,7 +15,6 @@ import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
 import { supabase } from "@/lib/supabase";
 import { 
-  MapPin, 
   Clock, 
   Camera, 
   PaperPlaneRight, 
@@ -24,9 +23,12 @@ import {
   ShareNetwork, 
   CaretLeft, 
   CaretRight, 
-  X 
+  X,
+  CheckCircle,
+  NavigationArrow
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 interface Falla {
   number: string;
@@ -52,12 +54,38 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [visited, setVisited] = useState(false);
+
+  useEffect(() => {
+    // Check if this falla was visited from local storage
+    const visitedFallas = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+    setVisited(visitedFallas.includes(falla.number));
+  }, [falla.number]);
+
+  const toggleVisited = () => {
+    const visitedFallas = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+    let newVisited;
+    if (visited) {
+      newVisited = visitedFallas.filter((n: string) => n !== falla.number);
+      toast.info("Removed from your passport");
+    } else {
+      newVisited = [...visitedFallas, falla.number];
+      toast.success("Added to your Digital Passport! 🦇", {
+        description: `You've checked in at ${falla.name}`
+      });
+    }
+    localStorage.setItem("visited_fallas", JSON.stringify(newVisited));
+    setVisited(!visited);
+  };
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
     const { error } = await addComment(newComment, user?.id);
     if (!error) {
       setNewComment("");
+      toast.success("Note shared with the community!");
+    } else {
+      toast.error("Failed to share note");
     }
   };
 
@@ -66,6 +94,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
     if (!file) return;
 
     setUploading(true);
+    const toastId = toast.loading("Uploading photo...");
+    
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `${falla.number}-${Math.random()}.${fileExt}`;
@@ -82,8 +112,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
         .getPublicUrl(filePath);
 
       await addImage(publicUrl, user?.id);
+      toast.success("Photo uploaded successfully!", { id: toastId });
     } catch (error: any) {
       console.error("Error:", error.message);
+      toast.error("Upload failed", { id: toastId });
     } finally {
       setUploading(false);
     }
@@ -99,9 +131,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
       className={cn("flex flex-col w-full h-full bg-[#FAF7F2]", className)}
     >
       <header className="p-4 md:p-8 pb-4 md:pb-6 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 shadow-sm">
-        {/* Top Control Bar - Responsive Layout */}
+        {/* Top Control Bar */}
         <div className="flex items-center justify-between mb-4 md:mb-6 gap-2">
-          {/* Left: Nav and Badge */}
           <div className="flex items-center gap-1.5 md:gap-3">
             <div className="flex items-center gap-1 bg-white rounded-xl ink-border p-0.5 soft-shadow-sm">
               <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-lg">
@@ -117,13 +148,12 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
             </span>
           </div>
           
-          {/* Right: Actions and Close */}
           <div className="flex items-center gap-1 md:gap-2">
             <Button 
               isIconOnly 
               variant="neutral" 
               size="sm"
-              className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-falla-fire border-falla-fire")}
+              className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-red-500 border-red-500")}
               onClick={() => setLiked(!liked)}
             >
               <Heart size={20} weight={liked ? "fill" : "bold"} />
@@ -133,7 +163,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
               variant="neutral" 
               size="sm"
               className="w-9 h-9 rounded-xl border-2"
-              onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })}
+              onClick={() => {
+                navigator.share?.({ title: falla.name, url: window.location.href });
+                toast.info("Sharing options opened");
+              }}
             >
               <ShareNetwork size={20} weight="bold" />
             </Button>
@@ -159,12 +192,12 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
         {/* Main Actions */}
         <div className="flex gap-2 md:gap-3">
           <Button 
-            variant="outline"
-            className="flex-1 h-11 md:h-14 rounded-xl md:rounded-2xl border-2 text-[10px] md:text-xs"
-            startContent={<MapPin size={18} weight="bold" className="text-falla-fire" />}
-            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${falla.coordinates.lat},${falla.coordinates.lng}`)}
+            variant={visited ? "secondary" : "outline"}
+            className={cn("flex-1 h-11 md:h-14 rounded-xl md:rounded-2xl border-2 text-[10px] md:text-xs transition-all", visited && "bg-falla-sage text-white")}
+            startContent={<CheckCircle size={18} weight={visited ? "fill" : "bold"} />}
+            onClick={toggleVisited}
           >
-            Locate
+            {visited ? "Visited" : "Check-in"}
           </Button>
           <input
             type="file"
@@ -181,6 +214,14 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
             onClick={() => document.getElementById(`image-upload-${falla.number}`)?.click()}
           >
             Upload
+          </Button>
+          <Button 
+            variant="outline"
+            className="h-11 md:h-14 rounded-xl md:rounded-2xl border-2 hidden md:flex"
+            isIconOnly
+            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${falla.coordinates.lat},${falla.coordinates.lng}`)}
+          >
+            <NavigationArrow size={18} weight="bold" className="text-falla-fire" />
           </Button>
         </div>
       </header>
