@@ -5,9 +5,7 @@ import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { MagnifyingGlass, Target, Funnel, CheckCircle } from "@phosphor-icons/react";
-import { Input } from "@heroui/react";
-import { motion } from "framer-motion";
+import { MagnifyingGlass, Target, CheckCircle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 
@@ -24,6 +22,7 @@ interface Falla {
   number: string;
   name: string;
   time: string;
+  is_burnt?: boolean;
   coordinates: {
     lng: number;
     lat: number;
@@ -40,7 +39,7 @@ const MapComponent = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const [fallasData, setFallasData] = useState<Falla[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showVisitedOnly, setShowVisitedOnly] = useState(false);
+  const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'standing'>('all');
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
   const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -53,19 +52,16 @@ const MapComponent = () => {
   const filteredFallas = useMemo(() => {
     return fallasData.filter(f => {
       const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase()) || f.number.includes(searchQuery);
-      const matchesVisited = showVisitedOnly ? visitedNumbers.includes(f.number) : true;
-      return matchesSearch && matchesVisited;
+      if (filterMode === 'visited') return matchesSearch && visitedNumbers.includes(f.number);
+      if (filterMode === 'standing') return matchesSearch && !f.is_burnt;
+      return matchesSearch;
     });
-  }, [fallasData, searchQuery, showVisitedOnly, visitedNumbers]);
+  }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
   useEffect(() => {
     const fetchFallas = async () => {
       try {
-        const { data, error } = await supabase
-          .from("fallas")
-          .select("*")
-          .order("number");
-
+        const { data, error } = await supabase.from("fallas").select("*").order("number");
         if (error || !data || data.length === 0) {
           setFallasData(localFallas as Falla[]);
         } else {
@@ -95,20 +91,6 @@ const MapComponent = () => {
     flyToFalla(falla);
   };
 
-  const navigateFalla = (direction: 'next' | 'prev') => {
-    if (!selectedFalla) return;
-    const currentIndex = fallasData.findIndex(f => f.number === selectedFalla.number);
-    let nextIndex;
-    if (direction === 'next') {
-      nextIndex = (currentIndex + 1) % fallasData.length;
-    } else {
-      nextIndex = (currentIndex - 1 + fallasData.length) % fallasData.length;
-    }
-    const nextFalla = fallasData[nextIndex];
-    setSelectedFalla(nextFalla);
-    flyToFalla(nextFalla);
-  };
-
   const handleGeolocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -118,9 +100,6 @@ const MapComponent = () => {
             zoom: 15,
             essential: true
           });
-          new mapboxgl.Marker({ color: "#FF5F1F", scale: 0.8 })
-            .setLngLat([position.coords.longitude, position.coords.latitude])
-            .addTo(mapRef.current);
         }
       });
     }
@@ -144,8 +123,8 @@ const MapComponent = () => {
         if (falla.coordinates?.lat && falla.coordinates?.lng) {
           const isVisited = visitedNumbers.includes(falla.number);
           const el = document.createElement("div");
-          el.className = `marker ${isVisited ? 'visited' : ''}`;
-          el.style.backgroundColor = isVisited ? "#6B705C" : "#FF5F1F"; // Sage for visited, Fire for new
+          el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''}`;
+          el.style.backgroundColor = falla.is_burnt ? "#1A1A1A" : (isVisited ? "#6B705C" : "#FF5F1F");
 
           el.addEventListener('click', () => handleSelectFalla(falla));
 
@@ -174,51 +153,62 @@ const MapComponent = () => {
     <div className="w-full h-full relative group font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      {/* Top UI Bar */}
-      <div className="absolute top-6 left-6 right-6 flex flex-col md:flex-row gap-3 pointer-events-none">
-        <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="pointer-events-auto flex-1 md:max-w-sm">
-          <Input 
-            placeholder="Search monuments..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            variant="flat"
-            startContent={<MagnifyingGlass size={20} weight="bold" className="text-falla-ink/40" />}
-            classNames={{
-              inputWrapper: "bg-white/95 backdrop-blur-md ink-border shadow-solid h-14 rounded-2xl",
-              input: "text-sm font-bold",
-            }}
-          />
-        </motion.div>
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-10">
+        <div className="bg-white/90 backdrop-blur-md ink-border shadow-solid rounded-3xl p-2 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 relative">
+              <MagnifyingGlass size={20} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 text-falla-ink/30" />
+              <input 
+                placeholder="Search monuments..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-12 bg-transparent pl-12 pr-4 font-bold text-sm outline-none placeholder:text-falla-ink/20"
+              />
+            </div>
+            <Button isIconOnly variant="ghost" onClick={handleGeolocation} className="h-12 w-12 rounded-2xl">
+              <Target size={24} weight="bold" />
+            </Button>
+          </div>
 
-        <div className="flex gap-2 pointer-events-auto">
-          <Button 
-            isIconOnly 
-            onClick={() => setShowVisitedOnly(!showVisitedOnly)}
-            className={cn(
-              "w-14 h-14 bg-white/90 backdrop-blur-md ink-border shadow-solid rounded-2xl transition-all",
-              showVisitedOnly && "bg-falla-sage text-white"
-            )}
-          >
-            <Funnel size={24} weight={showVisitedOnly ? "fill" : "bold"} />
-          </Button>
-          <Button 
-            isIconOnly 
-            onClick={handleGeolocation}
-            className="w-14 h-14 bg-white/90 backdrop-blur-md ink-border shadow-solid rounded-2xl"
-          >
-            <Target size={24} weight="bold" />
-          </Button>
+          <div className="flex items-center justify-between px-2 pb-1 border-t border-falla-ink/5 pt-2">
+            <div className="flex gap-1">
+              <Button 
+                size="sm" 
+                variant={filterMode === 'all' ? 'default' : 'ghost'} 
+                onClick={() => setFilterMode('all')}
+                className={cn("h-8 rounded-xl px-4 text-[10px] font-black uppercase", filterMode === 'all' ? "bg-falla-fire text-white" : "text-falla-ink/40")}
+              >
+                All
+              </Button>
+              <Button 
+                size="sm" 
+                variant={filterMode === 'visited' ? 'default' : 'ghost'} 
+                onClick={() => setFilterMode('visited')}
+                className={cn("h-8 rounded-xl px-4 text-[10px] font-black uppercase", filterMode === 'visited' ? "bg-falla-sage text-white" : "text-falla-ink/40")}
+              >
+                Visited
+              </Button>
+              <Button 
+                size="sm" 
+                variant={filterMode === 'standing' ? 'default' : 'ghost'} 
+                onClick={() => setFilterMode('standing')}
+                className={cn("h-8 rounded-xl px-4 text-[10px] font-black uppercase", filterMode === 'standing' ? "bg-falla-fire text-white" : "text-falla-ink/40")}
+              >
+                Standing
+              </Button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-px bg-falla-ink/10 mx-1" />
+              <div className="flex items-center gap-1.5 px-2">
+                <CheckCircle size={16} weight="fill" className="text-falla-sage" />
+                <span className="text-[10px] font-black text-falla-ink/40">
+                  {visitedNumbers.length}/{fallasData.length}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Progress Badge */}
-      <div className="absolute bottom-10 left-6 z-10 pointer-events-none">
-        <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="bg-falla-ink text-white px-4 py-2 rounded-xl ink-border shadow-solid flex items-center gap-3">
-          <CheckCircle size={20} weight="fill" className="text-falla-sage" />
-          <span className="text-[10px] font-black uppercase tracking-widest">
-            {visitedNumbers.length} / {fallasData.length} Discovered
-          </span>
-        </motion.div>
       </div>
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={setIsDrawerOpen} shouldScaleBackground autoFocus={false}>
@@ -231,8 +221,18 @@ const MapComponent = () => {
                 <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-none">
                   <FallaDetails 
                     falla={selectedFalla} 
-                    onNext={() => navigateFalla('next')}
-                    onPrev={() => navigateFalla('prev')}
+                    onNext={() => {
+                      const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
+                      const next = fallasData[(idx + 1) % fallasData.length];
+                      setSelectedFalla(next);
+                      flyToFalla(next);
+                    }}
+                    onPrev={() => {
+                      const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
+                      const prev = fallasData[(idx - 1 + fallasData.length) % fallasData.length];
+                      setSelectedFalla(prev);
+                      flyToFalla(prev);
+                    }}
                     onClose={() => setIsDrawerOpen(false)}
                   />
                 </div>

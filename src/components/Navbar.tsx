@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Show, UserButton } from "@clerk/react";
+import { Show, UserButton, useUser } from "@clerk/react";
 import {
   Navbar,
   NavbarBrand,
@@ -16,6 +16,9 @@ import { cn } from "@/utils/cn";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useUser();
+
+  const isAdmin = user?.publicMetadata?.role === "admin";
 
   const menuItems = [
     { label: "Home", path: "/", icon: <House size={20} weight="bold" /> },
@@ -42,7 +45,6 @@ export default function AppNavbar() {
         />
         <NavbarBrand>
           <Link to="/" className="flex items-center gap-3 group">
-            {/* Custom SVG Flame Logo */}
             <div className="w-10 h-10 flex items-center justify-center relative group-hover:scale-110 transition-transform">
               <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path 
@@ -59,7 +61,7 @@ export default function AppNavbar() {
                 />
               </svg>
             </div>
-            <p className="font-display text-2xl text-falla-ink hidden md:block leading-none tracking-tight text-falla-fire">
+            <p className="font-display text-2xl text-falla-fire hidden md:block leading-none tracking-tight">
               FallaMap
             </p>
           </Link>
@@ -88,16 +90,18 @@ export default function AppNavbar() {
       <NavbarContent justify="end" className="gap-4">
         <NavbarItem className="gap-3 flex items-center">
           <Show when="signed-in">
-            <Button 
-              as={Link} 
-              to="/dashboard" 
-              variant="flat" 
-              size="sm" 
-              className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
-              startContent={<SquaresFour size={16} weight="bold" />}
-            >
-              Admin
-            </Button>
+            {isAdmin && (
+              <Button 
+                as={Link} 
+                to="/dashboard" 
+                variant="flat" 
+                size="sm" 
+                className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                startContent={<SquaresFour size={16} weight="bold" />}
+              >
+                Admin
+              </Button>
+            )}
             <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2 overflow-hidden">
               <UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8" } }} />
             </div>
