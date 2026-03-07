@@ -215,6 +215,10 @@ const MapComponent = () => {
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[100]" />
           <Drawer.Content className="bg-[#FAF7F2] flex flex-col rounded-t-[3rem] h-[85vh] fixed bottom-0 left-0 right-0 z-[101] outline-none max-w-5xl mx-auto border-x-2 border-t-2 border-falla-ink shadow-solid">
+            {/* Screen Reader Only Title & Description */}
+            <Drawer.Title className="sr-only">Monument Details</Drawer.Title>
+            <Drawer.Description className="sr-only">View photos and community notes for this Falla</Drawer.Description>
+            
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:my-6" />
             <div className="flex-1 overflow-hidden relative flex flex-col">
               {selectedFalla && (

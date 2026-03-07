@@ -119,11 +119,17 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
       const fileName = `${falla.number}-${Math.random()}.${fileExt}`;
       const filePath = `falla-images/${fileName}`;
 
+      // UPLOAD to Supabase
       const { error: uploadError } = await supabase.storage
         .from("community-content")
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        if (uploadError.message.includes("Bucket not found")) {
+          throw new Error("Supabase Bucket 'community-content' not found. Please create it in your Supabase project.");
+        }
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from("community-content")
@@ -132,8 +138,11 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
       await addImage(publicUrl, user?.id);
       toast.success("Photo uploaded successfully!", { id: toastId });
     } catch (error: any) {
-      console.error("Error:", error.message);
-      toast.error("Upload failed", { id: toastId });
+      console.error("Upload error:", error.message);
+      toast.error(error.message || "Upload failed", { 
+        id: toastId,
+        duration: 5000 
+      });
     } finally {
       setUploading(false);
     }
