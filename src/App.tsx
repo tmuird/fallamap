@@ -14,6 +14,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext.tsx";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import ModerationDashboard from "./components/admin/ModerationDashboard";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -95,6 +96,7 @@ export default function App() {
               <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
               <Route path="/sign-in" element={<PageWrapper><SignInPage /></PageWrapper>} />
               <Route path="/sign-up" element={<PageWrapper><SignUpPage /></PageWrapper>} />
+              <Route path="/dashboard" element={<PageWrapper><ModerationDashboard /></PageWrapper>} />
             </Routes>
           </AnimatePresence>
         </main>
