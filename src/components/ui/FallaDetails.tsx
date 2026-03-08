@@ -153,7 +153,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         animate={{ opacity: 1, x: 0 }}
         className={cn("flex flex-col w-full h-full bg-[#FAF7F2]", className)}
       >
-        <header className="p-4 md:p-10 pb-4 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 min-h-[180px] md:min-h-[240px] flex flex-col justify-between">
+        <header className="p-4 md:p-10 pb-4 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-40 min-h-[180px] md:min-h-[240px] flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1 bg-white rounded-xl ink-border p-0.5 shadow-sm">
@@ -199,7 +199,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2]">
           <div className="flex flex-col w-full min-h-full">
-            {/* Gallery with fixed aspect ratio */}
+            {/* Gallery with higher z-index overlays */}
             <div className="w-full aspect-square md:aspect-video bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">
               {images.length > 0 ? (
                 <Carousel className="w-full h-full">
@@ -208,28 +208,42 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                       <CarouselItem key={index} className="h-full relative group">
                         <PhotoView src={img.url}>
                           <div className="w-full h-full cursor-zoom-in">
-                            <Image src={img.url} className="object-cover w-full h-full rounded-none" removeWrapper />
+                            <Image 
+                              src={img.url} 
+                              className="object-cover w-full h-full rounded-none" 
+                              removeWrapper
+                              loading="lazy"
+                            />
                           </div>
                         </PhotoView>
                         
-                        {/* Image Specific Interaction Overlay */}
-                        <div className="absolute top-4 left-4 flex gap-2">
+                        {/* Image Specific Interaction Overlay - High z-index to avoid being obscured */}
+                        <div className="absolute top-4 left-4 flex gap-2 z-20">
                           <button 
                             onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }}
-                            className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm hover:scale-110 transition-transform flex items-center gap-2"
+                            className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm hover:scale-110 transition-transform flex items-center gap-2 shadow-solid-sm"
                           >
                             <Heart size={18} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
                             <span className="text-[10px] font-black">{img.likeCount}</span>
                           </button>
-                          <div className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <ArrowsOut size={18} weight="bold" />
                           </div>
                         </div>
-                        {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20"><EyeSlash size={18} weight="bold" /></div>}
+                        {img.is_private && (
+                          <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20 z-20">
+                            <EyeSlash size={18} weight="bold" />
+                          </div>
+                        )}
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  {images.length > 1 && <><CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2" /><CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2" /></>}
+                  {images.length > 1 && (
+                    <>
+                      <CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2 z-30" />
+                      <CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2 z-30" />
+                    </>
+                  )}
                 </Carousel>
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-white/30">
