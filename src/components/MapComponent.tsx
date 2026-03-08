@@ -257,14 +257,13 @@ const MapComponent = () => {
   return (
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
-      
       {/* Consolidated Hub - Unified Container Aesthetic */}
-      <div className="absolute top-[4.5rem] md:top-28 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+      <div className="absolute top-16 md:top-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={cn(
-            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink shadow-solid pointer-events-auto transition-all duration-300 overflow-hidden flex flex-col",
+            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-md border-2 border-falla-ink shadow-solid pointer-events-auto transition-all duration-300 overflow-hidden flex flex-col",
             "rounded-[2rem] md:rounded-[2.5rem]"
           )}
         >
@@ -349,7 +348,7 @@ const MapComponent = () => {
                 className="relative z-10 bg-transparent"
               >
                 {/* Subtle gradient line for transition instead of a thick border */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90%] h-[1.5px] bg-gradient-to-r from-transparent via-falla-ink/10 dark:via-white/10 to-transparent" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90%] h-px bg-falla-ink/10 dark:bg-white/10" />
                 
                 <div className="flex flex-col max-h-[40vh] overflow-y-auto scrollbar-hide py-2">
                   {autocompleteResults.map((result) => {
