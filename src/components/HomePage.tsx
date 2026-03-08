@@ -39,7 +39,7 @@ export default function HomePage() {
               transition={{ type: "spring", damping: 25, stiffness: 120 }}
               className="flex flex-col items-center gap-2"
             >
-              <h2 className="text-fluid-xl md:text-fluid-2xl font-display text-falla-ink lowercase tracking-tighter max-w-2xl leading-[0.9]">
+              <h2 className="text-fluid-xl md:text-fluid-2xl font-display text-falla-ink lowercase tracking-tight max-w-2xl leading-[0.9]">
                 Feel the <span className="text-falla-fire relative inline-block italic">
                   heat
                   <motion.span 
@@ -108,7 +108,7 @@ export default function HomePage() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
             <div className="absolute bottom-[2vh] left-[2vw] md:bottom-8 md:left-8 text-left">
-              <p className="font-display text-fluid-lg md:text-fluid-xl tracking-tight lowercase text-white mb-1">Plaça de l'Ajuntament</p>
+              <p className="font-display text-fluid-lg md:text-fluid-xl lowercase text-white mb-1">Plaça de l'Ajuntament</p>
               <div className="flex items-center gap-2 text-white/80">
                 <MapTrifold size={16} weight="bold" />
                 <p className="font-sans font-black uppercase tracking-[0.25em] text-[8px] md:text-xs">Falla Municipal 2026</p>

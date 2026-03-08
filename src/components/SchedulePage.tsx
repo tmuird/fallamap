@@ -2,9 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardBody } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Chip, Input, Textarea } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { 
   MapPin, 
   Flame, 
@@ -20,9 +19,6 @@ import {
   X,
   TrendUp,
   Trophy,
-  PaperPlaneRight,
-  Heart,
-  Clock,
   NavigationArrow
 } from "@phosphor-icons/react";
 import { Drawer } from "vaul";
@@ -369,7 +365,7 @@ export default function SchedulePage() {
               <CalendarBlank size={14} weight="bold" /> The Official Program
             </span>
           </div>
-          <h1 className="text-4xl md:text-8xl font-display text-falla-ink mb-6 leading-[0.85] tracking-tighter lowercase">
+          <h1 className="text-4xl md:text-8xl font-display text-falla-ink mb-6 leading-[0.85] lowercase">
             festival timeline
           </h1>
         </motion.div>
@@ -406,12 +402,12 @@ export default function SchedulePage() {
             />
           </div>
           
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={selectedDayId}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
@@ -425,25 +421,29 @@ export default function SchedulePage() {
               {currentDay?.events.map((event, index) => (
                 <motion.div
                   key={event.id}
+                  layout
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: index * 0.03 }}
                   className="relative group cursor-pointer"
                   onClick={() => handleEventClick(event)}
                 >
                   {/* Timeline Node - The "Dot" */}
-                  <div className="absolute left-[13px] md:left-[37px] top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-falla-paper border-[3px] border-falla-ink flex items-center justify-center z-10 group-hover:scale-125 transition-all duration-300 shadow-solid-sm group-hover:border-falla-fire">
+                  <motion.div 
+                    layoutId={`node-${event.id}`}
+                    className="absolute left-[13px] md:left-[37px] top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-falla-paper border-[3px] border-falla-ink flex items-center justify-center z-10 group-hover:scale-125 transition-all duration-300 shadow-solid-sm group-hover:border-falla-fire"
+                  >
                     <div className={cn(
                       "w-1.5 h-1.5 rounded-full transition-all duration-300",
                       event.isLive ? "bg-falla-fire animate-pulse scale-150" : "bg-falla-ink group-hover:bg-falla-fire"
                     )} />
-                  </div>
+                  </motion.div>
 
                   {/* Compact Event Row */}
                   <div className="ml-12 md:ml-20 pl-4 md:pl-8 py-4 flex items-center gap-6 border-b-2 border-falla-ink/5 hover:bg-falla-sand/5 transition-all rounded-2xl group/row relative overflow-hidden">
                     <div className="shrink-0 w-16 md:w-24">
-                      <span className="text-xl md:text-2xl font-black text-falla-ink/40 font-sans group-hover:text-falla-ink transition-colors tracking-tighter">
+                      <span className="text-xl md:text-2xl font-black text-falla-ink/40 font-sans group-hover:text-falla-ink transition-colors">
                         {event.time}
                       </span>
                     </div>
@@ -508,7 +508,7 @@ export default function SchedulePage() {
                             {selectedEvent.icon}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-3xl font-black text-falla-ink tracking-tighter">{selectedEvent.time}</span>
+                            <span className="text-3xl font-black text-falla-ink">{selectedEvent.time}</span>
                             <span className="text-[10px] font-black uppercase text-falla-fire tracking-widest">Central European Time</span>
                           </div>
                         </div>
@@ -518,7 +518,7 @@ export default function SchedulePage() {
                       </div>
 
                       <div className="space-y-4">
-                        <h2 className="text-5xl md:text-8xl font-display text-falla-ink leading-[0.8] lowercase tracking-tighter">
+                        <h2 className="text-5xl md:text-8xl font-display text-falla-ink leading-[0.8] lowercase">
                           {selectedEvent.title}
                         </h2>
                         <div className="flex flex-wrap gap-3 items-center">

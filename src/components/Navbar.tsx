@@ -12,8 +12,6 @@ import {
   House, 
   MapTrifold, 
   CalendarBlank, 
-  List, 
-  X, 
   Archive, 
   Fingerprint,
   ShieldCheck
@@ -27,16 +25,33 @@ export default function AppNavbar() {
   const { user } = useUser();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      
+      // Determine if scrolled enough to change background
+      setScrolled(currentScrollY > 20);
+
+      // Smart Navbar logic
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Scrolling down - hide navbar
+        setIsVisible(false);
+      } else {
+        // Scrolling up - show navbar
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   const menuItems = [
     { label: "Home", path: "/", icon: <House size={20} weight="bold" /> },
@@ -51,10 +66,18 @@ export default function AppNavbar() {
   };
 
   return (
-    <div className={cn(
-      "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out px-2 md:px-12 pointer-events-none flex flex-col items-center",
-      scrolled ? "pt-2 md:pt-6" : "pt-4 md:pt-10"
-    )}>
+    <motion.div 
+      initial={{ y: 0 }}
+      animate={{ 
+        y: isVisible || isMenuOpen ? 0 : -120,
+        opacity: isVisible || isMenuOpen ? 1 : 0
+      }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out px-2 md:px-12 pointer-events-none flex flex-col items-center",
+        scrolled ? "pt-2 md:pt-6" : "pt-4 md:pt-10"
+      )}
+    >
       {/* Unified Custom Wrapper for Seamless Aesthetic */}
       <motion.div 
         className={cn(
@@ -70,23 +93,34 @@ export default function AppNavbar() {
           className="bg-transparent h-14 md:h-20"
           classNames={{
             wrapper: "px-2 md:px-8 gap-1 md:gap-4 bg-transparent",
-            toggle: "w-9 h-9 md:w-11 md:h-11 flex items-center justify-center rounded-xl ink-border bg-falla-paper shadow-solid-sm active:scale-95 transition-all p-0 flex-shrink-0",
           }}
         >
           <NavbarContent className="gap-1 md:gap-4 flex-shrink-0" justify="start">
+            {/* Mobile Menu Toggle - Back to Left */}
             <Button
               isIconOnly
               variant="neutral"
-              className="sm:hidden w-9 h-9 md:w-11 md:h-11 flex items-center justify-center rounded-xl ink-border bg-falla-paper shadow-solid-sm active:scale-95 transition-all p-0 flex-shrink-0"
+              className="sm:hidden w-9 h-9 flex items-center justify-center rounded-full ink-border bg-falla-paper shadow-solid-sm active:shadow-none transition-all p-0 flex-shrink-0 relative overflow-hidden border-2"
               onClick={() => {
                 if (navigator.vibrate) navigator.vibrate(50);
                 setIsMenuOpen(!isMenuOpen);
               }}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMenuOpen ? <X size={20} weight="bold" className="text-falla-fire" /> : <List size={20} weight="bold" className="text-falla-ink" />}
+              <div className="flex flex-col gap-1 items-center justify-center">
+                <motion.div 
+                  animate={isMenuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                  className="w-5 h-0.5 bg-falla-ink rounded-full"
+                />
+                <motion.div 
+                  animate={isMenuOpen ? { rotate: -45, y: -0 } : { rotate: 0, y: 0 }}
+                  className={cn("w-5 h-0.5 bg-falla-ink rounded-full", isMenuOpen ? "" : "w-3 ml-auto")}
+                />
+              </div>
             </Button>
-            <NavbarBrand className="flex-shrink-0 w-auto">
+
+            {/* Desktop Brand */}
+            <NavbarBrand className="hidden sm:flex flex-shrink-0 w-auto">
               <Link to="/" className="flex items-center gap-1.5 md:gap-4 group" onClick={handleMenuClose}>
                 <motion.div 
                   whileHover={{ rotate: -10, scale: 1.1 }}
@@ -108,13 +142,35 @@ export default function AppNavbar() {
                     />
                   </svg>
                 </motion.div>
-                <p className="font-display text-base md:text-3xl text-falla-fire hidden sm:block leading-none tracking-tighter lowercase flex-shrink-0">
+                <p className="font-display text-base md:text-3xl text-falla-fire leading-none lowercase flex-shrink-0">
                   fallamap
                 </p>
               </Link>
             </NavbarBrand>
           </NavbarContent>
 
+          {/* Mobile Center Brand - Use div instead of Link to test if it stabilizes */}
+          <NavbarContent className="sm:hidden" justify="center">
+            <Link to="/" className="flex items-center gap-2" onClick={handleMenuClose}>
+              <div className="w-6 h-6 flex items-center justify-center relative flex-shrink-0">
+                <svg width="24" height="24" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path 
+                    d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
+                    fill="var(--falla-fire)" 
+                  />
+                  <path 
+                    d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z" 
+                    fill="#FFB600" 
+                  />
+                </svg>
+              </div>
+              <p className="font-display text-xl text-falla-fire leading-none lowercase">
+                fallamap
+              </p>
+            </Link>
+          </NavbarContent>
+
+          {/* Desktop Nav */}
           <NavbarContent className="hidden sm:flex gap-2 md:gap-8 lg:gap-12 flex-shrink min-w-0" justify="center">
             {menuItems.filter(item => !["Home", "Journey"].includes(item.label)).map((item, index) => (
               <NavbarItem key={index} className="flex-shrink min-w-0">
@@ -251,7 +307,7 @@ export default function AppNavbar() {
                     to={item.path}
                     className={({ isActive }) => 
                       cn(
-                        "w-full text-4xl md:text-6xl font-display uppercase tracking-tighter py-3 md:py-4 transition-all flex items-center gap-4 rounded-2xl px-4",
+                        "w-full text-4xl md:text-6xl font-display uppercase py-3 md:py-4 transition-all flex items-center gap-4 rounded-2xl px-4",
                         isActive ? "text-falla-fire bg-falla-fire/5 translate-x-2" : "text-falla-ink/40 hover:text-falla-ink/70 hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
                       )
                     }
@@ -269,6 +325,6 @@ export default function AppNavbar() {
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

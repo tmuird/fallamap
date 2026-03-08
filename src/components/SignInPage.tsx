@@ -10,7 +10,7 @@ export default function SignInPage() {
         className="max-w-md w-full bg-falla-paper rounded-[2.5rem] ink-border soft-shadow overflow-hidden p-8 border-2 border-falla-ink"
       >
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-display text-falla-fire italic lowercase tracking-tighter mb-2">Welcome Back</h1>
+          <h1 className="text-4xl font-display text-falla-fire italic lowercase mb-2">Welcome Back</h1>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-falla-ink/40">Enter the flame once more</p>
         </div>
         <SignIn 

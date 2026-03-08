@@ -33,6 +33,8 @@
   --falla-sage: #8B9467;
   --falla-sand: #E6D5B8;
   --falla-shadow: #1A1A1A;
+  --marker-scale: 1;
+  --hub-scale: 1;
 }
 
 .dark {
@@ -42,24 +44,36 @@
   --falla-sage: #8B9467;
   --falla-sand: #2D2D2D;
   --falla-shadow: #000000;
+  --marker-scale: 1;
+  --hub-scale: 1;
 }
 
 body {
   @apply bg-falla-paper text-falla-ink antialiased;
   font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  letter-spacing: -0.01em; /* Subtle breathing room for body text */
 }
 
-/* --- Typography --- */
-.font-display {
-  font-family: 'MatzyFood', cursive;
+/* --- Global Typography Standards --- */
+
+/* Display Titles (MatzyFood) */
+h1, .font-display {
+  letter-spacing: 0.01em !important; /* Force a tiny bit of space between jumbled characters */
 }
 
-.font-retro {
-  font-family: 'BuhunRetro', sans-serif;
+/* Subheaders & Secondary Titles */
+h2, h3, h4 {
+  letter-spacing: -0.01em;
 }
 
-.font-milky {
-  font-family: 'MilkyShine', sans-serif;
+/* Pill Labels & Uppercase Snippets */
+.uppercase {
+  letter-spacing: 0.1em; /* Ensure all uppercase labels have enough tracking to be readable */
+}
+
+/* Overriding tracking-widest for even more clarity */
+.tracking-widest {
+  letter-spacing: 0.25em !important;
 }
 
 /* --- Components --- */
@@ -113,6 +127,7 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
+  transform: scale(var(--marker-scale));
 }
 
 .marker.hub {
@@ -122,6 +137,7 @@ body {
   border-width: 3.5px;
   z-index: 20;
   box-shadow: 4px 4px 0px 0px var(--falla-shadow);
+  transform: scale(var(--hub-scale));
 }
 
 .hub-icon {
@@ -157,13 +173,13 @@ body {
 }
 
 .marker:hover {
-  transform: scale(1.2) translate(-2px, -2px);
+  transform: scale(calc(var(--marker-scale) * 1.25)) translate(-2px, -2px);
   box-shadow: 4px 4px 0px 0px var(--falla-shadow);
   z-index: 50;
 }
 
 .marker.hub:hover {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(calc(var(--hub-scale) * 1.15)) rotate(5deg);
   border-color: var(--falla-fire);
 }
 

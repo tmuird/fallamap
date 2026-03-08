@@ -47,7 +47,7 @@ export const LoadingScreen = () => {
           />
         </div>
         
-        <p className="mt-6 font-display text-lg text-falla-ink tracking-tight uppercase lowercase opacity-40">
+        <p className="mt-6 font-display text-lg text-falla-ink uppercase lowercase opacity-40">
           igniting <span className="text-falla-fire">falla</span>map
         </p>
       </div>

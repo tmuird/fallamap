@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import officialHubs from "./official_events.json";
 import { Drawer } from "vaul";
-import { MagnifyingGlass, Target, CheckCircle, X, Star, Heart, CalendarBlank, MapPin, Flame } from "@phosphor-icons/react";
+import { MagnifyingGlass, Target, CheckCircle, X, Star, Heart, CalendarBlank } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { useUser } from "@clerk/react";
@@ -123,6 +123,31 @@ const MapComponent = () => {
 
     mapRef.current = map;
 
+    const updateMarkerScale = () => {
+      const zoom = map.getZoom();
+      // Base zoom 14 = scale 1.0
+      // Zoom 10 = scale 0.4
+      // Zoom 18 = scale 1.2
+      let scale = 1.0;
+      if (zoom <= 14) {
+        // More aggressive shrinking at lower zooms to prevent overlap
+        scale = Math.max(0.35, 1 - (14 - zoom) * 0.15);
+      } else {
+        scale = Math.min(1.2, 1 + (zoom - 14) * 0.05);
+      }
+      mapContainerRef.current?.style.setProperty('--marker-scale', scale.toString());
+      
+      // Landmark (Hub) specific scale adjustment
+      let hubScale = scale;
+      if (zoom < 12) {
+        hubScale = scale * 0.8; // Shrink hubs even more at very low zoom
+      }
+      mapContainerRef.current?.style.setProperty('--hub-scale', hubScale.toString());
+    };
+
+    map.on('zoom', updateMarkerScale);
+    updateMarkerScale(); // Initial call
+
     if ("geolocation" in navigator) {
       const el = document.createElement('div');
       el.className = 'user-location-marker';
@@ -141,9 +166,22 @@ const MapComponent = () => {
         .setLngLat([0, 0])
         .addTo(map);
 
+      let initialZoomDone = false;
+
       const watchId = navigator.geolocation.watchPosition(
         (pos) => {
-          userMarkerRef.current?.setLngLat([pos.coords.longitude, pos.coords.latitude]);
+          const { longitude, latitude } = pos.coords;
+          userMarkerRef.current?.setLngLat([longitude, latitude]);
+          
+          if (!initialZoomDone) {
+            map.flyTo({
+              center: [longitude, latitude],
+              zoom: 15,
+              duration: 2000,
+              essential: true
+            });
+            initialZoomDone = true;
+          }
         },
         (err) => console.error("Geolocation error:", err),
         { enableHighAccuracy: true }
@@ -287,7 +325,10 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      <div className="absolute top-11 md:top-12 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+      <div 
+        className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col"
+        style={{ top: 'calc(3rem + env(safe-area-inset-top, 0px))' }}
+      >
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -378,26 +419,30 @@ const MapComponent = () => {
                       <button
                         key={key}
                         onClick={() => handleAutocompleteClick(result)}
-                        className="w-full px-6 py-3 md:py-4 flex items-center justify-between hover:bg-falla-ink/5 dark:hover:bg-white/5 transition-all group relative bg-transparent border-none active:scale-[0.98]"
+                        className="w-full px-6 py-3 md:py-4 flex items-center justify-between hover:bg-falla-ink/5 dark:hover:bg-white/5 transition-all group relative bg-transparent border-none active:scale-[0.98] gap-4"
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 min-w-0 flex-1">
                           <div className="w-10 h-10 rounded-xl bg-falla-ink/5 dark:bg-white/5 flex items-center justify-center font-display text-lg text-falla-fire group-hover:scale-110 transition-all shrink-0">
                             {result.is_hub ? <CalendarBlank size={20} weight="bold" /> : `#${result.number}`}
                           </div>
-                          <div className="text-left overflow-hidden">
+                          <div className="text-left overflow-hidden flex-1">
                             <p className="font-bold text-sm text-falla-ink leading-none mb-1 truncate transition-colors">
-                              {parts.map((part, i) => 
+                              {parts.map((part: string, i: number) => 
                                 regex.test(part) 
                                   ? <span key={i} className="text-falla-fire">{part}</span> 
                                   : <span key={i} className="opacity-80 group-hover:opacity-100">{part}</span>
                               )}
                             </p>
-                            <p className="text-[10px] font-black uppercase text-falla-ink/40 tracking-widest">
+                            <p className="text-[10px] font-black uppercase text-falla-ink/40 tracking-widest truncate">
                               {result.is_hub ? 'Official Event Location' : result.is_special ? 'Special Section' : 'Monument'}
                             </p>
                           </div>
                         </div>
-                        {result.number && visitedNumbers.includes(result.number) && <CheckCircle size={20} weight="fill" className="text-falla-sage shrink-0 drop-shadow-sm ml-2" />}
+                        <div className="w-6 flex justify-end shrink-0">
+                          {result.number && visitedNumbers.includes(result.number) && (
+                            <CheckCircle size={20} weight="fill" className="text-falla-sage drop-shadow-sm" />
+                          )}
+                        </div>
                       </button>
                     );
                   })}

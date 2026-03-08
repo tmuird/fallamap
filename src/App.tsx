@@ -72,7 +72,7 @@ export default function App() {
             padding: '16px 24px',
             border: '2.5px solid var(--falla-ink)',
           },
-          actionButton: {
+          actionButtonStyle: {
             backgroundColor: 'var(--falla-fire)',
             color: 'white',
             borderRadius: '12px',

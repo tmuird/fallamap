@@ -216,7 +216,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
             <motion.h2 
               key={identifier}
               initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-              className="text-2xl md:text-4xl font-display text-falla-ink leading-[0.9] tracking-tighter lowercase line-clamp-2 pr-2 min-h-[3.5rem] md:min-h-[5rem]"
+              className="text-2xl md:text-4xl font-display text-falla-ink leading-[0.9] lowercase line-clamp-2 pr-2 min-h-[3.5rem] md:min-h-[5rem]"
             >
               {falla.name}
             </motion.h2>

@@ -18,7 +18,7 @@ export default function ContactPage() {
               <ChatCircleDots size={14} weight="bold" /> Get in touch
             </span>
           </div>
-          <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight lowercase tracking-tighter">
+          <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight lowercase">
             Connect with the <span className="text-falla-fire">Flame</span>
           </h1>
           <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">

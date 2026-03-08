@@ -16,7 +16,7 @@ export default function ArchivePage() {
             </span>
           </div>
           
-          <h1 className="text-6xl md:text-[10rem] font-display text-falla-ink mb-8 leading-[0.85] tracking-tighter lowercase">
+          <h1 className="text-6xl md:text-[10rem] font-display text-falla-ink mb-8 leading-[0.85] lowercase">
             coming <span className="text-falla-fire">soon</span>
           </h1>
           
