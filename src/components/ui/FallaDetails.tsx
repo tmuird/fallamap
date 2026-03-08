@@ -24,7 +24,8 @@ import {
   X,
   CheckCircle,
   EyeSlash,
-  Eye
+  Eye,
+  MapPin
 } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -58,16 +59,13 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const [liked, setLiked] = useState(false);
   const [visited, setVisited] = useState(false);
 
-  // Initial Interaction Fetch
   useEffect(() => {
     const checkInteractions = async () => {
-      // 1. Check Local (Instant Fallback)
       const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
       const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
       setVisited(localV.includes(falla.number));
       setLiked(localL.includes(falla.number));
 
-      // 2. Check Supabase (Authoritative)
       if (user && falla.id) {
         const { data } = await supabase
           .from("user_interactions")
@@ -89,19 +87,13 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     const setState = type === 'like' ? setLiked : setVisited;
     const localKey = type === 'like' ? "liked_fallas" : "visited_fallas";
 
-    // 1. OPTIMISTIC UPDATE (Instant color change)
+    // Optimistic
     setState(!currentState);
     const local = JSON.parse(localStorage.getItem(localKey) || "[]");
-    let newLocal;
-    if (currentState) {
-      newLocal = local.filter((n: string) => n !== falla.number);
-    } else {
-      newLocal = [...local, falla.number];
-    }
+    let newLocal = currentState ? local.filter((n: string) => n !== falla.number) : [...local, falla.number];
     localStorage.setItem(localKey, JSON.stringify(newLocal));
-    onInteraction?.(); // Update Parent Map Immediately!
+    onInteraction?.();
 
-    // 2. BACKGROUND PERSISTENCE
     if (user && falla.id) {
       try {
         if (currentState) {
@@ -110,10 +102,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           await supabase.from("user_interactions").insert([{ user_id: user.id, falla_id: falla.id, type }]);
         }
       } catch (err) {
-        console.error("DB Sync failed, but kept local state:", err);
+        console.error("Sync error:", err);
       }
     }
-    
     toast.success(currentState ? "Removed" : "Added!");
   };
 
@@ -129,24 +120,19 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploading(true);
     const toastId = toast.loading("Uploading...");
-    
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `${falla.number}-${Math.random()}.${fileExt}`;
       const filePath = `falla-images/${fileName}`;
-
       const { error: uploadError } = await supabase.storage.from("community-content").upload(filePath, file);
       if (uploadError) throw uploadError;
-
       const { data: { publicUrl } } = supabase.storage.from("community-content").getPublicUrl(filePath);
-
       await addImage(publicUrl, user?.id, isPrivate);
-      toast.success("Uploaded!", { id: toastId });
+      toast.success("Done!", { id: toastId });
     } catch (error: any) {
-      toast.error("Upload failed", { id: toastId });
+      toast.error("Failed", { id: toastId });
     } finally {
       setUploading(false);
     }
@@ -159,97 +145,106 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       animate={{ opacity: 1, x: 0 }}
       className={cn("flex flex-col w-full h-full bg-[#FAF7F2]", className)}
     >
-      <header className="p-4 md:p-8 pb-4 md:pb-6 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 shadow-sm">
-        <div className="flex items-center justify-between mb-4 md:mb-6 gap-2">
-          <div className="flex items-center gap-1.5 md:gap-3">
-            <div className="flex items-center gap-1 bg-white rounded-xl ink-border p-0.5 soft-shadow-sm">
+      <header className="p-6 md:p-10 pb-6 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-white rounded-xl ink-border p-0.5 shadow-sm">
               <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-lg"><CaretLeft size={18} weight="bold" /></Button>
               <div className="w-px h-4 bg-falla-ink/10" />
               <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-8 h-8 rounded-lg"><CaretRight size={18} weight="bold" /></Button>
             </div>
-            <span className="text-[10px] md:text-[11px] uppercase tracking-wider font-black text-falla-ink/60 px-2.5 py-1">#{falla.number}</span>
+            <div className="brutal-pill px-3 py-1 bg-white shadow-none text-[10px] font-black border-2">#{falla.number}</div>
           </div>
           
-          <div className="flex items-center gap-1 md:gap-2">
-            <Button isIconOnly variant="neutral" size="sm" className={cn("w-9 h-9 rounded-xl border-2 transition-colors", liked && "text-red-500 border-red-500 bg-red-50")} onClick={() => toggleInteraction('like')}><Heart size={20} weight={liked ? "fill" : "bold"} /></Button>
-            <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })}><ShareNetwork size={20} weight="bold" /></Button>
-            {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2 bg-falla-ink text-white ml-1" onClick={onClose}><X size={20} weight="bold" /></Button>}
+          <div className="flex items-center gap-2">
+            <Button isIconOnly variant="neutral" size="sm" className={cn("w-10 h-10 rounded-xl border-2 transition-all", liked && "text-red-500 border-red-500 bg-red-50")} onClick={() => toggleInteraction('like')}><Heart size={22} weight={liked ? "fill" : "bold"} /></Button>
+            <Button isIconOnly variant="neutral" size="sm" className="w-10 h-10 rounded-xl border-2" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })}><ShareNetwork size={22} weight="bold" /></Button>
+            {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-10 h-10 rounded-xl border-2 bg-falla-ink text-white ml-1" onClick={onClose}><X size={22} weight="bold" /></Button>}
           </div>
         </div>
         
-        <h2 className="text-2xl md:text-6xl font-display text-falla-ink leading-tight mb-4 md:mb-8 tracking-tight">{falla.name}</h2>
+        <h2 className="text-3xl md:text-7xl font-display text-falla-ink leading-[0.9] mb-8 tracking-tighter lowercase">{falla.name}</h2>
         
-        <div className="flex gap-2 md:gap-3 items-center">
+        {/* Streamlined Action Hub */}
+        <div className="flex flex-wrap gap-3 items-center">
           <Button 
             variant={visited ? "secondary" : "outline"}
-            className={cn("flex-1 h-11 md:h-14 rounded-xl md:rounded-2xl border-2 text-[10px] md:text-xs transition-all", visited && "bg-falla-sage text-white")}
-            startContent={<CheckCircle size={18} weight={visited ? "fill" : "bold"} />}
+            className={cn("flex-1 min-w-[120px] h-14 rounded-2xl border-2 text-xs font-black uppercase tracking-widest transition-all", visited && "bg-falla-sage text-white shadow-none")}
+            startContent={<CheckCircle size={20} weight={visited ? "fill" : "bold"} />}
             onClick={() => toggleInteraction('visited')}
           >
             {visited ? "Visited" : "Passport"}
           </Button>
-          <input type="file" id={`img-${falla.number}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-          <Button className="flex-1 h-11 md:h-14 rounded-xl md:rounded-2xl border-2 text-[10px] md:text-xs" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
           
-          <div className="hidden md:flex items-center gap-2 px-4 h-14 bg-white ink-border rounded-2xl soft-shadow-sm ml-2">
-            {isPrivate ? <EyeSlash size={18} weight="bold" className="text-falla-ink/40" /> : <Eye size={18} weight="bold" className="text-falla-fire" />}
+          <div className="flex-1 min-w-[140px] flex items-center gap-2">
+            <input type="file" id={`img-${falla.number}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+            <Button className="w-full h-14 rounded-2xl border-2 text-xs font-black uppercase tracking-widest" isLoading={uploading} startContent={<Camera size={20} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
+          </div>
+
+          <div className="h-14 px-4 bg-white ink-border rounded-2xl flex items-center gap-3 soft-shadow-sm">
+            {isPrivate ? <EyeSlash size={20} weight="bold" className="text-falla-ink/30" /> : <Eye size={20} weight="bold" className="text-falla-fire" />}
             <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} />
-            <span className="text-[9px] font-black uppercase text-falla-ink/40">Private</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-falla-ink/40 hidden sm:block">Private</span>
           </div>
         </div>
       </header>
       
       <div className="flex-1 flex flex-col md:flex-row min-h-0">
-        <div className="w-full md:w-1/2 aspect-video md:aspect-auto bg-falla-sand/20 border-b-2 md:border-b-0 md:border-r-2 border-falla-ink overflow-hidden group relative shrink-0">
+        {/* Gallery */}
+        <div className="w-full md:w-1/2 aspect-square md:aspect-auto bg-falla-sand/10 border-b-2 md:border-b-0 md:border-r-2 border-falla-ink overflow-hidden relative shrink-0">
           {images.length > 0 ? (
             <Carousel className="w-full h-full">
               <CarouselContent className="h-full">
                 {images.map((img, index) => (
-                  <CarouselItem key={index} className="h-full">
+                  <CarouselItem key={index} className="h-full relative">
                     <Image src={img.url} className="object-cover w-full h-full rounded-none" removeWrapper />
-                    {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-lg backdrop-blur-md"><EyeSlash size={16} weight="bold" /></div>}
+                    {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20"><EyeSlash size={18} weight="bold" /></div>}
                   </CarouselItem>
                 ))}
               </CarouselContent>
               {images.length > 1 && <><CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2" /><CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2" /></>}
             </Carousel>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-8 text-center bg-white/30">
-              <Camera size={40} weight="thin" className="mb-3 opacity-5" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Gallery Empty</span>
+            <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-white/30">
+              <MapPin size={48} weight="thin" className="mb-4 opacity-5" />
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Gallery Empty</p>
             </div>
           )}
         </div>
 
-        <div className="w-full md:w-1/2 p-4 md:p-10 flex flex-col bg-[#FAF7F2] relative overflow-hidden flex-1">
-          <ScrollArea className="flex-1 pr-2 md:pr-4 scrollbar-hide">
-            <div className="space-y-6 pb-40 pt-4">
+        {/* Community Feed */}
+        <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col bg-[#FAF7F2] relative overflow-hidden flex-1">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
+              <PaperPlaneRight size={20} weight="bold" />
+            </div>
+            <span className="font-display text-xl lowercase italic text-falla-ink">Community Notes</span>
+          </div>
+
+          <ScrollArea className="flex-1 pr-4 scrollbar-hide">
+            <div className="space-y-8 pb-48 pt-2">
               {comments.map((comment, i) => (
-                <motion.div key={comment.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="group/comment border-b border-falla-ink/5 pb-4 last:border-0 relative">
-                  <div className="flex items-center justify-between mb-2">
+                <motion.div key={comment.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="group border-b-2 border-falla-ink/5 pb-6 last:border-0 relative">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-black text-[8px] md:text-[9px] text-falla-fire uppercase tracking-widest">{comment.user_id ? "verified" : "visitor"}</span>
-                      {comment.is_private && <EyeSlash size={12} weight="bold" className="text-falla-ink/20" />}
+                      <span className="text-[9px] font-black uppercase tracking-widest text-falla-fire">Verified contibutor</span>
+                      {comment.is_private && <EyeSlash size={14} weight="bold" className="text-falla-ink/20" />}
                     </div>
-                    <span className="text-[7px] md:text-[8px] text-falla-ink/20 font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
+                    <span className="text-[8px] text-falla-ink/20 font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
                   </div>
-                  <p className="text-sm md:text-xl text-falla-ink font-medium leading-tight">"{comment.text}"</p>
+                  <p className="text-lg md:text-2xl text-falla-ink font-medium leading-tight">"{comment.text}"</p>
                 </motion.div>
               ))}
             </div>
           </ScrollArea>
 
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2] to-transparent pt-12 z-20">
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between md:hidden px-2">
-                <span className="text-[10px] font-black uppercase text-falla-ink/40">{isPrivate ? "Private Mode" : "Public Mode"}</span>
-                <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} />
-              </div>
-              <div className="flex gap-2">
-                <div className="flex-1 bg-white ink-border rounded-xl md:rounded-[2rem] shadow-solid hover:shadow-none transition-all overflow-hidden focus-within:shadow-none translate-y-[-2px] hover:translate-y-0 active:translate-y-0 border-2">
-                  <Textarea variant="flat" placeholder="Share a story..." value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={2} className="w-full" classNames={{ input: "text-sm md:text-lg p-3 md:p-5 font-bold bg-transparent placeholder:text-falla-ink/20", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2] to-transparent pt-16 z-20">
+            <div className="flex flex-col gap-4">
+              <div className="flex gap-3">
+                <div className="flex-1 bg-white ink-border rounded-[2rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2">
+                  <Textarea variant="flat" placeholder="Tell a story..." value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={3} className="w-full" classNames={{ input: "text-base md:text-xl p-4 md:p-6 font-bold bg-transparent placeholder:text-falla-ink/20", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
                 </div>
-                <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim()} className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-[1.5rem] shrink-0 border-2"><PaperPlaneRight size={20} weight="bold" /></Button>
+                <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim()} className="w-14 h-14 md:w-20 md:h-20 rounded-[1.5rem] md:rounded-[2rem] shrink-0 border-2"><PaperPlaneRight size={24} weight="bold" /></Button>
               </div>
             </div>
           </div>
