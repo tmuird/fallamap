@@ -15,6 +15,11 @@ export default {
         sans: ["Bricolage Grotesque", "sans-serif"],
         display: ["MatzyFood", "cursive"],
       },
+      fontSize: {
+        'fluid-display': ['clamp(5.5rem, 22vw, 18rem)', { lineHeight: '0.75' }],
+        'fluid-xl': ['clamp(3rem, 10vw, 6rem)', { lineHeight: '0.85' }],
+        'fluid-2xl': ['clamp(4.5rem, 12vw, 10rem)', { lineHeight: '0.8' }],
+      },
       colors: {
         falla: {
           paper: "var(--falla-paper)", 

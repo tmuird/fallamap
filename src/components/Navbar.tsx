@@ -122,7 +122,7 @@ export default function AppNavbar() {
                   to={item.path}
                   className={({ isActive }) => 
                     cn(
-                      "text-[10px] md:text-sm font-black uppercase tracking-[0.1em] md:tracking-[0.3em] transition-all hover:text-falla-fire flex items-center gap-1 md:gap-2 italic relative group py-1 md:py-2 whitespace-nowrap",
+                      "text-[10px] md:text-sm font-black uppercase tracking-[0.1em] md:tracking-[0.3em] transition-all hover:text-falla-fire flex items-center gap-1 md:gap-2 relative group py-1 md:py-2 whitespace-nowrap",
                       isActive ? "text-falla-fire" : "text-falla-ink/40"
                     )
                   }
@@ -251,7 +251,7 @@ export default function AppNavbar() {
                     to={item.path}
                     className={({ isActive }) => 
                       cn(
-                        "w-full text-4xl md:text-6xl font-display uppercase tracking-tighter py-3 md:py-4 transition-all flex items-center gap-4 italic rounded-2xl px-4",
+                        "w-full text-4xl md:text-6xl font-display uppercase tracking-tighter py-3 md:py-4 transition-all flex items-center gap-4 rounded-2xl px-4",
                         isActive ? "text-falla-fire bg-falla-fire/5 translate-x-2" : "text-falla-ink/40 hover:text-falla-ink/70 hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
                       )
                     }

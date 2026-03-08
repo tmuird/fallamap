@@ -58,7 +58,7 @@ export default function ArchivePage() {
 
         {/* Footer Note */}
         <div className="mt-24 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.6em] text-falla-ink/10 italic">
+          <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.1em] text-falla-ink/10 italic">
             "Deixe'm que et conte..."
           </p>
         </div>

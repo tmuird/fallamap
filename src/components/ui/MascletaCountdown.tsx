@@ -63,7 +63,7 @@ export function MascletaCountdown() {
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 leading-none mb-1">
               {isLive ? 'Happening Now' : 'Mascletà Daily'}
             </p>
-            <h4 className="text-base font-display italic lowercase leading-none text-falla-ink">
+            <h4 className="text-base font-display lowercase leading-none text-falla-ink">
               {isLive ? 'nit del foc' : 'Next Explosion'}
             </h4>
           </div>
@@ -78,11 +78,11 @@ export function MascletaCountdown() {
           <div className="flex items-center gap-2 justify-between">
             {timeLeft && (
               <div className="flex gap-1.5 items-baseline">
-                <span className="text-2xl font-display text-falla-ink italic">{timeLeft.hours.toString().padStart(2, '0')}</span>
+                <span className="text-2xl font-display text-falla-ink">{timeLeft.hours.toString().padStart(2, '0')}</span>
                 <span className="text-[10px] font-bold text-falla-ink/20 uppercase">h</span>
-                <span className="text-2xl font-display text-falla-ink italic">{timeLeft.minutes.toString().padStart(2, '0')}</span>
+                <span className="text-2xl font-display text-falla-ink">{timeLeft.minutes.toString().padStart(2, '0')}</span>
                 <span className="text-[10px] font-bold text-falla-ink/20 uppercase">m</span>
-                <span className="text-2xl font-display text-falla-fire italic">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+                <span className="text-2xl font-display text-falla-fire">{timeLeft.seconds.toString().padStart(2, '0')}</span>
                 <span className="text-[10px] font-bold text-falla-fire/20 uppercase">s</span>
               </div>
             )}

@@ -22,9 +22,9 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
      fallamap
     </h1>
     
-    <div className="flex items-center justify-center gap-2 mt-2 md:mt-4">
-      <span className="w-1.5 h-1.5 rounded-full bg-falla-sage animate-pulse" />
-      <p className="text-[10px] md:text-sm text-falla-ink font-bold uppercase tracking-[0.2em] opacity-40">
+    <div className="flex items-center justify-center gap-2 mt-4 md:mt-6">
+      <span className="w-2 h-2 rounded-full bg-falla-sage animate-pulse" />
+      <p className="text-xs md:text-base text-falla-ink font-bold uppercase tracking-[0.2em] opacity-40">
         Live from <span className="opacity-100">València</span>
       </p>
     </div>

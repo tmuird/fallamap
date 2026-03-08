@@ -638,7 +638,7 @@ export default function SchedulePage() {
 
         {/* Info Box */}
         <div className="mt-20 p-10 rounded-[2.5rem] bg-falla-sand/10 border-2 border-dashed border-falla-ink/10 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink/30 mb-3 italic">"Senyor pirotècnic, pot començar la mascletà!"</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-falla-ink/30 mb-3 italic">"Senyor pirotècnic, pot començar la mascletà!"</p>
           <p className="text-xs font-bold text-falla-ink/40 max-w-xl mx-auto leading-relaxed">
             The official program is subject to changes based on weather and city safety protocols. 
             Times are indicative of the main celebration start.

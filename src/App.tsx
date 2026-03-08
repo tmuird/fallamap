@@ -141,7 +141,7 @@ export default function App() {
           <footer className="w-full flex flex-col items-center justify-center py-12 px-6 border-t-2 border-falla-ink/5 mt-auto bg-falla-paper transition-colors duration-300">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 bg-falla-fire rounded-full ink-border" />
-              <span className="font-display text-2xl tracking-widest text-falla-fire">
+              <span className="font-display text-3xl tracking-widest text-falla-fire">
                 fallamap
               </span>
             </div>

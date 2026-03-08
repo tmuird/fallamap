@@ -133,7 +133,7 @@ export default function HomePage() {
 
         {/* Minimal Footer */}
         <div className="pb-6 text-center flex flex-col items-center gap-2 shrink-0">
-          <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.6em] text-falla-ink/20 lowercase italic">
+          <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.1em] text-falla-ink/20 italic">
             "Deixe'm que et conte..."
           </p>
         </div>
