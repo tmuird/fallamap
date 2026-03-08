@@ -1,16 +1,16 @@
-import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@heroui/react";
-import { 
-  MapPin, 
-  Flame, 
-  MusicNotes, 
-  Bell, 
-  Sparkle, 
-  CalendarBlank, 
+import { Chip, Switch } from "@heroui/react";
+import {
+  MapPin,
+  Flame,
+  MusicNotes,
+  Bell,
+  Sparkle,
+  CalendarBlank,
   Fire,
   CaretRight,
   ChatCircleDots,
@@ -19,70 +19,82 @@ import {
   X,
   TrendUp,
   Trophy,
-  NavigationArrow
+  NavigationArrow,
+  Heart,
+  PaperPlaneRight,
+  Eye,
+  EyeSlash,
+  Check,
+  CalendarPlus,
 } from "@phosphor-icons/react";
 import { Drawer } from "vaul";
+import { useUser } from "@clerk/react";
+import { useEventDetails } from "@/lib/hooks/useEventDetails";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import { motion as m } from "framer-motion";
+// @ts-ignore
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
 
 const scheduleData = [
   {
     id: "mar-14",
     day: "Sat 14",
     subtitle: "The Weekend Begins",
+    date: "2026-03-14",
     events: [
       {
         id: "mascleta-14",
         time: "14:00",
         title: "Mascletà",
         location: "Plaça de l'Ajuntament",
-        description: "The daily explosion of gunpowder. Today featuring Pirotècnia Aitana with 'La belleza del sonido'.",
+        description:
+          "The daily explosion of gunpowder. Today featuring Pirotècnia Aitana with 'La belleza del sonido'.",
         type: "Pyrotechnics",
         icon: <Flame size={24} weight="bold" />,
         color: "danger",
-        discussionCount: 45,
-        photoCount: 22
       },
       {
         id: "ninot-indultat-infantil",
         time: "17:30",
         title: "Infant Ninot Indultat",
         location: "Exposición del Ninot",
-        description: "Official proclamation of the one children's figure saved from the flames by popular vote.",
+        description:
+          "Official proclamation of the one children's figure saved from the flames by popular vote.",
         type: "Major",
         icon: <Trophy size={24} weight="bold" />,
         color: "primary",
-        discussionCount: 12,
-        photoCount: 34
       },
       {
         id: "pyro-spectacle-14",
         time: "23:59",
         title: "Night Pyro Show",
         location: "Plaza del Ayuntamiento",
-        description: "'Falles, llum i soroll' by Pirotècnia Tamarit. A combination of light and noise.",
+        description:
+          "'Falles, llum i soroll' by Pirotècnia Tamarit. A combination of light and noise.",
         type: "Fireworks",
         icon: <Sparkle size={24} weight="bold" />,
         color: "warning",
-        discussionCount: 28,
-        photoCount: 19
-      }
-    ]
+      },
+    ],
   },
   {
     id: "mar-15",
     day: "Sun 15",
     subtitle: "La Plantà Infantil",
+    date: "2026-03-15",
     events: [
       {
         id: "planta-infantil",
         time: "09:00",
         title: "Children's Plantà",
         location: "Everywhere",
-        description: "Commissions across the city assemble their children's monuments. The festival officially begins in the streets.",
+        description:
+          "Commissions across the city assemble their children's monuments. The festival officially begins in the streets.",
         type: "Major",
         icon: <Camera size={24} weight="bold" />,
         color: "primary",
-        discussionCount: 24,
-        photoCount: 156
       },
       {
         id: "mascleta-15",
@@ -93,51 +105,47 @@ const scheduleData = [
         type: "Pyrotechnics",
         icon: <Flame size={24} weight="bold" />,
         color: "danger",
-        discussionCount: 189,
-        photoCount: 92
       },
       {
         id: "ninot-indultat",
         time: "17:30",
         title: "Ninot Indultat 2026",
         location: "Museum of Sciences",
-        description: "The final verdict. One main ninot will be saved from the fire and move to the Fallero Museum.",
+        description:
+          "The final verdict. One main ninot will be saved from the fire and move to the Fallero Museum.",
         type: "Major",
         icon: <Trophy size={24} weight="bold" />,
         color: "primary",
-        discussionCount: 56,
-        photoCount: 12
       },
       {
         id: "alba-falles",
         time: "23:59",
         title: "L'Alba de les Falles",
         location: "City-wide",
-        description: "A synchronized firework display across all commissions. Today by Pirotècnia Vulcano at the Town Hall.",
+        description:
+          "A synchronized firework display across all commissions. Today by Pirotècnia Vulcano at the Town Hall.",
         type: "Fireworks",
         icon: <Sparkle size={24} weight="bold" />,
         color: "warning",
-        discussionCount: 67,
-        photoCount: 112
-      }
-    ]
+      },
+    ],
   },
   {
     id: "mar-16",
     day: "Mon 16",
     subtitle: "The Main Plantà",
+    date: "2026-03-16",
     events: [
       {
         id: "planta-main",
         time: "08:00",
         title: "The Main Plantà",
         location: "Valencia Streets",
-        description: "The deadline for all major monuments to be fully erected. The city is now an open-air museum.",
+        description:
+          "The deadline for all major monuments to be fully erected. The city is now an open-air museum.",
         type: "Major",
         icon: <NavigationArrow size={24} weight="bold" />,
         color: "primary",
-        discussionCount: 12,
-        photoCount: 89
       },
       {
         id: "awards-infantil",
@@ -148,8 +156,6 @@ const scheduleData = [
         type: "Ceremony",
         icon: <Trophy size={24} weight="bold" />,
         color: "secondary",
-        discussionCount: 15,
-        photoCount: 22
       },
       {
         id: "castillo-16",
@@ -160,39 +166,36 @@ const scheduleData = [
         type: "Fireworks",
         icon: <Sparkle size={24} weight="bold" />,
         color: "warning",
-        discussionCount: 34,
-        photoCount: 56
-      }
-    ]
+      },
+    ],
   },
   {
     id: "mar-17",
     day: "Tue 17",
     subtitle: "L'Ofrena Day 1",
+    date: "2026-03-17",
     events: [
       {
         id: "awards-main",
         time: "09:00",
         title: "Awards Ceremony",
         location: "Town Hall",
-        description: "The highly anticipated awards for the main falla monuments and illuminated streets.",
+        description:
+          "The highly anticipated awards for the main falla monuments and illuminated streets.",
         type: "Ceremony",
         icon: <Trophy size={24} weight="bold" />,
         color: "secondary",
-        discussionCount: 45,
-        photoCount: 23
       },
       {
         id: "ofrena-day-1",
         time: "15:30",
         title: "Ofrena de Flors",
         location: "Plaza de la Virgen",
-        description: "Day one of the offering. Thousands of falleros bring carnations to build the Virgin's flower mantle.",
+        description:
+          "Day one of the offering. Thousands of falleros bring carnations to build the Virgin's flower mantle.",
         type: "Procession",
         icon: <MusicNotes size={24} weight="bold" />,
         color: "secondary",
-        discussionCount: 120,
-        photoCount: 450
       },
       {
         id: "castillo-17",
@@ -203,27 +206,25 @@ const scheduleData = [
         type: "Fireworks",
         icon: <Sparkle size={24} weight="bold" />,
         color: "warning",
-        discussionCount: 23,
-        photoCount: 41
-      }
-    ]
+      },
+    ],
   },
   {
     id: "mar-18",
     day: "Wed 18",
     subtitle: "The Night of Fire",
+    date: "2026-03-18",
     events: [
       {
         id: "ofrena-day-2",
         time: "15:30",
         title: "Ofrena de Flors",
         location: "Plaza de la Virgen",
-        description: "Conclusion of the offering with the arrival of the Fallera Mayor de Valencia.",
+        description:
+          "Conclusion of the offering with the arrival of the Fallera Mayor de Valencia.",
         type: "Procession",
         icon: <MusicNotes size={24} weight="bold" />,
         color: "secondary",
-        discussionCount: 340,
-        photoCount: 890
       },
       {
         id: "nit-del-foc",
@@ -234,15 +235,14 @@ const scheduleData = [
         type: "Fireworks",
         icon: <Sparkle size={24} weight="bold" />,
         color: "warning",
-        discussionCount: 560,
-        photoCount: 1200
-      }
-    ]
+      },
+    ],
   },
   {
     id: "mar-19",
     day: "Thu 19",
     subtitle: "La Cremà",
+    date: "2026-03-19",
     events: [
       {
         id: "mascleta-final",
@@ -253,21 +253,18 @@ const scheduleData = [
         type: "Pyrotechnics",
         icon: <Flame size={24} weight="bold" />,
         color: "danger",
-        discussionCount: 567,
-        photoCount: 234,
-        isLive: true
+        isLive: true,
       },
       {
         id: "fire-parade",
         time: "19:00",
         title: "Cavalcada del Foc",
         location: "Calle de la Paz",
-        description: "A parade of fire celebrating the element that will soon consume the monuments.",
+        description:
+          "A parade of fire celebrating the element that will soon consume the monuments.",
         type: "Parade",
         icon: <Fire size={24} weight="bold" />,
         color: "warning",
-        discussionCount: 88,
-        photoCount: 41
       },
       {
         id: "crema-infantil-muni",
@@ -278,8 +275,6 @@ const scheduleData = [
         type: "The Burning",
         icon: <Flame size={24} weight="bold" />,
         color: "danger",
-        discussionCount: 210,
-        photoCount: 112
       },
       {
         id: "crema-general",
@@ -290,32 +285,445 @@ const scheduleData = [
         type: "The Burning",
         icon: <Flame size={24} weight="bold" />,
         color: "danger",
-        discussionCount: 432,
-        photoCount: 189
       },
       {
         id: "crema-muni",
         time: "23:00",
         title: "Municipal Cremà",
         location: "Plaza del Ayuntamiento",
-        description: "The final act. The burning of the giant municipal falla marks the end of the festival.",
+        description:
+          "The final act. The burning of the giant municipal falla marks the end of the festival.",
         type: "The Burning",
         icon: <Flame size={24} weight="bold" />,
         color: "danger",
-        discussionCount: 890,
-        photoCount: 456
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
+
+// ─── ICS helper ──────────────────────────────────────────────────────────────
+
+function buildICS(event: any, dayDate: string) {
+  const [h, m] = event.time.split(":").map(Number);
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  const dateStr = dayDate.replace(/-/g, "");
+  const startDT = `${dateStr}T${pad(h)}${pad(m)}00`;
+  const endH = h + 1 >= 24 ? 0 : h + 1;
+  const endDT = `${dateStr}T${pad(endH)}${pad(m)}00`;
+
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Fallamap//EN",
+    "BEGIN:VEVENT",
+    `SUMMARY:${event.title} – Las Fallas 2026`,
+    `DTSTART;TZID=Europe/Madrid:${startDT}`,
+    `DTEND;TZID=Europe/Madrid:${endDT}`,
+    `LOCATION:${event.location}`,
+    `DESCRIPTION:${event.description}`,
+    `URL:${window.location.href}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${event.title.replace(/\s+/g, "-")}-Fallas2026.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Event drawer community hub ───────────────────────────────────────────────
+
+function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) {
+  const { user, isLoaded } = useUser();
+  const navigate = useNavigate();
+  const { comments, images, loading, addComment, addImage, toggleImageLike } =
+    useEventDetails(event.id);
+
+  const [newComment, setNewComment] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isSignedIn = isLoaded && !!user;
+
+  const handleCommentSubmit = async () => {
+    if (!user) {
+      toast.error("Please sign in to share notes", {
+        action: { label: "Join", onClick: () => navigate("/sign-up") },
+      });
+      return;
+    }
+    if (!newComment.trim()) return;
+    const { error } = await addComment(newComment, user.id, isPrivate);
+    if (!error) {
+      setNewComment("");
+      toast.success("Note shared!");
+    } else {
+      toast.error("Couldn't post note — check DB migration.");
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      toast.error("Please sign in to upload photos", {
+        action: { label: "Join", onClick: () => navigate("/sign-up") },
+      });
+      return;
+    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const toastId = toast.loading("Uploading photo...");
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `event-images/${event.id}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("community-content")
+        .upload(path, file);
+      if (uploadError) throw uploadError;
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("community-content").getPublicUrl(path);
+      const { error } = await addImage(publicUrl, user.id, isPrivate);
+      if (error) throw error;
+      toast.success("Photo shared!", { id: toastId });
+    } catch {
+      toast.error("Upload failed", { id: toastId });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/schedule?day=${scheduleData.find((d) =>
+      d.events.some((e) => e.id === event.id)
+    )?.id}&event=${event.id}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${event.title} – Las Fallas 2026`, text: event.description, url });
+      } catch {
+        // user dismissed
+      }
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied!", { description: url });
+    }
+  };
+
+  const handleAddToCalendar = () => {
+    buildICS(event, dayDate);
+    toast.success("Calendar file downloaded!", {
+      description: "Open the .ics file to add to your calendar app.",
+    });
+  };
+
+  return (
+    <PhotoProvider maskOpacity={0.85} bannerVisible={false} speed={() => 300}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t-2 border-falla-ink/5 pt-12">
+        {/* ── Photo stream ── */}
+        <div className="lg:col-span-7 space-y-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Camera size={24} weight="bold" className="text-falla-fire" />
+              <h3 className="text-2xl font-display lowercase">
+                Photo Stream
+                {images.length > 0 && (
+                  <span className="ml-2 text-sm font-sans font-black text-falla-ink/30">
+                    {images.length}
+                  </span>
+                )}
+              </h3>
+            </div>
+            <div className="flex items-center gap-2">
+              {isSignedIn && (
+                <div className="h-9 px-3 bg-falla-paper ink-border rounded-full flex items-center gap-2 border-2 shrink-0">
+                  {isPrivate ? (
+                    <EyeSlash size={16} weight="bold" className="text-falla-ink/30" />
+                  ) : (
+                    <Eye size={16} weight="bold" className="text-falla-fire" />
+                  )}
+                  <Switch
+                    size="sm"
+                    color="warning"
+                    isSelected={isPrivate}
+                    onValueChange={setIsPrivate}
+                    aria-label="Private"
+                  />
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+                disabled={uploading}
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-10 px-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest shadow-solid-sm hover:shadow-none transition-all"
+                startContent={<Camera size={16} weight="bold" />}
+                isLoading={uploading}
+                onClick={() => {
+                  if (!isSignedIn) {
+                    toast.error("Sign in to post photos", {
+                      action: { label: "Join", onClick: () => navigate("/sign-up") },
+                    });
+                    return;
+                  }
+                  fileInputRef.current?.click();
+                }}
+              >
+                Post Photo
+              </Button>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="aspect-square bg-falla-sand/10 rounded-3xl animate-pulse"
+                />
+              ))}
+            </div>
+          ) : images.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {images.map((img) => (
+                <div key={img.id || img.url} className="relative group aspect-square">
+                  <PhotoView src={img.url}>
+                    <div className="w-full h-full cursor-zoom-in rounded-3xl overflow-hidden border-2 border-falla-ink/5 bg-falla-sand/10">
+                      <img
+                        src={img.url}
+                        alt="Community photo"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  </PhotoView>
+                  {img.id && (
+                    <button
+                      onClick={() => toggleImageLike(img.id)}
+                      className="absolute top-3 left-3 bg-black/40 backdrop-blur-md border border-white/20 px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 text-white transition-all hover:scale-110 active:scale-95"
+                    >
+                      <Heart
+                        size={14}
+                        weight={img.likeCount > 0 ? "fill" : "bold"}
+                        className={img.likeCount > 0 ? "text-red-400" : "text-white"}
+                      />
+                      <span className="text-[10px] font-black">{img.likeCount}</span>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    if (!isSignedIn) {
+                      toast.error("Sign in to post photos", {
+                        action: { label: "Join", onClick: () => navigate("/sign-up") },
+                      });
+                      return;
+                    }
+                    fileInputRef.current?.click();
+                  }}
+                  className="aspect-square bg-falla-sand/20 rounded-3xl border-2 border-dashed border-falla-ink/10 flex flex-col items-center justify-center p-6 text-center group hover:bg-falla-sand/30 transition-all cursor-pointer"
+                >
+                  <Camera
+                    size={24}
+                    weight="thin"
+                    className="text-falla-ink/20 mb-2 group-hover:scale-110 transition-transform"
+                  />
+                  <p className="text-[9px] font-black uppercase text-falla-ink/20 tracking-widest">
+                    Be first to share
+                  </p>
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="p-8 rounded-[2.5rem] bg-falla-fire/5 border-2 border-falla-fire/10 flex items-center gap-6">
+            <div className="w-16 h-16 rounded-full bg-falla-fire flex items-center justify-center text-falla-paper shadow-solid-sm shrink-0">
+              <TrendUp size={32} weight="bold" />
+            </div>
+            <div>
+              <h4 className="text-lg font-display lowercase leading-none mb-1">
+                Trending now
+              </h4>
+              <p className="text-xs font-medium text-falla-ink/60 leading-relaxed">
+                Share your moments — photos and notes make this community hub come alive.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Live notes / comments ── */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <ChatCircleDots size={24} weight="bold" className="text-falla-sage" />
+              <h3 className="text-2xl font-display lowercase">
+                Live Notes
+                {comments.length > 0 && (
+                  <span className="ml-2 text-sm font-sans font-black text-falla-ink/30">
+                    {comments.length}
+                  </span>
+                )}
+              </h3>
+            </div>
+            <span className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-[0.2em] text-falla-sage bg-falla-sage/10 px-2 py-1 rounded-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-falla-sage animate-pulse" />
+              Active
+            </span>
+          </div>
+
+          {/* Comment feed */}
+          <div className="flex-1 space-y-4 min-h-[200px]">
+            {loading ? (
+              [1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-16 bg-falla-sand/10 rounded-2xl animate-pulse"
+                />
+              ))
+            ) : comments.length > 0 ? (
+              <AnimatePresence mode="popLayout">
+                {comments.map((c, i) => (
+                  <motion.div
+                    key={c.id || i}
+                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="group"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">
+                          {c.user_id ? "Community" : "Anonymous"}
+                        </span>
+                        {c.is_private && (
+                          <EyeSlash size={12} weight="bold" className="text-falla-ink/20" />
+                        )}
+                      </div>
+                      <span className="text-[9px] font-bold text-falla-ink/20">
+                        {new Date(c.created_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <div className="p-4 bg-falla-paper border-2 border-falla-ink/5 shadow-solid-sm rounded-2xl group-hover:translate-x-0.5 transition-all">
+                      <p className="text-sm font-medium text-falla-ink">"{c.text}"</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center opacity-30">
+                <ChatCircleDots size={40} weight="thin" className="mb-4 text-falla-ink" />
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-falla-ink">
+                  Be first to speak
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Comment input */}
+          <div className="pt-4 border-t-2 border-falla-ink/5 space-y-3">
+            {isSignedIn && (
+              <div className="flex items-center gap-2 justify-end">
+                <span className="text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
+                  {isPrivate ? "Private" : "Public"}
+                </span>
+                {isPrivate ? (
+                  <EyeSlash size={14} weight="bold" className="text-falla-ink/30" />
+                ) : (
+                  <Eye size={14} weight="bold" className="text-falla-fire" />
+                )}
+                <Switch
+                  size="sm"
+                  color="warning"
+                  isSelected={isPrivate}
+                  onValueChange={setIsPrivate}
+                  aria-label="Private note"
+                />
+              </div>
+            )}
+            <div className="flex gap-3">
+              <input
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleCommentSubmit();
+                  }
+                }}
+                placeholder={isSignedIn ? "Join the discussion..." : "Sign in to share a note..."}
+                disabled={!isSignedIn}
+                className="flex-1 bg-falla-paper border-2 border-falla-ink rounded-xl px-5 py-3 text-sm font-bold placeholder:text-falla-ink/20 focus:outline-none focus:border-falla-fire transition-all disabled:opacity-50"
+              />
+              <Button
+                isIconOnly
+                onClick={handleCommentSubmit}
+                disabled={!newComment.trim() || !isSignedIn}
+                className="w-12 h-12 bg-falla-fire text-falla-paper border-2 border-falla-ink shadow-solid hover:shadow-none transition-all rounded-xl shrink-0"
+              >
+                <PaperPlaneRight size={20} weight="bold" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer utils */}
+      <div className="mt-16 flex flex-wrap gap-4 pt-12 border-t-2 border-falla-ink/5">
+        <Button
+          onClick={handleAddToCalendar}
+          className="flex-1 min-w-[200px] h-14 bg-falla-fire text-falla-paper border-2 border-falla-ink shadow-solid hover:shadow-none transition-all rounded-xl"
+          startContent={<CalendarPlus size={20} weight="bold" />}
+        >
+          Add to Calendar
+        </Button>
+        <Button
+          onClick={handleShare}
+          variant="outline"
+          className="flex-1 min-w-[200px] h-14 rounded-xl border-2 shadow-solid hover:shadow-none transition-all"
+          startContent={<ShareNetwork size={20} weight="bold" />}
+        >
+          Share Event
+        </Button>
+      </div>
+    </PhotoProvider>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function SchedulePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedDayId, setSelectedDayId] = useState(searchParams.get("day") || "mar-19");
+  const [selectedDayId, setSelectedDayId] = useState(
+    searchParams.get("day") || "mar-19"
+  );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const currentDay = useMemo(() => 
-    scheduleData.find(d => d.id === selectedDayId), 
+  const currentDay = useMemo(
+    () => scheduleData.find((d) => d.id === selectedDayId),
     [selectedDayId]
   );
 
@@ -323,18 +731,14 @@ export default function SchedulePage() {
     const eventId = searchParams.get("event");
     if (!eventId) return null;
     for (const day of scheduleData) {
-      const found = day.events.find(e => e.id === eventId);
-      if (found) return found;
+      const found = day.events.find((e) => e.id === eventId);
+      if (found) return { ...found, dayDate: day.date };
     }
     return null;
   }, [searchParams]);
 
   useEffect(() => {
-    if (selectedEvent) {
-      setIsDrawerOpen(true);
-    } else {
-      setIsDrawerOpen(false);
-    }
+    setIsDrawerOpen(!!selectedEvent);
   }, [selectedEvent]);
 
   const handleEventClick = (event: any) => {
@@ -354,8 +758,8 @@ export default function SchedulePage() {
   return (
     <div className="min-h-screen bg-falla-paper pt-32 pb-20 px-4 md:px-8 transition-colors duration-300">
       <div className="max-w-4xl mx-auto antialiased relative">
-        {/* Header Section */}
-        <motion.div 
+        {/* Header */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
@@ -370,7 +774,7 @@ export default function SchedulePage() {
           </h1>
         </motion.div>
 
-        {/* Sticky Day Selector - The "Postage Stamp" Bar */}
+        {/* Sticky day selector */}
         <div className="sticky top-20 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
           <div className="flex bg-falla-sand/20 p-1.5 rounded-[2rem] border-2 border-falla-ink shadow-solid-sm overflow-x-auto scrollbar-hide max-w-full">
             {scheduleData.map((day) => (
@@ -379,8 +783,8 @@ export default function SchedulePage() {
                 onClick={() => handleDayChange(day.id)}
                 className={cn(
                   "px-6 md:px-10 py-3 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap",
-                  selectedDayId === day.id 
-                    ? "bg-falla-fire text-falla-paper shadow-solid-sm border-2 border-falla-ink translate-y-[-2px]" 
+                  selectedDayId === day.id
+                    ? "bg-falla-fire text-falla-paper shadow-solid-sm border-2 border-falla-ink translate-y-[-2px]"
                     : "text-falla-ink/40 hover:text-falla-ink"
                 )}
               >
@@ -390,18 +794,17 @@ export default function SchedulePage() {
           </div>
         </div>
 
-        {/* Timeline View */}
+        {/* Timeline */}
         <div className="relative">
-          {/* Enhanced Vertical Tracing Line */}
           <div className="absolute left-[23px] md:left-[47px] top-0 bottom-0 w-[3px] bg-falla-ink/5 overflow-hidden">
-            <motion.div 
+            <motion.div
               initial={{ height: 0 }}
               animate={{ height: "100%" }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
               className="w-full bg-gradient-to-b from-falla-fire via-falla-fire to-transparent opacity-30"
             />
           </div>
-          
+
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={selectedDayId}
@@ -429,18 +832,20 @@ export default function SchedulePage() {
                   className="relative group cursor-pointer"
                   onClick={() => handleEventClick(event)}
                 >
-                  {/* Timeline Node - The "Dot" */}
-                  <motion.div 
+                  <motion.div
                     layoutId={`node-${event.id}`}
                     className="absolute left-[13px] md:left-[37px] top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-falla-paper border-[3px] border-falla-ink flex items-center justify-center z-10 group-hover:scale-125 transition-all duration-300 shadow-solid-sm group-hover:border-falla-fire"
                   >
-                    <div className={cn(
-                      "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                      event.isLive ? "bg-falla-fire animate-pulse scale-150" : "bg-falla-ink group-hover:bg-falla-fire"
-                    )} />
+                    <div
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                        (event as any).isLive
+                          ? "bg-falla-fire animate-pulse scale-150"
+                          : "bg-falla-ink group-hover:bg-falla-fire"
+                      )}
+                    />
                   </motion.div>
 
-                  {/* Compact Event Row */}
                   <div className="ml-12 md:ml-20 pl-4 md:pl-8 py-4 flex items-center gap-6 border-b-2 border-falla-ink/5 hover:bg-falla-sand/5 transition-all rounded-2xl group/row relative overflow-hidden">
                     <div className="shrink-0 w-16 md:w-24">
                       <span className="text-xl md:text-2xl font-black text-falla-ink/40 font-sans group-hover:text-falla-ink transition-colors">
@@ -453,29 +858,28 @@ export default function SchedulePage() {
                         <h3 className="text-xl md:text-3xl font-display text-falla-ink leading-tight lowercase group-hover:text-falla-fire transition-colors truncate">
                           {event.title}
                         </h3>
-                        {event.isLive && (
+                        {(event as any).isLive && (
                           <span className="flex items-center gap-1.5 px-2 py-0.5 bg-falla-fire/10 text-falla-fire text-[8px] font-black uppercase tracking-widest rounded-md border border-falla-fire/20">
                             <span className="w-1.5 h-1.5 rounded-full bg-falla-fire animate-pulse" />
                             Live
                           </span>
                         )}
                       </div>
-                      
                       <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
                         <div className="flex items-center gap-1.5">
                           <MapPin size={12} weight="bold" />
                           <span className="truncate">{event.location}</span>
                         </div>
-                        <div className="hidden sm:flex items-center gap-4">
+                        <div className="hidden sm:flex items-center gap-1.5">
                           <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-                          <div className="flex items-center gap-1.5 group-hover:text-falla-fire transition-colors">
-                            <ChatCircleDots size={12} weight="bold" />
-                            {event.discussionCount} Notes
-                          </div>
-                          <div className="flex items-center gap-1.5 group-hover:text-falla-fire transition-colors">
-                            <Camera size={12} weight="bold" />
-                            {event.photoCount} Photos
-                          </div>
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            color={event.color as any}
+                            className="font-black text-[8px] uppercase tracking-widest h-5 px-2 border border-current/10"
+                          >
+                            {event.type}
+                          </Chip>
                         </div>
                       </div>
                     </div>
@@ -490,17 +894,20 @@ export default function SchedulePage() {
           </AnimatePresence>
         </div>
 
-        {/* Details Drawer with Community Hub */}
-        <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()}>
+        {/* Event detail drawer */}
+        <Drawer.Root
+          open={isDrawerOpen}
+          onOpenChange={(open) => !open && handleDrawerClose()}
+        >
           <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100]" />
             <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center">
               <div className="w-full max-w-5xl bg-falla-paper rounded-t-[3rem] border-x-2 border-t-2 border-falla-ink shadow-solid flex flex-col max-h-[92vh] overflow-hidden">
-                {/* Visual Handle */}
                 <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4" />
-                
+
                 {selectedEvent && (
                   <div className="flex-1 overflow-y-auto px-6 md:px-12 pb-12 pt-4 scrollbar-hide overscroll-contain">
+                    {/* Event header */}
                     <header className="flex flex-col gap-6 mb-16 relative">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -508,11 +915,20 @@ export default function SchedulePage() {
                             {selectedEvent.icon}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-3xl font-black text-falla-ink">{selectedEvent.time}</span>
-                            <span className="text-[10px] font-black uppercase text-falla-fire tracking-widest">Central European Time</span>
+                            <span className="text-3xl font-black text-falla-ink">
+                              {selectedEvent.time}
+                            </span>
+                            <span className="text-[10px] font-black uppercase text-falla-fire tracking-widest">
+                              Central European Time
+                            </span>
                           </div>
                         </div>
-                        <Button isIconOnly variant="neutral" className="w-12 h-12 rounded-full border-2 bg-falla-paper" onClick={handleDrawerClose}>
+                        <Button
+                          isIconOnly
+                          variant="neutral"
+                          className="w-12 h-12 rounded-full border-2 bg-falla-paper"
+                          onClick={handleDrawerClose}
+                        >
                           <X size={24} weight="bold" />
                         </Button>
                       </div>
@@ -522,113 +938,32 @@ export default function SchedulePage() {
                           {selectedEvent.title}
                         </h2>
                         <div className="flex flex-wrap gap-3 items-center">
-                          <Chip variant="flat" color={selectedEvent.color as any} className="font-black text-[10px] uppercase tracking-[0.2em] px-4 h-8 border-2 border-current/10">
+                          <Chip
+                            variant="flat"
+                            color={selectedEvent.color as any}
+                            className="font-black text-[10px] uppercase tracking-[0.2em] px-4 h-8 border-2 border-current/10"
+                          >
                             {selectedEvent.type}
                           </Chip>
                           <div className="flex items-center gap-2 px-5 py-2 bg-falla-sand/20 rounded-full border-2 border-falla-ink/5">
                             <MapPin size={18} weight="bold" className="text-falla-fire" />
-                            <span className="text-xs font-bold text-falla-ink uppercase tracking-widest">{selectedEvent.location}</span>
+                            <span className="text-xs font-bold text-falla-ink uppercase tracking-widest">
+                              {selectedEvent.location}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      
+
                       <p className="text-xl md:text-2xl font-medium leading-tight text-falla-ink/60 max-w-3xl">
                         {selectedEvent.description}
                       </p>
                     </header>
 
-                    {/* Community Hub Implementation */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t-2 border-falla-ink/5 pt-12">
-                      {/* Left: Photos & Gallery */}
-                      <div className="lg:col-span-7 space-y-10">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Camera size={24} weight="bold" className="text-falla-fire" />
-                            <h3 className="text-2xl font-display lowercase">Photo Stream</h3>
-                          </div>
-                          <Button size="sm" variant="outline" className="h-10 px-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest" startContent={<Camera size={16} weight="bold" />}>
-                            Post Photo
-                          </Button>
-                        </div>
-
-                        {/* Live Photo Stream (Mock) */}
-                        <div className="grid grid-cols-2 gap-4">
-                          {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="aspect-square bg-falla-sand/20 rounded-3xl border-2 border-dashed border-falla-ink/10 flex flex-col items-center justify-center p-6 text-center group hover:bg-falla-sand/30 transition-all cursor-pointer">
-                              <Camera size={24} weight="thin" className="text-falla-ink/20 mb-2 group-hover:scale-110 transition-transform" />
-                              <p className="text-[9px] font-black uppercase text-falla-ink/20 tracking-widest">Waiting for uploads</p>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="p-8 rounded-[2.5rem] bg-falla-fire/5 border-2 border-falla-fire/10 flex items-center gap-6">
-                          <div className="w-16 h-16 rounded-full bg-falla-fire flex items-center justify-center text-falla-paper shadow-solid-sm shrink-0">
-                            <TrendUp size={32} weight="bold" />
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-display lowercase leading-none mb-1">Trending now</h4>
-                            <p className="text-xs font-medium text-falla-ink/60 leading-relaxed">
-                              This event is currently generating high community engagement. Share your point of view!
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right: Live Discussion */}
-                      <div className="lg:col-span-5 flex flex-col gap-8">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <ChatCircleDots size={24} weight="bold" className="text-falla-sage" />
-                            <h3 className="text-2xl font-display lowercase">Live Notes</h3>
-                          </div>
-                          <span className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-[0.2em] text-falla-sage bg-falla-sage/10 px-2 py-1 rounded-md">
-                            <span className="w-1.5 h-1.5 rounded-full bg-falla-sage animate-pulse" />
-                            Active
-                          </span>
-                        </div>
-
-                        {/* Mock Chat Feed */}
-                        <div className="flex-1 space-y-6">
-                          {[
-                            { user: "Pepita_VLC", text: "The noise is incredible this year! 🧨", time: "2m ago" },
-                            { user: "FalleroMayor", text: "Best viewing spot is near the bank corner.", time: "5m ago" },
-                            { user: "TouristTom", text: "Is it safe for kids? It's very loud.", time: "12m ago" }
-                          ].map((msg, i) => (
-                            <div key={i} className="group">
-                              <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">{msg.user}</span>
-                                <span className="text-[9px] font-bold text-falla-ink/20">{msg.time}</span>
-                              </div>
-                              <div className="p-4 bg-falla-paper border-2 border-falla-ink soft-shadow-sm rounded-2xl group-hover:translate-x-1 transition-all">
-                                <p className="text-sm font-medium text-falla-ink">"{msg.text}"</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="pt-6 border-t-2 border-falla-ink/5">
-                          <div className="flex gap-3">
-                            <input 
-                              placeholder="Join the discussion..." 
-                              className="flex-1 bg-falla-paper border-2 border-2 border-falla-ink rounded-xl px-5 py-3 text-sm font-bold placeholder:text-falla-ink/20 focus:outline-none focus:border-falla-fire transition-all"
-                            />
-                            <Button isIconOnly className="w-12 h-12 bg-falla-fire text-falla-paper border-2 border-falla-ink shadow-solid">
-                              <CaretRight size={20} weight="bold" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Footer Utils */}
-                    <div className="mt-16 flex flex-wrap gap-4 pt-12 border-t-2 border-falla-ink/5">
-                      <Button className="flex-1 min-w-[200px] h-14 bg-falla-fire text-falla-paper border-2 border-falla-ink shadow-solid" startContent={<Bell size={20} weight="bold" />}>
-                        Get Notification
-                      </Button>
-                      <Button variant="outline" className="flex-1 min-w-[200px] h-14 rounded-xl border-2 shadow-solid" startContent={<ShareNetwork size={20} weight="bold" />}>
-                        Share Event
-                      </Button>
-                    </div>
+                    {/* Community hub — fully wired */}
+                    <EventCommunityHub
+                      event={selectedEvent}
+                      dayDate={(selectedEvent as any).dayDate}
+                    />
                   </div>
                 )}
               </div>
@@ -636,12 +971,14 @@ export default function SchedulePage() {
           </Drawer.Portal>
         </Drawer.Root>
 
-        {/* Info Box */}
+        {/* Footer note */}
         <div className="mt-20 p-10 rounded-[2.5rem] bg-falla-sand/10 border-2 border-dashed border-falla-ink/10 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-falla-ink/30 mb-3 italic">"Senyor pirotècnic, pot començar la mascletà!"</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-falla-ink/30 mb-3 italic">
+            "Senyor pirotècnic, pot començar la mascletà!"
+          </p>
           <p className="text-xs font-bold text-falla-ink/40 max-w-xl mx-auto leading-relaxed">
-            The official program is subject to changes based on weather and city safety protocols. 
-            Times are indicative of the main celebration start.
+            The official program is subject to changes based on weather and city safety
+            protocols. Times are indicative of the main celebration start.
           </p>
         </div>
       </div>
