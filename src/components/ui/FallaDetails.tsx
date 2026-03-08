@@ -189,7 +189,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         </div>
       </header>
       
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2]">
         <div className="flex flex-col w-full min-h-full">
           {/* Gallery with react-photo-view */}
           <div className="w-full aspect-video md:aspect-[16/9] bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">

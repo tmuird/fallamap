@@ -51,7 +51,7 @@ const MapComponent = () => {
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Authoritative Data Load
+  // 1. Initial Load
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -65,7 +65,7 @@ const MapComponent = () => {
     fetchData();
   }, []);
 
-  // 2. Interaction Sync (Passport & Likes)
+  // 2. Interaction Sync
   const refreshInteractions = useCallback(async () => {
     const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
     const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
@@ -97,7 +97,7 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Initialize Map (Strictly Once)
+  // 3. Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -118,7 +118,7 @@ const MapComponent = () => {
     };
   }, [isDarkMode]);
 
-  // 4. Reactive Markers (Pinned & Fast)
+  // 4. Reactive Markers
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
@@ -143,11 +143,8 @@ const MapComponent = () => {
         markerElsRef.current[falla.number] = el;
       }
 
-      // SYNC STATES FAST (No re-creation)
-      const isVisited = visitedNumbers.includes(falla.number);
-      const isLiked = likedNumbers.includes(falla.number);
-      el.classList.toggle('visited', isVisited);
-      el.classList.toggle('liked', isLiked);
+      el.classList.toggle('visited', visitedNumbers.includes(falla.number));
+      el.classList.toggle('liked', likedNumbers.includes(falla.number));
       el.classList.toggle('burnt', !!falla.is_burnt);
     });
   }, [fallasData, isDarkMode, visitedNumbers, likedNumbers]);
@@ -185,7 +182,6 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // 6. Sync Visibility
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -197,24 +193,24 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-10">
-        <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-2 flex flex-col gap-2">
+      <div className="absolute top-4 md:top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-6 z-10">
+        <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-1.5 md:p-2 flex flex-col gap-1.5 md:gap-2">
           <div className="flex items-center gap-2">
             <div className="flex-1 relative">
-              <MagnifyingGlass size={20} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 text-falla-ink/30" />
+              <MagnifyingGlass size={18} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 text-falla-ink/30" />
               <input 
                 placeholder="Search València..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 bg-transparent pl-12 pr-4 font-bold text-sm outline-none placeholder:text-falla-ink/20"
+                className="w-full h-10 md:h-12 bg-transparent pl-11 pr-4 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20"
               />
             </div>
-            <Button isIconOnly variant="ghost" onClick={() => mapRef.current?.flyTo({ center: [-0.37739, 39.46975], zoom: 13 })} className="h-12 w-12 rounded-2xl">
-              <Target size={24} weight="bold" />
+            <Button isIconOnly variant="ghost" onClick={() => mapRef.current?.flyTo({ center: [-0.37739, 39.46975], zoom: 13 })} className="h-10 w-10 md:h-12 md:w-12 rounded-2xl">
+              <Target size={20} weight="bold" />
             </Button>
           </div>
 
-          <div className="flex items-center justify-between px-2 pb-1 border-t border-falla-ink/5 pt-2">
+          <div className="flex items-center justify-between px-2 pb-0.5 border-t border-falla-ink/5 pt-1.5 md:pt-2">
             <div className="flex gap-1">
               {(['all', 'visited', 'standing'] as const).map((mode) => (
                 <Button 
@@ -222,16 +218,19 @@ const MapComponent = () => {
                   size="sm" 
                   variant={filterMode === mode ? 'default' : 'ghost'} 
                   onClick={() => setFilterMode(mode)}
-                  className={cn("h-8 rounded-xl px-4 text-[10px] font-black uppercase transition-none", filterMode === mode ? "bg-falla-fire text-white shadow-none" : "text-falla-ink/40")}
+                  className={cn(
+                    "h-7 md:h-8 rounded-xl px-3 md:px-4 text-[9px] md:text-[10px] font-black uppercase transition-none", 
+                    filterMode === mode ? "bg-falla-fire text-white shadow-none" : "text-falla-ink/40"
+                  )}
                 >
                   {mode}
                 </Button>
               ))}
             </div>
             
-            <div className="flex items-center gap-1.5 px-2 bg-falla-ink/5 rounded-full py-1">
+            <div className="flex items-center gap-1.5 px-2 bg-falla-ink/5 rounded-full py-0.5 md:py-1">
               <CheckCircle size={14} weight="fill" className="text-falla-sage" />
-              <span className="text-[10px] font-black text-falla-ink/60">
+              <span className="text-[9px] md:text-[10px] font-black text-falla-ink/60">
                 {visitedNumbers.length}/{fallasData.length}
               </span>
             </div>

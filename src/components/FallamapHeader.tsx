@@ -7,33 +7,46 @@ interface FallamapHeaderProps {
 export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
  return (
   <motion.div
-   className="w-full pt-8 md:pt-20 pb-4 md:pb-16 flex flex-col items-center justify-center relative"
+   className="w-full pt-8 md:pt-16 pb-4 md:pb-12 flex flex-col items-center justify-center relative"
    initial={{ opacity: 0 }}
    animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
-   transition={{ duration: 0.4 }}
+   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
   >
    <motion.div
-    initial={{ y: 5 }}
-    animate={{ y: 0 }}
-    transition={{ duration: 0.6 }}
-    className="text-center px-4 mb-4 md:mb-12"
+    initial={{ y: 10, scale: 0.95 }}
+    animate={{ y: 0, scale: 1 }}
+    transition={{ type: "spring", damping: 20, stiffness: 100 }}
+    className="text-center px-4 mb-4 md:mb-10"
    >
-    <h1 className="text-5xl md:text-9xl font-display text-falla-fire leading-none tracking-tight lowercase">
+    <h1 className="text-6xl md:text-[10rem] font-display text-falla-fire leading-none tracking-tighter lowercase select-none">
      fallamap
     </h1>
     
-    <p className="text-[10px] md:text-xl text-falla-ink/40 mt-2 md:mt-6 max-w-[200px] md:max-w-lg mx-auto font-bold tracking-normal leading-tight">
-     A friendly, minimalist guide to València's ephemeral heritage.
-    </p>
+    <div className="flex items-center justify-center gap-2 mt-2 md:mt-4">
+      <span className="w-1.5 h-1.5 rounded-full bg-falla-sage animate-pulse" />
+      <p className="text-[10px] md:text-sm text-falla-ink/40 font-bold uppercase tracking-[0.2em]">
+        Live from <span className="text-falla-ink/60">València</span>
+      </p>
+    </div>
    </motion.div>
 
-   <div className="flex flex-wrap justify-center gap-2 md:gap-6">
-    <div className="brutal-pill px-2 py-0.5 md:px-4 md:py-1.5 border-[1.5px] md:border-2 bg-white">
-     <p className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] text-falla-ink font-black">300+ Locations</p>
-    </div>
-    <div className="brutal-pill px-2 py-0.5 md:px-4 md:py-1.5 border-[1.5px] md:border-2 bg-white">
-     <p className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] text-falla-ink font-black">Live Data</p>
-    </div>
+   <div className="flex flex-wrap justify-center gap-2 md:gap-4 px-6">
+    <motion.div 
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.3 }}
+      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-white/80 backdrop-blur-sm border-[1.5px] md:border-2"
+    >
+     <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black">80 Monuments</p>
+    </motion.div>
+    <motion.div 
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.4 }}
+      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-white/80 backdrop-blur-sm border-[1.5px] md:border-2"
+    >
+     <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black">Official Schedule</p>
+    </motion.div>
    </div>
   </motion.div>
  );

@@ -18,7 +18,6 @@ import {
   List, 
   X, 
   Archive, 
-  User,
   Fingerprint,
   ShieldCheck
 } from "@phosphor-icons/react";
@@ -46,7 +45,7 @@ export default function AppNavbar() {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen} 
       maxWidth="xl" 
-      className="bg-[#FAF7F2] border-b-2 border-falla-ink sticky top-0 h-20"
+      className="bg-[#FAF7F2]/80 backdrop-blur-md border-b-2 border-falla-ink/5 sticky top-0 h-20"
       classNames={{
         wrapper: "px-4 md:px-8 max-w-full",
         toggle: "w-10 h-10 flex items-center justify-center rounded-xl ink-border bg-white soft-shadow active:shadow-none transition-all p-0",
@@ -76,7 +75,7 @@ export default function AppNavbar() {
                 />
               </svg>
             </div>
-            <p className="font-display text-2xl text-[#FF7043] hidden md:block leading-none tracking-tight">
+            <p className="font-display text-2xl text-[#FF7043] hidden md:block leading-none tracking-tight lowercase">
               fallamap
             </p>
           </Link>
@@ -90,12 +89,11 @@ export default function AppNavbar() {
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "text-sm font-bold uppercase tracking-[0.2em] transition-all hover:text-falla-fire flex items-center gap-2",
-                  isActive ? "text-falla-fire" : "text-falla-ink/60"
+                  "text-xs font-black uppercase tracking-[0.25em] transition-all hover:text-falla-fire flex items-center gap-2 italic",
+                  isActive ? "text-falla-fire" : "text-falla-ink/40"
                 )
               }
             >
-              {item.icon}
               {item.label}
             </NavLink>
           </NavbarItem>
@@ -110,19 +108,19 @@ export default function AppNavbar() {
                 <Button 
                   variant="flat" 
                   size="sm" 
-                  className="bg-white text-falla-ink font-bold uppercase tracking-widest text-[10px] rounded-xl px-4 h-10 ink-border shadow-sm hover:shadow-none transition-all border-2"
-                  startContent={<Fingerprint size={18} weight="bold" className="text-falla-fire" />}
+                  className="bg-white text-falla-ink font-bold uppercase tracking-widest text-[9px] rounded-xl px-4 h-9 ink-border shadow-sm hover:shadow-none transition-all border-2"
+                  startContent={<Fingerprint size={16} weight="bold" className="text-falla-fire" />}
                 >
-                  My Journey
+                  Journey
                 </Button>
               </Link>
               
               {isAdmin && (
-                <Link to="/dashboard" className="hidden md:block">
+                <Link to="/dashboard" className="hidden lg:block">
                   <Button 
                     variant="flat" 
                     size="sm" 
-                    className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                    className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[9px] rounded-xl px-4 h-9 ink-border soft-shadow hover:shadow-none transition-all border-2"
                     startContent={<ShieldCheck size={16} weight="bold" />}
                   >
                     Admin
@@ -133,7 +131,7 @@ export default function AppNavbar() {
                 <UserButton 
                   appearance={{ 
                     elements: { 
-                      userButtonAvatarBox: "w-8 h-8",
+                      userButtonAvatarBox: "w-7 h-7",
                       userButtonTrigger: "focus:shadow-none focus:ring-0" 
                     } 
                   }}
@@ -146,7 +144,7 @@ export default function AppNavbar() {
               <Button 
                 variant="light" 
                 size="sm" 
-                className="text-falla-ink font-bold uppercase tracking-widest text-[10px] h-10"
+                className="text-falla-ink font-black uppercase tracking-widest text-[9px] h-9"
               >
                 Sign In
               </Button>
@@ -154,7 +152,7 @@ export default function AppNavbar() {
             <Link to="/sign-up">
               <Button 
                 size="sm" 
-                className="bg-falla-fire text-white font-bold uppercase tracking-widest text-[10px] rounded-xl px-6 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                className="bg-falla-fire text-white font-black uppercase tracking-widest text-[9px] rounded-xl px-5 h-9 ink-border soft-shadow hover:shadow-none transition-all border-2"
               >
                 Join
               </Button>
@@ -163,15 +161,15 @@ export default function AppNavbar() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu className="pt-12 bg-[#FAF7F2]/98 backdrop-blur-xl border-t-2 border-falla-ink">
+      <NavbarMenu className="pt-12 bg-[#FAF7F2]/98 backdrop-blur-xl border-t-2 border-falla-ink/5">
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item.label}-${index}`} className="px-4">
             <NavLink
               to={item.path}
               className={({ isActive }) => 
                 cn(
-                  "w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all flex items-center gap-4",
-                  isActive ? "text-falla-fire translate-x-2" : "text-falla-ink opacity-60"
+                  "w-full text-5xl font-display uppercase tracking-tighter py-6 block transition-all flex items-center gap-4 italic",
+                  isActive ? "text-falla-fire translate-x-2" : "text-falla-ink opacity-40"
                 )
               }
               onClick={handleMenuClose}
@@ -184,10 +182,10 @@ export default function AppNavbar() {
         <NavbarMenuItem className="px-4 border-t border-falla-ink/5 mt-4 pt-4">
           <NavLink
             to="/profile"
-            className="w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all flex items-center gap-4 text-falla-ink opacity-60"
+            className="w-full text-5xl font-display uppercase tracking-tighter py-6 block transition-all flex items-center gap-4 text-falla-ink opacity-40 italic"
             onClick={handleMenuClose}
           >
-            <User size={40} weight="bold" /> My Journey
+            Journey
           </NavLink>
         </NavbarMenuItem>
       </NavbarMenu>

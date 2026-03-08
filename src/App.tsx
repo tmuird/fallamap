@@ -11,12 +11,14 @@ import { ClerkProvider } from "@clerk/react";
 import SignUpPage from "@/components/SignUpPage.tsx";
 import { motion, AnimatePresence } from "framer-motion";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext.tsx";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Toaster } from "sonner";
 import ModerationDashboard from "./components/admin/ModerationDashboard";
 import UserProfile from "./components/profile/UserProfile";
 import ArchivePage from "./components/ArchivePage";
+import { MascletaCountdown } from "./components/ui/MascletaCountdown";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -31,7 +33,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => (
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    transition={{ duration: 0.3, ease: "easeInOut" }}
+    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     className="w-full flex-grow flex flex-col"
   >
     {children}
@@ -42,15 +44,38 @@ export default function App() {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.body.className = isDarkMode ? "dark" : "light";
+    
+    // Smooth transition out of loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
   }, [isDarkMode]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FAF7F2] text-[#1A1A1A] font-sans">
-      <Toaster position="top-center" richColors />
+    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans selection:bg-falla-fire selection:text-white">
+      <Toaster 
+        position="top-center" 
+        richColors 
+        toastOptions={{
+          className: "ink-border soft-shadow-sm font-sans font-bold",
+          style: {
+            background: "#FAF7F2",
+            border: "2px solid #1A1A1A",
+            borderRadius: "16px"
+          }
+        }}
+      />
       
+      <AnimatePresence mode="wait">
+        {loading && <LoadingScreen key="loading" />}
+      </AnimatePresence>
+
       <ClerkProvider
         routerPush={(to: string) => navigate(to)}
         routerReplace={(to: string) => navigate(to, { replace: true })}
@@ -64,7 +89,7 @@ export default function App() {
             borderRadius: "16px",
           },
           elements: {
-            card: "border-2 border-[#1A1A1A] shadow-[4px_4px_0px_0px_#1A1A1A] bg-[#FAF7F2]",
+            card: "border-2 border-[#1A1A1A] shadow-solid bg-[#FAF7F2]",
             navbar: "hidden",
             headerTitle: "font-display text-2xl uppercase tracking-widest",
             headerSubtitle: "font-sans font-bold",
@@ -95,15 +120,17 @@ export default function App() {
           </AnimatePresence>
         </main>
 
+        <MascletaCountdown />
+
         {location.pathname !== "/map" && (
-          <footer className="w-full flex flex-col items-center justify-center py-12 px-6 border-t-2 border-falla-ink/5 mt-auto bg-[#FAF7F2]">
+          <footer className="w-full flex flex-col items-center justify-center py-12 px-6 border-t-2 border-falla-ink/5 mt-auto bg-falla-paper">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-[#FF7043] rounded-full ink-border" />
-              <span className="font-display text-2xl tracking-widest text-[#FF7043]">
+              <div className="w-6 h-6 bg-falla-fire rounded-full ink-border" />
+              <span className="font-display text-2xl tracking-widest text-falla-fire">
                 fallamap
               </span>
             </div>
-            <p className="text-[10px] font-bold tracking-[0.3em] text-[#1A1A1A]/30 uppercase">
+            <p className="text-[10px] font-bold tracking-[0.3em] text-falla-ink/30 uppercase">
               © 2026 valència
             </p>
           </footer>
