@@ -58,9 +58,16 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const [liked, setLiked] = useState(false);
   const [visited, setVisited] = useState(false);
 
+  // Initial Interaction Fetch
   useEffect(() => {
     const checkInteractions = async () => {
-      // Priority 1: Supabase
+      // 1. Check Local (Instant Fallback)
+      const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+      const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
+      setVisited(localV.includes(falla.number));
+      setLiked(localL.includes(falla.number));
+
+      // 2. Check Supabase (Authoritative)
       if (user && falla.id) {
         const { data } = await supabase
           .from("user_interactions")
@@ -71,15 +78,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         if (data) {
           setVisited(data.some(i => i.type === "visited"));
           setLiked(data.some(i => i.type === "like"));
-          return;
         }
       }
-      
-      // Priority 2: Local Fallback
-      const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
-      const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
-      setVisited(localV.includes(falla.number));
-      setLiked(localL.includes(falla.number));
     };
     checkInteractions();
   }, [user, falla.id, falla.number]);
@@ -87,37 +87,34 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const toggleInteraction = async (type: 'like' | 'visited') => {
     const currentState = type === 'like' ? liked : visited;
     const setState = type === 'like' ? setLiked : setVisited;
+    const localKey = type === 'like' ? "liked_fallas" : "visited_fallas";
 
-    if (!user) {
-      // Local fallback
-      const key = type === 'like' ? "liked_fallas" : "visited_fallas";
-      const local = JSON.parse(localStorage.getItem(key) || "[]");
-      let newLocal;
-      if (currentState) {
-        newLocal = local.filter((n: string) => n !== falla.number);
-      } else {
-        newLocal = [...local, falla.number];
-      }
-      localStorage.setItem(key, JSON.stringify(newLocal));
-      setState(!currentState);
-      onInteraction?.();
-      toast.success(currentState ? "Removed" : "Added!");
-      return;
+    // 1. OPTIMISTIC UPDATE (Instant color change)
+    setState(!currentState);
+    const local = JSON.parse(localStorage.getItem(localKey) || "[]");
+    let newLocal;
+    if (currentState) {
+      newLocal = local.filter((n: string) => n !== falla.number);
+    } else {
+      newLocal = [...local, falla.number];
     }
+    localStorage.setItem(localKey, JSON.stringify(newLocal));
+    onInteraction?.(); // Update Parent Map Immediately!
 
-    try {
-      if (currentState) {
-        await supabase.from("user_interactions").delete().eq("user_id", user.id).eq("falla_id", falla.id).eq("type", type);
-        setState(false);
-      } else {
-        await supabase.from("user_interactions").insert([{ user_id: user.id, falla_id: falla.id, type }]);
-        setState(true);
+    // 2. BACKGROUND PERSISTENCE
+    if (user && falla.id) {
+      try {
+        if (currentState) {
+          await supabase.from("user_interactions").delete().eq("user_id", user.id).eq("falla_id", falla.id).eq("type", type);
+        } else {
+          await supabase.from("user_interactions").insert([{ user_id: user.id, falla_id: falla.id, type }]);
+        }
+      } catch (err) {
+        console.error("DB Sync failed, but kept local state:", err);
       }
-      onInteraction?.(); // Trigger map refresh
-      toast.success(currentState ? "Removed" : "Added!");
-    } catch (err) {
-      console.error(err);
     }
+    
+    toast.success(currentState ? "Removed" : "Added!");
   };
 
   const handleCommentSubmit = async () => {
@@ -125,7 +122,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     const { error } = await addComment(newComment, user?.id, isPrivate);
     if (!error) {
       setNewComment("");
-      toast.success(isPrivate ? "Private note saved!" : "Note shared with community!");
+      toast.success(isPrivate ? "Private note saved!" : "Note shared!");
     }
   };
 

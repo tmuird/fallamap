@@ -48,7 +48,6 @@ const MapComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'standing'>('all');
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
-  const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // 1. Fetch data
@@ -64,7 +63,7 @@ const MapComponent = () => {
     fetchFallas();
   }, []);
 
-  // 2. Interaction Sync (Passport)
+  // 2. Fetch Passport State
   const refreshInteractions = useCallback(async () => {
     if (user) {
       const { data } = await supabase
@@ -74,7 +73,9 @@ const MapComponent = () => {
         .eq("type", "visited");
       
       if (data) {
-        setVisitedNumbers(data.map((i: any) => i.fallas?.number).filter(Boolean));
+        const numbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
+        setVisitedNumbers(numbers);
+        localStorage.setItem("visited_fallas", JSON.stringify(numbers)); // Keep local in sync
       }
     } else {
       setVisitedNumbers(JSON.parse(localStorage.getItem("visited_fallas") || "[]"));
@@ -85,7 +86,7 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Initialize Map (Strictly Once per Theme)
+  // 3. Initialize Map (Strictly Once)
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -98,17 +99,10 @@ const MapComponent = () => {
     });
 
     mapRef.current = map;
-
-    // Clean up markers ref when map is destroyed
-    return () => {
-      Object.values(markersRef.current).forEach(m => m.remove());
-      markersRef.current = {};
-      markerElsRef.current = {};
-      map.remove();
-    };
+    return () => map.remove();
   }, [isDarkMode]);
 
-  // 4. Reactive Marker Logic (No lag version)
+  // 4. Stable Marker Logic
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
@@ -121,8 +115,8 @@ const MapComponent = () => {
         el = document.createElement("div");
         el.className = 'marker';
         el.addEventListener('click', (e) => {
-          e.stopPropagation(); // Fix "multiple cards" issue
-          handleSelectFalla(falla);
+          e.stopPropagation();
+          setSearchParams({ falla: falla.number }, { replace: true }); // Let URL drive the open
         });
 
         marker = new mapboxgl.Marker(el)
@@ -133,55 +127,35 @@ const MapComponent = () => {
         markerElsRef.current[falla.number] = el;
       }
 
-      // SYNC STATES FAST (No JS inline styles, just class toggle)
-      const isVisited = visitedNumbers.includes(falla.number);
-      el.classList.toggle('visited', isVisited);
+      el.classList.toggle('visited', visitedNumbers.includes(falla.number));
       el.classList.toggle('burnt', !!falla.is_burnt);
     });
-  }, [fallasData, isDarkMode]); // Only re-run when data or theme changes
+  }, [fallasData, isDarkMode, visitedNumbers]);
 
-  // 5. Secondary update for visited (Instant, no marker re-creation)
+  // 5. URL driven selection (Solves double popup)
+  const selectedFalla = useMemo(() => {
+    const num = searchParams.get("falla");
+    return fallasData.find(f => f.number === num) || null;
+  }, [searchParams, fallasData]);
+
   useEffect(() => {
-    Object.entries(markerElsRef.current).forEach(([num, el]) => {
-      const isVisited = visitedNumbers.includes(num);
-      el.classList.toggle('visited', isVisited);
-    });
-  }, [visitedNumbers]);
-
-  const flyToFalla = (falla: Falla) => {
-    mapRef.current?.flyTo({
-      center: [falla.coordinates.lng, falla.coordinates.lat],
-      zoom: 16,
-      pitch: 60,
-      duration: 2000,
-      essential: true
-    });
-  };
-
-  const handleSelectFalla = (falla: Falla) => {
-    setSelectedFalla(falla);
-    setIsDrawerOpen(true);
-    setSearchParams({ falla: falla.number }, { replace: true });
-    flyToFalla(falla);
-  };
+    if (selectedFalla) {
+      setIsDrawerOpen(true);
+      mapRef.current?.flyTo({
+        center: [selectedFalla.coordinates.lng, selectedFalla.coordinates.lat],
+        zoom: 16,
+        pitch: 60,
+        duration: 2000,
+        essential: true
+      });
+    } else {
+      setIsDrawerOpen(false);
+    }
+  }, [selectedFalla]);
 
   const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
     setSearchParams({}, { replace: true });
-    setSelectedFalla(null);
   };
-
-  // 6. Search Params / Deep Link
-  useEffect(() => {
-    const fallaNum = searchParams.get("falla");
-    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
-      const falla = fallasData.find(f => f.number === fallaNum);
-      if (falla) {
-        setSelectedFalla(falla);
-        setIsDrawerOpen(true);
-      }
-    }
-  }, [searchParams, fallasData, selectedFalla]);
 
   const filteredFallas = useMemo(() => {
     return fallasData.filter(f => {
@@ -192,7 +166,6 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // 7. Sync Visibility
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -259,11 +232,13 @@ const MapComponent = () => {
                     falla={selectedFalla} 
                     onNext={() => {
                       const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
-                      handleSelectFalla(fallasData[(idx + 1) % fallasData.length]);
+                      const next = fallasData[(idx + 1) % fallasData.length];
+                      setSearchParams({ falla: next.number }, { replace: true });
                     }}
                     onPrev={() => {
                       const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
-                      handleSelectFalla(fallasData[(idx - 1 + fallasData.length) % fallasData.length]);
+                      const prev = fallasData[(idx - 1 + fallasData.length) % fallasData.length];
+                      setSearchParams({ falla: prev.number }, { replace: true });
                     }}
                     onClose={handleDrawerClose}
                     onInteraction={refreshInteractions}
