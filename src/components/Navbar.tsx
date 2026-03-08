@@ -243,8 +243,8 @@ export default function AppNavbar() {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="w-full flex flex-col z-40 bg-transparent"
             >
-              <div className="absolute top-[56px] md:top-[80px] left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-falla-ink/10 to-transparent" />
               <div className="flex flex-col gap-2 px-4 py-8 relative">
+
                 {menuItems.map((item, index) => (
                   <NavLink
                     key={`${item.label}-${index}`}

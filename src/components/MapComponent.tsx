@@ -258,7 +258,8 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       {/* Consolidated Hub - Unified Container Aesthetic */}
-      <div className="absolute top-8 md:top-12 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+      <div className="absolute top-2 md:top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -349,9 +350,6 @@ const MapComponent = () => {
                 exit={{ height: 0, opacity: 0 }}
                 className="relative z-10 bg-transparent"
               >
-                {/* Subtle gradient line for transition instead of a thick border */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90%] h-px bg-falla-ink/10 dark:bg-white/10" />
-                
                 <div className="flex flex-col max-h-[40vh] overflow-y-auto scrollbar-hide py-2">
                   {autocompleteResults.map((result) => {
                     // Match highlighting logic
