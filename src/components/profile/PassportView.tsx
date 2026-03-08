@@ -16,14 +16,12 @@ export function PassportView() {
     const fetchPassport = async () => {
       if (!user) {
         const local = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
-        // For guests, we just show numbers since we don't have DB images easily joined
         setVisitedData(local.map((n: string) => ({ number: n })));
         setLoading(false);
         return;
       }
 
       try {
-        // Fetch visited fallas AND their most liked approved image
         const { data } = await supabase
           .from("user_interactions")
           .select(`
@@ -43,7 +41,6 @@ export function PassportView() {
         if (data) {
           const processed = data.map((item: any) => {
             const f = item.fallas;
-            // Get the first approved image (our hook ensures they are sorted by likes)
             const topImage = f.images?.find((img: any) => img.status === 'approved')?.url;
             return { ...f, topImage };
           });
@@ -72,7 +69,7 @@ export function PassportView() {
           </div>
         </div>
         
-        <div className="md:col-span-2 p-8 bg-white ink-border rounded-[2.5rem] border-2 flex flex-col justify-center relative overflow-hidden">
+        <div className="md:col-span-2 p-8 bg-white dark:bg-zinc-900 ink-border rounded-[2.5rem] border-2 flex flex-col justify-center relative overflow-hidden">
           <div className="absolute top-[-20px] right-[-20px] opacity-5">
             <Trophy size={120} weight="fill" />
           </div>
@@ -96,15 +93,15 @@ export function PassportView() {
             {visitedData.map((falla) => (
               <Link to={`/map?falla=${falla.number}`} key={falla.number} className="group">
                 <motion.div 
-                  whileHover={{ y: -8, rotate: 1 }}
-                  className="bg-white ink-border rounded-3xl flex flex-col overflow-hidden soft-shadow-sm h-full group-hover:shadow-none transition-all border-2 relative"
+                  whileHover={{ y: -8 }}
+                  className="bg-white dark:bg-zinc-900 ink-border rounded-3xl flex flex-col overflow-hidden soft-shadow-sm h-full group-hover:shadow-none transition-all border-2 relative"
                 >
-                  {/* Visual Background for Stamp */}
-                  <div className="aspect-square w-full relative bg-falla-sand/20 overflow-hidden border-b-2 border-falla-ink">
+                  {/* Square Background for Stamp */}
+                  <div className="aspect-square w-full relative bg-falla-sand/20 dark:bg-zinc-800 overflow-hidden border-b-2 border-falla-ink">
                     {falla.topImage ? (
                       <Image 
                         src={falla.topImage} 
-                        className="object-cover w-full h-full grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" 
+                        className="object-cover w-full h-full grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500 rounded-none" 
                         removeWrapper
                       />
                     ) : (

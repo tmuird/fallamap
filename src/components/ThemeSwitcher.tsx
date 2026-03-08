@@ -1,12 +1,23 @@
-// components/ThemeSwitcher.tsx
-import { useTheme } from "../context/ThemeContext"; // Adjust the import path as needed
+import { useTheme } from "@/context/ThemeContext";
+import { Sun, Moon } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
 
-export const ThemeSwitcher = () => {
- const { isDarkMode, toggleTheme } = useTheme();
+export function ThemeSwitcher() {
+  const { isDarkMode, toggleTheme } = useTheme();
 
- return (
-  <button onClick={toggleTheme} style={{ cursor: "pointer" }}>
-   {isDarkMode ? "🌙" : "☀️"}
-  </button>
- );
-};
+  return (
+    <Button
+      isIconOnly
+      variant="neutral"
+      onClick={toggleTheme}
+      className="w-9 h-9 rounded-xl border-2"
+      aria-label="Toggle theme"
+    >
+      {isDarkMode ? (
+        <Sun size={20} weight="bold" className="text-yellow-400" />
+      ) : (
+        <Moon size={20} weight="bold" className="text-falla-ink" />
+      )}
+    </Button>
+  );
+}
