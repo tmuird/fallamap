@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Timer, Fire, SpeakerHigh } from "@phosphor-icons/react";
+import { useLocation } from "react-router-dom";
+import { cn } from "@/utils/cn";
 
 export function MascletaCountdown() {
   const [timeLeft, setTimeData] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
   const [isLive, setIsLive] = useState(false);
+  const location = useLocation();
+  const isMap = location.pathname === "/map";
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -43,7 +47,12 @@ export function MascletaCountdown() {
     <motion.div 
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="fixed bottom-6 right-6 z-50 pointer-events-none md:pointer-events-auto"
+      className={cn(
+        "fixed z-[90] pointer-events-none md:pointer-events-auto transition-all duration-500",
+        isMap 
+          ? "bottom-6 right-6" 
+          : "bottom-24 right-6 md:bottom-10"
+      )}
     >
       <div className="bg-falla-paper/90 backdrop-blur-md ink-border shadow-solid rounded-3xl p-4 md:p-6 flex flex-col gap-3 min-w-[180px]">
         <div className="flex items-center gap-3">

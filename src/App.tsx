@@ -65,6 +65,11 @@ export default function App() {
         theme={isDarkMode ? 'dark' : 'light'}
         toastOptions={{
           className: "ink-border soft-shadow-sm font-sans font-bold !bg-falla-paper !text-falla-ink",
+          style: {
+            borderRadius: '9999px',
+            padding: '12px 24px',
+            border: '2px solid var(--falla-ink)',
+          }
         }}
       />
       

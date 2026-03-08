@@ -27,23 +27,16 @@ type ThemeProviderProps = {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
  // State to keep track of whether dark mode is enabled
  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-  // Initialize state based on the user's system preference
-  return (
-   window.matchMedia &&
-   window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
+  // Default to light mode (false)
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) return savedTheme === "dark";
+  return false;
  });
 
  // Effect hook to listen for changes to the system theme preference
  useEffect(() => {
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  const handleChange = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
-
-  mediaQuery.addEventListener("change", handleChange);
-
-  // Cleanup function to remove the event listener
-  return () => mediaQuery.removeEventListener("change", handleChange);
- }, []);
+  localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+ }, [isDarkMode]);
 
  // Function to toggle the theme
  const toggleTheme = () => {

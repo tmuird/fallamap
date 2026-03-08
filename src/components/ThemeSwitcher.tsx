@@ -10,13 +10,13 @@ export function ThemeSwitcher() {
       isIconOnly
       variant="neutral"
       onClick={toggleTheme}
-      className="w-9 h-9 rounded-xl border-2"
+      className="w-8 h-8 md:w-11 md:h-11 rounded-xl border-1.5 md:border-2 shadow-solid-sm hover:shadow-none transition-all"
       aria-label="Toggle theme"
     >
       {isDarkMode ? (
-        <Sun size={20} weight="bold" className="text-yellow-400" />
+        <Sun size={18} weight="bold" className="text-yellow-400 md:scale-110" />
       ) : (
-        <Moon size={20} weight="bold" className="text-falla-ink" />
+        <Moon size={18} weight="bold" className="text-falla-ink md:scale-110" />
       )}
     </Button>
   );

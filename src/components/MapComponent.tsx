@@ -119,7 +119,14 @@ const MapComponent = () => {
     if ("geolocation" in navigator) {
       const el = document.createElement('div');
       el.className = 'user-location-marker';
-      el.innerHTML = `<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M232,128a104,104,0,1,1-104-104A104.11,104.11,0,0,1,232,128Z" fill="#FF7043" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" fill="#FF7043"/><path d="M176,104a8,8,0,0,1-8,8H144v16h16a8,8,0,0,1,0,16H144v16a8,8,0,0,1-16,0V104a8,8,0,0,1,8-8h32A8,8,0,0,1,176,104Z" fill="#1A1A1A"/></svg>`;
+      el.innerHTML = `
+        <div class="relative w-6 h-6">
+          <div class="absolute inset-0 bg-falla-fire/30 rounded-full animate-ping"></div>
+          <div class="relative w-full h-full bg-falla-fire rounded-full border-2 border-white shadow-md flex items-center justify-center">
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+          </div>
+        </div>
+      `;
       
       userMarkerRef.current = new mapboxgl.Marker(el)
         .setLngLat([0, 0])
@@ -252,25 +259,25 @@ const MapComponent = () => {
       <div ref={mapContainerRef} className="w-full h-full" />
       
       {/* Consolidated Hub - Floating Island Aesthetic */}
-      <div className="absolute top-4 md:top-32 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-0 z-[100] pointer-events-none">
+      <div className="absolute top-4 md:top-10 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={cn(
-            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink p-2.5 md:p-3 flex flex-col gap-3 shadow-solid pointer-events-auto transition-all duration-300",
+            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink p-2 md:p-3 flex flex-col gap-2 md:gap-3 shadow-solid pointer-events-auto transition-all duration-300",
             autocompleteResults.length > 0 && isSearchFocused ? "rounded-t-[2.5rem] rounded-b-none border-b-transparent" : "rounded-[2.5rem]"
           )}
         >
-          <div className="flex items-center gap-3 h-12">
-            <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.5rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-4 h-full overflow-hidden">
-              <MagnifyingGlass size={22} weight="bold" className="opacity-30 shrink-0" />
+          <div className="flex items-center gap-2 md:gap-3 h-10 md:h-12">
+            <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.25rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-3 md:px-4 h-full overflow-hidden">
+              <MagnifyingGlass size={18} weight="bold" className="opacity-30 shrink-0 md:size-[22px]" />
               <input 
                 placeholder="Find a monument..." 
                 value={searchQuery}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 bg-transparent px-3 font-bold text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink h-full"
+                className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink h-full min-w-0"
               />
               <AnimatePresence>
                 {searchQuery && (
@@ -279,9 +286,9 @@ const MapComponent = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     onClick={() => setSearchQuery("")}
-                    className="w-7 h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors shrink-0 mr-[-4px]"
+                    className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors shrink-0 mr-[-2px]"
                   >
-                    <X size={16} weight="bold" />
+                    <X size={14} weight="bold" />
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -290,15 +297,15 @@ const MapComponent = () => {
               isIconOnly 
               variant="ghost" 
               onClick={handleGeolocateUser} 
-              className="h-full w-12 rounded-[1.5rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all shrink-0"
+              className="h-10 w-10 md:h-12 md:w-12 rounded-[1.25rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all shrink-0 border-2"
               aria-label="Locate me"
             >
-              <Target size={26} weight="bold" />
+              <Target size={22} weight="bold" className="md:size-[26px]" />
             </Button>
           </div>
 
-          <div className="flex items-center justify-between px-2 pb-1 border-t border-falla-ink/5 pt-3">
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mb-1">
+          <div className="flex items-center justify-between px-1 pb-1 border-t border-falla-ink/5 pt-3">
+            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center w-full">
               {[
                 { id: 'all', label: 'All' },
                 { id: 'special', label: 'Special', icon: <Star size={12} weight="fill" /> },
@@ -312,7 +319,7 @@ const MapComponent = () => {
                   onClick={() => setFilterMode(mode.id as any)}
                   startContent={mode.icon}
                   className={cn(
-                    "h-9 rounded-xl px-4 text-[11px] font-black uppercase transition-all whitespace-nowrap", 
+                    "h-8 md:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0", 
                     filterMode === mode.id ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
                   )}
                 >
@@ -320,16 +327,6 @@ const MapComponent = () => {
                 </Button>
               ))}
             </div>
-            
-            <motion.div 
-              layout
-              className="hidden md:flex items-center gap-2.5 px-4 bg-falla-fire/5 dark:bg-falla-fire/10 rounded-full py-2 border border-falla-fire/10 shadow-sm ml-2"
-            >
-              <CheckCircle size={18} weight="fill" className="text-falla-fire" />
-              <span className="text-[11px] font-black text-falla-ink/60">
-                {visitedNumbers.length}/{fallasData.length}
-              </span>
-            </motion.div>
           </div>
         </motion.div>
 
@@ -343,11 +340,14 @@ const MapComponent = () => {
               className="bg-falla-paper/95 dark:bg-zinc-950/95 backdrop-blur-xl border-x-2 border-b-2 border-falla-ink rounded-b-[2.5rem] shadow-solid overflow-hidden pointer-events-auto mt-[-2px]"
             >
               <div className="flex flex-col">
-                {autocompleteResults.map((result) => (
+                {autocompleteResults.map((result, idx) => (
                   <button
                     key={result.number}
                     onClick={() => handleAutocompleteClick(result)}
-                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-falla-fire/5 transition-colors border-b border-falla-ink/5 last:border-0 group"
+                    className={cn(
+                      "w-full px-6 py-4 flex items-center justify-between hover:bg-falla-fire/5 transition-colors group relative",
+                      idx !== autocompleteResults.length - 1 && "after:absolute after:bottom-0 after:left-6 after:right-6 after:h-[1.5px] after:bg-falla-ink/5"
+                    )}
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-falla-ink/5 flex items-center justify-center font-display text-lg text-falla-fire group-hover:scale-110 transition-transform">
@@ -381,33 +381,22 @@ const MapComponent = () => {
               className="w-full h-full md:max-w-5xl bg-falla-paper rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative"
             >
               {selectedFalla && (
-                <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-none">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={selectedFalla.number}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3, ease: "circOut" }}
-                      className="h-full flex flex-col"
-                    >
-                      <FallaDetails 
-                        falla={selectedFalla} 
-                        onNext={() => {
-                          const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
-                          const next = fallasData[(idx + 1) % fallasData.length];
-                          setSearchParams({ falla: next.number }, { replace: true });
-                        }}
-                        onPrev={() => {
-                          const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
-                          const prev = fallasData[(idx - 1 + fallasData.length) % fallasData.length];
-                          setSearchParams({ falla: prev.number }, { replace: true });
-                        }}
-                        onClose={handleDrawerClose}
-                        onInteraction={refreshInteractions}
-                      />
-                    </motion.div>
-                  </AnimatePresence>
+                <div className="flex-1 overflow-hidden">
+                  <FallaDetails 
+                    falla={selectedFalla} 
+                    onNext={() => {
+                      const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
+                      const next = fallasData[(idx + 1) % fallasData.length];
+                      setSearchParams({ falla: next.number }, { replace: true });
+                    }}
+                    onPrev={() => {
+                      const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
+                      const prev = fallasData[(idx - 1 + fallasData.length) % fallasData.length];
+                      setSearchParams({ falla: prev.number }, { replace: true });
+                    }}
+                    onClose={handleDrawerClose}
+                    onInteraction={refreshInteractions}
+                  />
                 </div>
               )}
             </motion.div>

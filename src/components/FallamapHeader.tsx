@@ -7,7 +7,7 @@ interface FallamapHeaderProps {
 export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
  return (
   <motion.div
-   className="w-full pt-[8vh] md:pt-[12vh] pb-4 md:pb-12 flex flex-col items-center justify-center relative"
+   className="w-full pt-[12vh] md:pt-[15vh] pb-8 md:pb-16 flex flex-col items-center justify-center relative"
    initial={{ opacity: 0 }}
    animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}

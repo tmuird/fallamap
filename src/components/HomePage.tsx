@@ -7,7 +7,7 @@ import { SparklesCore } from "@/components/ui/sparkles";
 
 export default function HomePage() {
   return (
-    <div className="h-[100dvh] bg-falla-paper flex flex-col items-center relative overflow-hidden selection:bg-falla-fire selection:text-white">
+    <div className="min-h-screen bg-falla-paper flex flex-col items-center relative overflow-x-hidden selection:bg-falla-fire selection:text-white pb-20">
       {/* Subtle "Senyera" / Valencian Flag Gradient Hint at top edge */}
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-falla-fire via-yellow-400 to-falla-fire opacity-50" />
       
@@ -27,10 +27,10 @@ export default function HomePage() {
         />
       </div>
       
-      <div className="z-10 w-full flex flex-col items-center h-full px-4 overflow-hidden relative">
+      <div className="z-10 w-full flex flex-col items-center px-4 relative">
         <FallamapHeader isVisible={true} />
 
-        <main className="w-full max-w-6xl flex-1 flex flex-col items-center justify-center -mt-[4vh] md:mt-0 gap-[4vh] md:gap-[6vh] pb-[4vh]">
+        <main className="w-full max-w-6xl flex flex-col items-center justify-center -mt-[2vh] md:mt-0 gap-[4vh] md:gap-[6vh] pb-12">
           {/* Main Content */}
           <div className="flex flex-col items-center text-center gap-[2vh] md:gap-[4vh] w-full">
             <motion.div 
@@ -70,30 +70,30 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, type: "spring" }}
-              className="flex flex-col sm:flex-row gap-4 w-full max-w-xs sm:max-w-none justify-center px-4"
+              className="flex flex-col sm:flex-row gap-3 w-full max-w-[280px] sm:max-w-none justify-center px-4"
             >
               <Link to="/map" className="flex-1 sm:flex-none">
                 <Button 
                   size="lg"
-                  className="bg-falla-fire text-falla-paper h-[7vh] min-h-[56px] px-8 md:px-12 rounded-2xl text-fluid-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all group"
+                  className="bg-falla-fire text-falla-paper h-12 md:h-14 px-8 md:px-10 rounded-full text-sm md:text-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-2 w-full hover:translate-y-[-2px] hover:shadow-solid-lg hover:rotate-1 active:translate-y-0 transition-all group font-black uppercase tracking-widest"
                 >
-                  Enter the Map 
+                  Explore Map 
                   <motion.div
                     animate={{ x: [0, 4, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <ArrowRight size={24} weight="bold" />
+                    <ArrowRight size={20} weight="bold" />
                   </motion.div>
                 </Button>
               </Link>
               
-              <Link to="/schedule" className="flex-1 sm:flex-none sm:hidden">
+              <Link to="/schedule" className="flex-1 sm:flex-none">
                 <Button 
                   variant="outline"
                   size="lg"
-                  className="bg-falla-paper text-falla-ink h-[7vh] min-h-[56px] px-8 rounded-2xl text-fluid-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all"
+                  className="bg-falla-paper text-falla-ink h-12 md:h-14 px-8 rounded-full text-sm md:text-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-2 w-full hover:translate-y-[-2px] hover:shadow-solid-lg hover:-rotate-1 active:translate-y-0 transition-all font-black uppercase tracking-widest"
                 >
-                  Schedule <CalendarBlank size={24} weight="bold" />
+                  Schedule <CalendarBlank size={20} weight="bold" />
                 </Button>
               </Link>
             </motion.div>
@@ -104,7 +104,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, type: "spring", damping: 20 }}
-            className="w-full h-[25vh] md:h-[35vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden ink-border shadow-solid bg-[url('/plaza.jpg')] bg-cover bg-center relative group max-w-5xl mx-auto shrink-0"
+            className="w-full h-[22vh] md:h-[35vh] rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden ink-border shadow-solid bg-[url('/plaza.jpg')] bg-cover bg-center relative group max-w-4xl mx-auto shrink-0 mt-2"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
             <div className="absolute bottom-[2vh] left-[2vw] md:bottom-8 md:left-8 text-left">
