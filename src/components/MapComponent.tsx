@@ -36,6 +36,7 @@ const MapComponent = () => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const markerElsRef = useRef<{ [key: string]: HTMLDivElement }>({});
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
@@ -110,6 +111,32 @@ const MapComponent = () => {
     });
 
     mapRef.current = map;
+
+    // Track User Location
+    if ("geolocation" in navigator) {
+      const el = document.createElement('div');
+      el.className = 'user-location-marker';
+      userMarkerRef.current = new mapboxgl.Marker(el)
+        .setLngLat([0, 0])
+        .addTo(map);
+
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          userMarkerRef.current?.setLngLat([pos.coords.longitude, pos.coords.latitude]);
+        },
+        (err) => console.error("Geolocation error:", err),
+        { enableHighAccuracy: true }
+      );
+
+      return () => {
+        navigator.geolocation.clearWatch(watchId);
+        Object.values(markersRef.current).forEach(m => m.remove());
+        markersRef.current = {};
+        markerElsRef.current = {};
+        map.remove();
+      };
+    }
+
     return () => {
       Object.values(markersRef.current).forEach(m => m.remove());
       markersRef.current = {};
@@ -189,6 +216,18 @@ const MapComponent = () => {
     });
   }, [filteredFallas]);
 
+  const handleGeolocateUser = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        mapRef.current?.flyTo({
+          center: [pos.coords.longitude, pos.coords.latitude],
+          zoom: 15,
+          essential: true
+        });
+      });
+    }
+  };
+
   return (
     <div className="w-full h-full relative font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
@@ -205,7 +244,7 @@ const MapComponent = () => {
                 className="w-full h-10 md:h-12 bg-transparent pl-11 pr-4 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20"
               />
             </div>
-            <Button isIconOnly variant="ghost" onClick={() => mapRef.current?.flyTo({ center: [-0.37739, 39.46975], zoom: 13 })} className="h-10 w-10 md:h-12 md:w-12 rounded-2xl">
+            <Button isIconOnly variant="ghost" onClick={handleGeolocateUser} className="h-10 w-10 md:h-12 md:w-12 rounded-2xl" aria-label="Locate me">
               <Target size={20} weight="bold" />
             </Button>
           </div>
@@ -241,7 +280,7 @@ const MapComponent = () => {
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} shouldScaleBackground autoFocus={false}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[100]" />
-          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-12 h-screen">
+          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-12 h-[100dvh]">
             <Drawer.Title className="sr-only">Falla Details</Drawer.Title>
             
             {/* Mobile Handler */}
@@ -252,6 +291,7 @@ const MapComponent = () => {
               <button 
                 onClick={handleDrawerClose}
                 className="hidden md:flex absolute top-6 right-6 w-10 h-10 items-center justify-center bg-white ink-border rounded-xl soft-shadow-sm hover:shadow-none transition-all z-50 group"
+                aria-label="Close"
               >
                 <X size={24} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
               </button>

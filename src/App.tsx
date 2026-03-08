@@ -49,16 +49,16 @@ export default function App() {
   useEffect(() => {
     document.body.className = isDarkMode ? "dark" : "light";
     
-    // Smooth transition out of loading
+    // Faster loading transition - only 800ms for the animation to play
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1200);
     
     return () => clearTimeout(timer);
   }, [isDarkMode]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans selection:bg-falla-fire selection:text-white">
+    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans selection:bg-falla-fire selection:text-white overflow-x-hidden">
       <Toaster 
         position="top-center" 
         richColors 

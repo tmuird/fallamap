@@ -147,25 +147,27 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       animate={{ opacity: 1, x: 0 }}
       className={cn("flex flex-col w-full h-full bg-[#FAF7F2]", className)}
     >
-      <header className="p-4 md:p-10 pb-4 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30">
+      <header className="p-4 md:p-10 pb-4 border-b-2 border-falla-ink bg-[#FAF7F2] sticky top-0 z-30 min-h-[180px] md:min-h-[240px] flex flex-col justify-between">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 bg-white rounded-xl ink-border p-0.5 shadow-sm">
-              <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-lg"><CaretLeft size={18} weight="bold" /></Button>
+              <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-lg" aria-label="Previous"><CaretLeft size={18} weight="bold" /></Button>
               <div className="w-px h-4 bg-falla-ink/10" />
-              <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-8 h-8 rounded-lg"><CaretRight size={18} weight="bold" /></Button>
+              <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-8 h-8 rounded-lg" aria-label="Next"><CaretRight size={18} weight="bold" /></Button>
             </div>
             <div className="brutal-pill px-2 py-0.5 bg-white shadow-none text-[9px] font-black border-2">#{falla.number}</div>
           </div>
           
           <div className="flex items-center gap-2">
-            <Button isIconOnly variant="neutral" size="sm" className={cn("w-9 h-9 rounded-xl border-2 transition-all", liked && "text-red-500 border-red-500 bg-red-50")} onClick={() => toggleInteraction('like')}><Heart size={20} weight={liked ? "fill" : "bold"} /></Button>
-            <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })}><ShareNetwork size={20} weight="bold" /></Button>
-            {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2 bg-falla-ink text-white ml-1 md:hidden" onClick={onClose}><X size={20} weight="bold" /></Button>}
+            <Button isIconOnly variant="neutral" size="sm" className={cn("w-9 h-9 rounded-xl border-2 transition-all", liked && "text-red-500 border-red-500 bg-red-50")} onClick={() => toggleInteraction('like')} aria-label="Like"><Heart size={20} weight={liked ? "fill" : "bold"} /></Button>
+            <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })} aria-label="Share"><ShareNetwork size={20} weight="bold" /></Button>
+            {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2 bg-falla-ink text-white ml-1 md:hidden" onClick={onClose} aria-label="Close"><X size={20} weight="bold" /></Button>}
           </div>
         </div>
         
-        <h2 className="text-2xl md:text-7xl font-display text-falla-ink leading-[0.9] mb-6 tracking-tighter lowercase">{falla.name}</h2>
+        <h2 className="text-2xl md:text-6xl font-display text-falla-ink leading-[0.95] mb-6 tracking-tighter lowercase line-clamp-2 min-h-[2em] md:min-h-[1.8em] flex items-center">
+          {falla.name}
+        </h2>
         
         <div className="flex flex-wrap gap-2 items-center">
           <Button 
@@ -184,15 +186,15 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
           <div className="h-12 md:h-14 px-3 bg-white ink-border rounded-xl flex items-center gap-2 soft-shadow-sm">
             {isPrivate ? <EyeSlash size={18} weight="bold" className="text-falla-ink/30" /> : <Eye size={18} weight="bold" className="text-falla-fire" />}
-            <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} />
+            <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" />
           </div>
         </div>
       </header>
       
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2]">
         <div className="flex flex-col w-full min-h-full">
-          {/* Gallery with react-photo-view */}
-          <div className="w-full aspect-video md:aspect-[16/9] bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">
+          {/* Gallery with fixed aspect ratio */}
+          <div className="w-full aspect-square md:aspect-video bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">
             {images.length > 0 ? (
               <PhotoProvider 
                 maskOpacity={0.9}
@@ -274,7 +276,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           <div className="flex-1 bg-white ink-border rounded-[2rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2">
             <Textarea variant="flat" placeholder="Tell a story..." value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={3} className="w-full" classNames={{ input: "text-base md:text-xl p-4 md:p-6 font-bold bg-transparent placeholder:text-falla-ink/20", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
           </div>
-          <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim()} className="w-14 h-14 md:w-20 md:h-20 rounded-[1.5rem] md:rounded-[2rem] shrink-0 border-2"><PaperPlaneRight size={24} weight="bold" /></Button>
+          <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim()} className="w-14 h-14 md:w-20 md:h-20 rounded-[1.5rem] md:rounded-[2rem] shrink-0 border-2" aria-label="Send"><PaperPlaneRight size={24} weight="bold" /></Button>
         </div>
       </div>
     </motion.div>

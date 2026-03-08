@@ -34,8 +34,8 @@
 body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  background-color: #FAF7F2;
-  color: #1A1A1A;
+  background-color: #FAF7F2 !important;
+  color: #1A1A1A !important;
   letter-spacing: 0.01em;
   font-style: normal !important;
 }
@@ -118,6 +118,17 @@ h1, h2, h3, h4, .font-display {
   box-shadow: 4px 4px 0px 0px #1A1A1A;
 }
 
+/* User Location Marker */
+.user-location-marker {
+  width: 16px;
+  height: 16px;
+  background-color: #3b82f6; /* Blue-500 */
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+  z-index: 100;
+}
+
 /* Mapbox Minimal Overrides */
 .mapboxgl-popup-content {
   padding: 0 !important;
@@ -162,11 +173,11 @@ button, .heroui-button {
 }
 
 /* Lightbox Overrides */
-.yarl__container {
+.PhotoView-Slider {
   background-color: rgba(26, 26, 26, 0.95) !important;
   backdrop-filter: blur(10px);
 }
 
-.yarl__button {
-  filter: drop-shadow(2px 2px 0px #1A1A1A);
+.PhotoView__Photo {
+  cursor: zoom-out !important;
 }
