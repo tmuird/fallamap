@@ -15,21 +15,18 @@ import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
 import { supabase } from "@/lib/supabase";
 import { 
-  
   Camera, 
   PaperPlaneRight, 
-  
   Heart, 
   ShareNetwork, 
   CaretLeft, 
   CaretRight, 
   X,
   CheckCircle,
-  
   EyeSlash,
   Eye
 } from "@phosphor-icons/react";
-import { motion, } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 interface Falla {
@@ -49,9 +46,10 @@ interface FallaDetailsProps {
   onNext?: () => void;
   onPrev?: () => void;
   onClose?: () => void;
+  onInteraction?: () => void;
 }
 
-export function FallaDetails({ falla, className, onNext, onPrev, onClose }: FallaDetailsProps) {
+export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInteraction }: FallaDetailsProps) {
   const { user } = useUser();
   const { comments, images, addComment, addImage } = useFallaDetails(falla.number);
   const [newComment, setNewComment] = useState("");
@@ -97,6 +95,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose }: Fall
         setState(true);
         toast.success(type === 'like' ? "Saved to collection! ❤️" : "Stamped in passport! 🦇");
       }
+      onInteraction?.(); // Trigger parent refresh
     } catch (err) {
       console.error(err);
     }
