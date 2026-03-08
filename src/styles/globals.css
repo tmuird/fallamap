@@ -77,6 +77,9 @@ h1, h2, h3, h4, .font-display {
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .marker.visited {
@@ -84,6 +87,15 @@ h1, h2, h3, h4, .font-display {
   width: 18px !important;
   height: 18px !important;
   z-index: 5;
+}
+
+.marker.liked::after {
+  content: '❤️';
+  font-size: 8px;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  filter: drop-shadow(1px 1px 0px #1A1A1A);
 }
 
 .marker.burnt {

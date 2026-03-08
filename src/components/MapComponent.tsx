@@ -44,11 +44,15 @@ const MapComponent = () => {
   const [fallasData, setFallasData] = useState<Falla[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'standing'>('all');
+  
+  // Interactions State
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
+  const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
+  
   const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Load Fallas Data
+  // 1. Initial Load
   useEffect(() => {
     const fetchFallas = async () => {
       const { data: fallas } = await supabase.from("fallas").select("*").order("number");
@@ -57,26 +61,41 @@ const MapComponent = () => {
     fetchFallas();
   }, []);
 
-  // Sync Visited State
-  const refreshVisited = useCallback(async () => {
+  // 2. Fetch User Interactions
+  const refreshInteractions = useCallback(async () => {
     if (user) {
       const { data } = await supabase
         .from("user_interactions")
-        .select("fallas(number)")
-        .eq("user_id", user.id)
-        .eq("type", "visited");
+        .select("type, fallas(number)")
+        .eq("user_id", user.id);
       
       if (data) {
-        setVisitedNumbers(data.map((i: any) => i.fallas?.number).filter(Boolean));
+        const visited = data.filter(i => i.type === 'visited').map((i: any) => i.fallas?.number).filter(Boolean);
+        const liked = data.filter(i => i.type === 'like').map((i: any) => i.fallas?.number).filter(Boolean);
+        setVisitedNumbers(visited);
+        setLikedNumbers(liked);
       }
     } else {
       setVisitedNumbers(JSON.parse(localStorage.getItem("visited_fallas") || "[]"));
+      setLikedNumbers(JSON.parse(localStorage.getItem("liked_fallas") || "[]"));
     }
   }, [user]);
 
   useEffect(() => {
-    refreshVisited();
-  }, [refreshVisited]);
+    refreshInteractions();
+  }, [refreshInteractions]);
+
+  // 3. Handle Map Deep Link
+  useEffect(() => {
+    const fallaNum = searchParams.get("falla");
+    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
+      const falla = fallasData.find(f => f.number === fallaNum);
+      if (falla) {
+        setSelectedFalla(falla);
+        setIsDrawerOpen(true);
+      }
+    }
+  }, [searchParams, fallasData, selectedFalla]);
 
   const flyToFalla = (falla: Falla) => {
     mapRef.current?.flyTo({
@@ -101,7 +120,7 @@ const MapComponent = () => {
     setSelectedFalla(null);
   };
 
-  // Initialize Map
+  // 4. Initialize Mapbox
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -117,48 +136,38 @@ const MapComponent = () => {
     return () => map.remove();
   }, [isDarkMode]);
 
-  // Deep Link Handling
-  useEffect(() => {
-    const fallaNum = searchParams.get("falla");
-    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
-      const falla = fallasData.find(f => f.number === fallaNum);
-      if (falla) {
-        setSelectedFalla(falla);
-        setIsDrawerOpen(true);
-      }
-    }
-  }, [searchParams, fallasData, selectedFalla]);
-
-  // Marker Management (Reactive to data and visited status)
+  // 5. Marker Lifecycle (Reactive)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
 
-    // Remove existing
-    Object.values(markersRef.current).forEach(m => m.remove());
-    markersRef.current = {};
-
+    // We only update markers that exist or add new ones
     fallasData.forEach((falla) => {
-      if (falla.coordinates?.lat && falla.coordinates?.lng) {
-        const isVisited = visitedNumbers.includes(falla.number);
+      const isVisited = visitedNumbers.includes(falla.number);
+      const isLiked = likedNumbers.includes(falla.number);
+      
+      let marker = markersRef.current[falla.number];
+
+      if (!marker) {
         const el = document.createElement("div");
-        
-        // Clean CSS classes - No manual style overrides
-        el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''}`;
-        
+        el.className = 'marker';
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           handleSelectFalla(falla);
         });
 
-        const marker = new mapboxgl.Marker(el)
+        marker = new mapboxgl.Marker(el)
           .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
           .addTo(map);
         
         markersRef.current[falla.number] = marker;
       }
+
+      // Update appearance without re-creating
+      const el = marker.getElement();
+      el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''} ${isLiked ? 'liked' : ''}`;
     });
-  }, [fallasData, visitedNumbers, isDarkMode]);
+  }, [fallasData, visitedNumbers, likedNumbers]); // Watch interactions specifically
 
   const filteredFallas = useMemo(() => {
     return fallasData.filter(f => {
@@ -169,7 +178,7 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // Sync marker visibility with filtering
+  // 6. Search Visibility Sync
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -181,7 +190,6 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      {/* Consolidated Control Center */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-10">
         <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-2 flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -244,7 +252,7 @@ const MapComponent = () => {
                       handleSelectFalla(fallasData[(idx - 1 + fallasData.length) % fallasData.length]);
                     }}
                     onClose={handleDrawerClose}
-                    onInteraction={refreshVisited}
+                    onInteraction={refreshInteractions}
                   />
                 </div>
               )}
