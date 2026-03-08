@@ -3,7 +3,7 @@ import { Clock } from "@phosphor-icons/react";
 
 export default function ArchivePage() {
   return (
-    <div className="min-h-screen bg-falla-paper py-12 md:py-24 px-4 md:px-8 flex items-center justify-center transition-colors duration-300">
+    <div className="min-h-screen bg-falla-paper pt-32 pb-24 px-4 md:px-8 flex items-center justify-center transition-colors duration-300">
       <div className="max-w-4xl mx-auto text-center">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
