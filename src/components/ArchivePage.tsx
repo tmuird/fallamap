@@ -11,7 +11,7 @@ export default function ArchivePage() {
           className="space-y-8"
         >
           <div className="brutal-pill inline-block bg-falla-paper border-falla-ink/20 shadow-none px-6 py-2">
-            <span className="text-xs font-black uppercase tracking-[0.4em] text-falla-fire lowercase">legacy archive</span>
+            <span className="text-xs font-black uppercase tracking-[0.4em] text-falla-fire">legacy archive</span>
           </div>
           
           <h1 className="text-6xl md:text-[10rem] font-display text-falla-ink mb-6 leading-none italic tracking-tighter lowercase">

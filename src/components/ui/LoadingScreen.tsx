@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export const LoadingScreen = () => {
   return (
-    <div className="fixed inset-0 z-[200] bg-[#FAF7F2] flex flex-col items-center justify-center">
+    <div className="fixed inset-0 z-[200] bg-falla-paper flex flex-col items-center justify-center">
       <div className="relative w-64 h-64 flex flex-col items-center justify-center">
         {/* Custom Brutalist Flame Logo */}
         <motion.div

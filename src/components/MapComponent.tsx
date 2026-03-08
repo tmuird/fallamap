@@ -258,7 +258,7 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       {/* Consolidated Hub - Unified Container Aesthetic */}
-      <div className="absolute top-14 md:top-24 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+      <div className="absolute top-2 md:top-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -310,7 +310,9 @@ const MapComponent = () => {
               </Button>
             </div>
 
-            <div className="flex items-center justify-between px-1 pb-1 border-t border-falla-ink/5 pt-3">
+            <div className="flex items-center justify-between px-1 pb-1 pt-2 md:pt-3 relative">
+              {/* Ultra-thin separator */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-falla-ink/10 dark:bg-white/10" />
               <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center w-full">
                 {[
                   { id: 'all', label: 'All' },

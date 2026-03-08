@@ -33,7 +33,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => (
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
     className="w-full flex-grow flex flex-col"
   >
     {children}
@@ -49,13 +49,15 @@ export default function App() {
   useEffect(() => {
     document.documentElement.className = isDarkMode ? "dark" : "light";
     document.body.className = isDarkMode ? "dark" : "light";
-    
+  }, [isDarkMode]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1200);
     
     return () => clearTimeout(timer);
-  }, [isDarkMode]);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans transition-colors duration-300 selection:bg-falla-fire selection:text-white overflow-x-hidden">
@@ -109,7 +111,7 @@ export default function App() {
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
-              <Route path="/map" element={<MapPage />} />
+              <Route path="/map" element={<PageWrapper><MapPage /></PageWrapper>} />
               <Route path="/schedule" element={<PageWrapper><SchedulePage /></PageWrapper>} />
               <Route path="/archive" element={<PageWrapper><ArchivePage /></PageWrapper>} />
               <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
