@@ -25,12 +25,13 @@ import {
   EyeSlash,
   Eye,
   MapPin,
-  ArrowsOut,
-  ChatCircleDots
+  
+  ChatCircleDots,
+  LockKey
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 // @ts-ignore
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
@@ -56,7 +57,7 @@ interface FallaDetailsProps {
 }
 
 export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInteraction }: FallaDetailsProps) {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number);
   const [newComment, setNewComment] = useState("");
@@ -122,6 +123,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   };
 
   const handleCommentSubmit = async () => {
+    if (!user) {
+      toast.error("Please sign in to share notes");
+      return;
+    }
     if (!newComment.trim()) return;
     const { error } = await addComment(newComment, user?.id, isPrivate);
     if (!error) {
@@ -136,6 +141,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user) {
+      toast.error("Please sign in to upload photos");
+      return;
+    }
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
@@ -155,6 +164,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       setUploading(false);
     }
   };
+
+  const isSignedIn = isLoaded && !!user;
 
   return (
     <PhotoProvider 
@@ -208,59 +219,54 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
             <div className="h-12 md:h-14 px-3 bg-white ink-border rounded-xl flex items-center gap-2 soft-shadow-sm">
               {isPrivate ? <EyeSlash size={18} weight="bold" className="text-falla-ink/30" /> : <Eye size={18} weight="bold" className="text-falla-fire" />}
-              <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" />
+              <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" disabled={!isSignedIn} />
             </div>
           </div>
         </header>
         
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2]">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2] relative">
           <div className="flex flex-col w-full min-h-full">
-            {/* Gallery with fixed aspect ratio */}
+            {/* Gallery with Content Wall for Guests */}
             <div className="w-full aspect-square md:aspect-video bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">
               {images.length > 0 ? (
-                <Carousel className="w-full h-full">
-                  <CarouselContent className="h-full">
-                    {images.map((img, index) => (
-                      <CarouselItem key={index} className="h-full relative group">
-                        <PhotoView src={img.url}>
-                          <div className="w-full h-full cursor-zoom-in">
-                            <Image 
-                              src={img.url} 
-                              className="object-cover w-full h-full rounded-none" 
-                              removeWrapper
-                              loading="lazy"
-                            />
-                          </div>
-                        </PhotoView>
-                        
-                        {/* Image Interaction Layer - Always visible z-index */}
-                        <div className="absolute top-4 left-4 flex gap-2 z-50">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }}
-                            className="bg-white/90 backdrop-blur-md ink-border p-2.5 rounded-xl shadow-solid-sm hover:scale-110 active:scale-95 transition-all flex items-center gap-2"
-                          >
-                            <Heart size={20} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
-                            <span className="text-xs font-black">{img.likeCount}</span>
-                          </button>
-                          <div className="bg-white/90 backdrop-blur-md ink-border p-2.5 rounded-xl shadow-solid-sm pointer-events-none flex items-center justify-center">
-                            <ArrowsOut size={20} weight="bold" />
-                          </div>
-                        </div>
-                        {img.is_private && (
-                          <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20 z-50">
-                            <EyeSlash size={18} weight="bold" />
-                          </div>
-                        )}
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  {images.length > 1 && (
-                    <>
-                      <CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2 z-30" />
-                      <CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2 z-30" />
-                    </>
+                <div className="w-full h-full relative">
+                  <div className={cn("w-full h-full", !isSignedIn && "blur-xl grayscale pointer-events-none")}>
+                    <Carousel className="w-full h-full">
+                      <CarouselContent className="h-full">
+                        {images.map((img, index) => (
+                          <CarouselItem key={index} className="h-full relative group">
+                            <PhotoView src={img.url}>
+                              <div className="w-full h-full cursor-zoom-in">
+                                <Image src={img.url} className="object-cover w-full h-full rounded-none" removeWrapper loading="lazy" />
+                              </div>
+                            </PhotoView>
+                            
+                            <div className="absolute top-4 left-4 flex gap-2 z-50">
+                              <button onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }} className="bg-white/90 backdrop-blur-md ink-border p-2.5 rounded-xl shadow-solid-sm hover:scale-110 active:scale-95 transition-all flex items-center gap-2">
+                                <Heart size={20} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
+                                <span className="text-xs font-black">{img.likeCount}</span>
+                              </button>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      {images.length > 1 && isSignedIn && <><CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2 z-30" /><CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2 z-30" /></>}
+                    </Carousel>
+                  </div>
+
+                  {!isSignedIn && (
+                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center bg-white/10 backdrop-blur-[2px]">
+                      <div className="w-16 h-16 rounded-[2rem] bg-white ink-border flex items-center justify-center mb-6 shadow-solid">
+                        <LockKey size={32} weight="fill" className="text-falla-fire" />
+                      </div>
+                      <h3 className="text-2xl font-display italic mb-3 lowercase">Community Gallery</h3>
+                      <p className="text-sm font-bold text-falla-ink/60 max-w-[240px] mb-8">Join the community to see and share festival memories.</p>
+                      <Link to="/sign-up" className="w-full max-w-[200px]">
+                        <Button className="bg-falla-fire text-white w-full h-12 rounded-xl text-xs font-black uppercase tracking-widest shadow-solid border-2">Join to unlock</Button>
+                      </Link>
+                    </div>
                   )}
-                </Carousel>
+                </div>
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-white/30">
                   <MapPin size={48} weight="thin" className="mb-4 opacity-5" />
@@ -269,8 +275,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
               )}
             </div>
 
-            {/* Community Feed */}
-            <div className="w-full p-6 md:p-12 flex flex-col bg-[#FAF7F2] min-h-[400px]">
+            {/* Community Feed with Guest Blur */}
+            <div className="w-full p-6 md:p-12 flex flex-col bg-[#FAF7F2] min-h-[400px] relative">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
                   <ChatCircleDots size={20} weight="bold" />
@@ -278,18 +284,11 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                 <span className="font-display text-xl lowercase italic text-falla-ink">Community Notes</span>
               </div>
 
-              <div className="space-y-8 pb-48 pt-2">
+              <div className={cn("space-y-8 pb-48 pt-2", !isSignedIn && "blur-md select-none pointer-events-none")}>
                 <AnimatePresence mode="popLayout">
                   {comments.length > 0 ? (
                     comments.map((comment, i) => (
-                      <motion.div 
-                        key={comment.id || i} 
-                        layout
-                        initial={{ opacity: 0, y: 10 }} 
-                        animate={{ opacity: 1, y: 0 }} 
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="group border-b-2 border-falla-ink/5 pb-6 last:border-0 relative"
-                      >
+                      <motion.div key={comment.id || i} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="group border-b-2 border-falla-ink/5 pb-6 last:border-0 relative">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <span className="text-[9px] font-black uppercase tracking-widest text-falla-fire">Verified contributor</span>
@@ -308,6 +307,12 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                   )}
                 </AnimatePresence>
               </div>
+
+              {!isSignedIn && comments.length > 0 && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-t from-[#FAF7F2] via-transparent to-transparent pt-20">
+                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-falla-fire bg-white border-2 border-falla-fire px-4 py-2 rounded-xl shadow-solid">Sign up to read more notes</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -315,10 +320,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         {/* Sticky Bottom Input */}
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-10 bg-gradient-to-t from-[#FAF7F2] via-[#FAF7F2] to-transparent pt-16 z-40 pointer-events-none">
           <div className="flex gap-2 pointer-events-auto max-w-4xl mx-auto w-full">
-            <div className="flex-1 bg-white ink-border rounded-[2rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2">
-              <Textarea variant="flat" placeholder="Tell a story..." value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={3} className="w-full" classNames={{ input: "text-base md:text-xl p-4 md:p-6 font-bold bg-transparent placeholder:text-falla-ink/20", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
+            <div className={cn("flex-1 bg-white ink-border rounded-[2rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2", !isSignedIn && "opacity-50 grayscale")}>
+              <Textarea variant="flat" placeholder={isSignedIn ? "Tell a story..." : "Sign in to share..."} value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={3} className="w-full" disabled={!isSignedIn} classNames={{ input: "text-base md:text-xl p-4 md:p-6 font-bold bg-transparent placeholder:text-falla-ink/20", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
             </div>
-            <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim()} className="w-14 h-14 md:w-20 md:h-20 rounded-[1.5rem] md:rounded-[2rem] shrink-0 border-2" aria-label="Send"><PaperPlaneRight size={24} weight="bold" /></Button>
+            <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim() || !isSignedIn} className="w-14 h-14 md:w-20 md:h-20 rounded-[1.5rem] md:rounded-[2rem] shrink-0 border-2" aria-label="Send"><PaperPlaneRight size={24} weight="bold" /></Button>
           </div>
         </div>
       </motion.div>
