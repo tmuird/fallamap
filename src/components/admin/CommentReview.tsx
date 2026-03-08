@@ -61,7 +61,7 @@ export function CommentReview() {
     <div className="space-y-6 mt-16">
       <div className="flex items-center justify-between mb-8 pt-12 border-t-2 border-falla-ink/10">
         <h2 className="font-display text-3xl text-falla-ink">Comment Queue</h2>
-        <span className="brutal-pill px-4 py-1 text-xs font-black uppercase text-falla-mustard">
+        <span className="brutal-pill px-4 py-1 text-xs font-black uppercase text-falla-fire">
           {pendingComments.length} Pending
         </span>
       </div>
@@ -75,7 +75,7 @@ export function CommentReview() {
           {pendingComments.map((comment) => (
             <Card key={comment.id}>
               <CardBody className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <div className="flex-shrink-0 w-12 h-12 bg-falla-mustard/10 text-falla-mustard rounded-2xl flex items-center justify-center border-2 border-falla-mustard/20">
+                <div className="flex-shrink-0 w-12 h-12 bg-falla-fire/10 text-falla-fire rounded-2xl flex items-center justify-center border-2 border-falla-fire/20">
                   <ChatCircleDots size={24} weight="bold" />
                 </div>
                 

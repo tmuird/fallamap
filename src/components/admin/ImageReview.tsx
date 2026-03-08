@@ -55,10 +55,10 @@ export function ImageReview() {
 
   if (!isAdmin) {
     return (
-      <div className="p-8 text-center bg-white ink-border rounded-3xl">
+      <div className="p-8 text-center bg-falla-paper ink-border rounded-3xl border-2 border-falla-ink">
         <ShieldCheck size={48} weight="thin" className="mx-auto mb-4 text-falla-fire" />
         <h2 className="font-display text-2xl text-falla-ink mb-2">Access Denied</h2>
-        <p className="text-sm font-medium opacity-60">You must be a Fallamap administrator to review content.</p>
+        <p className="text-sm font-medium opacity-60 text-falla-ink">You must be a Fallamap administrator to review content.</p>
       </div>
     );
   }

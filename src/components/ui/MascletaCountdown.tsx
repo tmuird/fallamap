@@ -54,16 +54,16 @@ export function MascletaCountdown() {
           : "bottom-24 right-6 md:bottom-10"
       )}
     >
-      <div className="bg-falla-paper/90 backdrop-blur-md ink-border shadow-solid rounded-3xl p-4 md:p-6 flex flex-col gap-3 min-w-[180px]">
-        <div className="flex items-center gap-3">
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 ${isLive ? 'bg-falla-fire text-falla-paper border-falla-ink animate-pulse' : 'bg-falla-fire/10 text-falla-fire border-falla-fire/20'}`}>
-            {isLive ? <SpeakerHigh size={18} weight="fill" /> : <Timer size={18} weight="bold" />}
+      <div className="bg-falla-paper/90 backdrop-blur-md ink-border shadow-solid rounded-[2.5rem] p-6 md:p-8 flex flex-col gap-4 min-w-[200px]">
+        <div className="flex items-center gap-4">
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border-2 ${isLive ? 'bg-falla-fire text-falla-paper border-falla-ink animate-pulse' : 'bg-falla-fire/10 text-falla-fire border-falla-fire/20'}`}>
+            {isLive ? <SpeakerHigh size={20} weight="fill" /> : <Timer size={20} weight="bold" />}
           </div>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-widest text-falla-ink/40 leading-none mb-1">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 leading-none mb-1">
               {isLive ? 'Happening Now' : 'Mascletà Daily'}
             </p>
-            <h4 className="text-sm font-display italic lowercase leading-none text-falla-ink">
+            <h4 className="text-base font-display italic lowercase leading-none text-falla-ink">
               {isLive ? 'nit del foc' : 'Next Explosion'}
             </h4>
           </div>

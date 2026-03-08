@@ -66,12 +66,24 @@ export default function App() {
         richColors 
         theme={isDarkMode ? 'dark' : 'light'}
         toastOptions={{
-          className: "ink-border soft-shadow-sm font-sans font-bold !bg-falla-paper !text-falla-ink",
+          className: "ink-border soft-shadow-lg font-sans font-bold !bg-falla-paper !text-falla-ink border-2",
           style: {
-            borderRadius: '9999px',
-            padding: '12px 24px',
+            borderRadius: '24px',
+            padding: '16px 24px',
+            border: '2.5px solid var(--falla-ink)',
+          },
+          actionButton: {
+            backgroundColor: 'var(--falla-fire)',
+            color: 'white',
+            borderRadius: '12px',
+            padding: '8px 16px',
+            fontWeight: '900',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            fontSize: '10px',
             border: '2px solid var(--falla-ink)',
-          }
+            boxShadow: '2px 2px 0px 0px var(--falla-ink)',
+          },
         }}
       />
       

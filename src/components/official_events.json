@@ -1,0 +1,57 @@
+[
+  {
+    "id": "hub-ajuntament",
+    "name": "Plaça de l'Ajuntament",
+    "description": "The main square. Host to the daily Mascletà and the final Municipal Cremà.",
+    "type": "Official Hub",
+    "coordinates": {
+      "lng": -0.3768,
+      "lat": 39.4700
+    },
+    "events": ["mascleta", "crema-muni"]
+  },
+  {
+    "id": "hub-monteolivete",
+    "name": "Monteolivete Bridge",
+    "description": "Primary location for the Night Fireworks (Castillos) and the grand Nit del Foc.",
+    "type": "Official Hub",
+    "coordinates": {
+      "lng": -0.3535,
+      "lat": 39.4585
+    },
+    "events": ["castillo", "nit-del-foc"]
+  },
+  {
+    "id": "hub-virgen",
+    "name": "Plaza de la Virgen",
+    "description": "The spiritual heart of the festival. Site of the Flower Offering (L'Ofrena).",
+    "type": "Official Hub",
+    "coordinates": {
+      "lng": -0.3758,
+      "lat": 39.4764
+    },
+    "events": ["ofrena"]
+  },
+  {
+    "id": "hub-ninot",
+    "name": "Science Museum (Ninot)",
+    "description": "Location of the Ninot Exhibition and where the Indultats are proclaimed.",
+    "type": "Official Hub",
+    "coordinates": {
+      "lng": -0.3533,
+      "lat": 39.4572
+    },
+    "events": ["ninot-indultat"]
+  },
+  {
+    "id": "hub-serranos",
+    "name": "Torres de Serranos",
+    "description": "Historic gates where the Crida takes place and major parades pass through.",
+    "type": "Official Hub",
+    "coordinates": {
+      "lng": -0.3760,
+      "lat": 39.4790
+    },
+    "events": ["crida", "fire-parade"]
+  }
+]

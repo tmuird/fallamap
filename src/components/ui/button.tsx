@@ -11,11 +11,11 @@ const buttonVariants = cva(
       variant: {
         default: "bg-falla-fire text-white ink-border soft-shadow hover:bg-falla-fire/90",
         destructive: "bg-red-500 text-white ink-border soft-shadow hover:bg-red-600",
-        outline: "bg-white text-falla-ink ink-border soft-shadow hover:bg-falla-paper",
+        outline: "bg-falla-paper text-falla-ink ink-border soft-shadow hover:bg-falla-paper",
         secondary: "bg-falla-sage text-white ink-border soft-shadow hover:bg-falla-sage/90",
         ghost: "text-falla-ink hover:bg-falla-ink/5",
         link: "text-falla-fire underline-offset-4 hover:underline",
-        neutral: "bg-white text-falla-ink ink-border hover:bg-falla-paper",
+        neutral: "bg-falla-paper text-falla-ink ink-border hover:bg-falla-paper",
       },
       size: {
         default: "h-12 px-6 rounded-xl",
