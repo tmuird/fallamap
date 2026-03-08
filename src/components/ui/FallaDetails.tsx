@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { Image, Textarea, Switch } from "@heroui/react";
+import { Textarea, Switch } from "@heroui/react";
 import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
 import { supabase } from "@/lib/supabase";
@@ -172,7 +172,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       maskOpacity={0.85}
       bannerVisible={false}
       speed={() => 300}
-      toolbarRender={({ onScale, scale, rotate, onRotate, onClose }) => {
+      toolbarRender={({ onClose }) => {
         return (
           <div className="absolute top-6 right-6 z-[1000] flex gap-4">
             <button 
@@ -289,7 +289,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                                   <img 
                                     src={img.url} 
                                     alt={falla.name}
-                                    className="max-h-full max-w-full w-auto h-auto object-contain rounded-lg shadow-2xl relative z-20"
+                                    className="max-h-[95%] max-w-[95%] w-auto h-auto object-contain rounded-lg shadow-2xl relative z-20 flex-shrink-0"
                                     loading="lazy" 
                                   />
                                 </div>

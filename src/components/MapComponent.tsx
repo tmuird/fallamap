@@ -258,114 +258,140 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      {/* Consolidated Hub - Floating Island Aesthetic */}
-      <div className="absolute top-4 md:top-10 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none">
+      {/* Consolidated Hub - Unified Container Aesthetic */}
+      <div className="absolute top-4 md:top-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={cn(
-            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink p-2 md:p-3 flex flex-col gap-2 md:gap-3 shadow-solid pointer-events-auto transition-all duration-300",
-            autocompleteResults.length > 0 && isSearchFocused ? "rounded-t-[2.5rem] rounded-b-none border-b-transparent" : "rounded-[2.5rem]"
+            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink shadow-solid pointer-events-auto transition-all duration-300 overflow-hidden flex flex-col",
+            "rounded-[2rem] md:rounded-[2.5rem]"
           )}
         >
-          <div className="flex items-center gap-2 md:gap-3 h-10 md:h-12">
-            <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.25rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-3 md:px-4 h-full overflow-hidden">
-              <MagnifyingGlass size={18} weight="bold" className="opacity-30 shrink-0 md:size-[22px]" />
-              <input 
-                placeholder="Find a monument..." 
-                value={searchQuery}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink h-full min-w-0"
-              />
-              <AnimatePresence>
-                {searchQuery && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    onClick={() => setSearchQuery("")}
-                    className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors shrink-0 mr-[-2px]"
-                  >
-                    <X size={14} weight="bold" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
-            </div>
-            <Button 
-              isIconOnly 
-              variant="ghost" 
-              onClick={handleGeolocateUser} 
-              className="h-10 w-10 md:h-12 md:w-12 rounded-[1.25rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all shrink-0 border-2"
-              aria-label="Locate me"
-            >
-              <Target size={22} weight="bold" className="md:size-[26px]" />
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between px-1 pb-1 border-t border-falla-ink/5 pt-3">
-            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center w-full">
-              {[
-                { id: 'all', label: 'All' },
-                { id: 'special', label: 'Special', icon: <Star size={12} weight="fill" /> },
-                { id: 'liked', label: 'Liked', icon: <Heart size={12} weight="fill" /> },
-                { id: 'visited', label: 'Visited', icon: <CheckCircle size={12} weight="fill" /> }
-              ].map((mode) => (
-                <Button 
-                  key={mode.id}
-                  size="sm" 
-                  variant={filterMode === mode.id ? 'default' : 'ghost'} 
-                  onClick={() => setFilterMode(mode.id as any)}
-                  startContent={mode.icon}
-                  className={cn(
-                    "h-8 md:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0", 
-                    filterMode === mode.id ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
+          <div className="p-2 md:p-3 flex flex-col gap-2 md:gap-3 shrink-0 z-20 bg-transparent">
+            <div className="flex items-center gap-2 md:gap-3 h-10 md:h-12">
+              <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.25rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-3 md:px-4 h-full overflow-hidden">
+                <MagnifyingGlass size={18} weight="bold" className="opacity-30 shrink-0 md:size-[22px]" />
+                <input 
+                  placeholder="Find a monument..." 
+                  value={searchQuery}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/30 text-falla-ink h-full min-w-0"
+                />
+                <AnimatePresence>
+                  {searchQuery && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={() => {
+                        if (navigator.vibrate) navigator.vibrate(30);
+                        setSearchQuery("");
+                      }}
+                      className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors shrink-0 mr-[-2px] active:scale-95"
+                    >
+                      <X size={14} weight="bold" />
+                    </motion.button>
                   )}
-                >
-                  {mode.label}
-                </Button>
-              ))}
+                </AnimatePresence>
+              </div>
+              <Button 
+                isIconOnly 
+                variant="ghost" 
+                onClick={() => {
+                  if (navigator.vibrate) navigator.vibrate(50);
+                  handleGeolocateUser();
+                }} 
+                className="h-10 w-10 md:h-12 md:w-12 rounded-[1.25rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all shrink-0 border-2 active:scale-95"
+                aria-label="Locate me"
+              >
+                <Target size={22} weight="bold" className="md:size-[26px]" />
+              </Button>
             </div>
-          </div>
-        </motion.div>
 
-        {/* Autocomplete Dropdown */}
-        <AnimatePresence>
-          {isSearchFocused && autocompleteResults.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-falla-paper/95 dark:bg-zinc-950/95 backdrop-blur-xl border-x-2 border-b-2 border-falla-ink rounded-b-[2.5rem] shadow-solid overflow-hidden pointer-events-auto mt-[-2px]"
-            >
-              <div className="flex flex-col">
-                {autocompleteResults.map((result, idx) => (
-                  <button
-                    key={result.number}
-                    onClick={() => handleAutocompleteClick(result)}
+            <div className="flex items-center justify-between px-1 pb-1 border-t border-falla-ink/5 pt-3">
+              <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center w-full">
+                {[
+                  { id: 'all', label: 'All' },
+                  { id: 'special', label: 'Special', icon: <Star size={12} weight="fill" /> },
+                  { id: 'liked', label: 'Liked', icon: <Heart size={12} weight="fill" /> },
+                  { id: 'visited', label: 'Visited', icon: <CheckCircle size={12} weight="fill" /> }
+                ].map((mode) => (
+                  <Button 
+                    key={mode.id}
+                    size="sm" 
+                    variant={filterMode === mode.id ? 'default' : 'ghost'} 
+                    onClick={() => {
+                      if (navigator.vibrate) navigator.vibrate(30);
+                      setFilterMode(mode.id as any);
+                    }}
+                    startContent={mode.icon}
                     className={cn(
-                      "w-full px-6 py-4 flex items-center justify-between hover:bg-falla-fire/5 transition-colors group relative",
-                      idx !== autocompleteResults.length - 1 && "after:absolute after:bottom-0 after:left-6 after:right-6 after:h-[1.5px] after:bg-falla-ink/5"
+                      "h-8 md:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0 active:scale-95", 
+                      filterMode === mode.id ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
                     )}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-falla-ink/5 flex items-center justify-center font-display text-lg text-falla-fire group-hover:scale-110 transition-transform">
-                        #{result.number}
-                      </div>
-                      <div className="text-left">
-                        <p className="font-bold text-sm text-falla-ink leading-none mb-1 group-hover:text-falla-fire transition-colors">{result.name}</p>
-                        <p className="text-[10px] font-black uppercase text-falla-ink/30 tracking-widest">{result.is_special ? 'Special Section' : 'Monument'}</p>
-                      </div>
-                    </div>
-                    {visitedNumbers.includes(result.number) && <CheckCircle size={20} weight="fill" className="text-falla-sage" />}
-                  </button>
+                    {mode.label}
+                  </Button>
                 ))}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {isSearchFocused && autocompleteResults.length > 0 && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="relative z-10 bg-transparent"
+              >
+                {/* Subtle gradient line for transition instead of a thick border */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90%] h-[1.5px] bg-gradient-to-r from-transparent via-falla-ink/10 dark:via-white/10 to-transparent" />
+                
+                <div className="flex flex-col max-h-[40vh] overflow-y-auto scrollbar-hide py-2">
+                  {autocompleteResults.map((result) => {
+                    // Match highlighting logic
+                    const regex = new RegExp(`(${searchQuery})`, 'gi');
+                    const parts = result.name.split(regex);
+                    
+                    return (
+                      <button
+                        key={result.number}
+                        onClick={() => {
+                          if (navigator.vibrate) navigator.vibrate(50);
+                          handleAutocompleteClick(result);
+                        }}
+                        className="w-full px-6 py-3 md:py-4 flex items-center justify-between hover:bg-falla-ink/5 dark:hover:bg-white/5 transition-all group relative bg-transparent border-none active:scale-[0.98]"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-falla-ink/5 dark:bg-white/5 flex items-center justify-center font-display text-lg text-falla-fire group-hover:scale-110 group-hover:bg-falla-fire/10 transition-all shrink-0">
+                            #{result.number}
+                          </div>
+                          <div className="text-left overflow-hidden">
+                            <p className="font-bold text-sm text-falla-ink leading-none mb-1 truncate transition-colors">
+                              {parts.map((part, i) => 
+                                regex.test(part) 
+                                  ? <span key={i} className="text-falla-fire">{part}</span> 
+                                  : <span key={i} className="opacity-80 group-hover:opacity-100">{part}</span>
+                              )}
+                            </p>
+                            <p className="text-[10px] font-black uppercase text-falla-ink/40 tracking-widest">{result.is_special ? 'Special Section' : 'Monument'}</p>
+                          </div>
+                        </div>
+                        {visitedNumbers.includes(result.number) && <CheckCircle size={20} weight="fill" className="text-falla-sage shrink-0 drop-shadow-sm ml-2" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
+
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} shouldScaleBackground autoFocus={false}>
         <Drawer.Portal>
