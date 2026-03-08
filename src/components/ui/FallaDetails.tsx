@@ -25,10 +25,13 @@ import {
   CheckCircle,
   EyeSlash,
   Eye,
-  MapPin
+  MapPin,
+  ArrowsOut
 } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 interface Falla {
   id?: string;
@@ -58,6 +61,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const [isPrivate, setIsPrivate] = useState(false);
   const [liked, setLiked] = useState(false);
   const [visited, setVisited] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
 
   useEffect(() => {
     const checkInteractions = async () => {
@@ -165,7 +169,6 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         
         <h2 className="text-3xl md:text-7xl font-display text-falla-ink leading-[0.9] mb-8 tracking-tighter lowercase">{falla.name}</h2>
         
-        {/* Streamlined Action Hub */}
         <div className="flex flex-wrap gap-3 items-center">
           <Button 
             variant={visited ? "secondary" : "outline"}
@@ -190,20 +193,30 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       </header>
       
       <div className="flex-1 flex flex-col md:flex-row min-h-0">
-        {/* Gallery */}
         <div className="w-full md:w-1/2 aspect-square md:aspect-auto bg-falla-sand/10 border-b-2 md:border-b-0 md:border-r-2 border-falla-ink overflow-hidden relative shrink-0">
           {images.length > 0 ? (
-            <Carousel className="w-full h-full">
-              <CarouselContent className="h-full">
-                {images.map((img, index) => (
-                  <CarouselItem key={index} className="h-full relative">
-                    <Image src={img.url} className="object-cover w-full h-full rounded-none" removeWrapper />
-                    {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20"><EyeSlash size={18} weight="bold" /></div>}
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              {images.length > 1 && <><CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2" /><CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2" /></>}
-            </Carousel>
+            <>
+              <Carousel className="w-full h-full">
+                <CarouselContent className="h-full">
+                  {images.map((img, index) => (
+                    <CarouselItem key={index} className="h-full relative cursor-zoom-in" onClick={() => setLightboxIndex(index)}>
+                      <Image src={img.url} className="object-cover w-full h-full rounded-none" removeWrapper />
+                      <div className="absolute top-4 left-4 bg-white/80 p-2 rounded-xl border-2 border-falla-ink shadow-sm">
+                        <ArrowsOut size={18} weight="bold" />
+                      </div>
+                      {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20"><EyeSlash size={18} weight="bold" /></div>}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {images.length > 1 && <><CarouselPrevious className="left-4 bg-white/90 ink-border shadow-none border-2" /><CarouselNext className="right-4 bg-white/90 ink-border shadow-none border-2" /></>}
+              </Carousel>
+              <Lightbox
+                index={lightboxIndex}
+                open={lightboxIndex >= 0}
+                close={() => setLightboxIndex(-1)}
+                slides={images.map(img => ({ src: img.url }))}
+              />
+            </>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-white/30">
               <MapPin size={48} weight="thin" className="mb-4 opacity-5" />
@@ -212,15 +225,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           )}
         </div>
 
-        {/* Community Feed */}
         <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col bg-[#FAF7F2] relative overflow-hidden flex-1">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
-              <PaperPlaneRight size={20} weight="bold" />
-            </div>
-            <span className="font-display text-xl lowercase italic text-falla-ink">Community Notes</span>
-          </div>
-
           <ScrollArea className="flex-1 pr-4 scrollbar-hide">
             <div className="space-y-8 pb-48 pt-2">
               {comments.map((comment, i) => (

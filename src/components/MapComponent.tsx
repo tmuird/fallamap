@@ -48,14 +48,14 @@ const MapComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'standing'>('all');
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
+  const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Authoritative Data Load
+  // 1. Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data: fallas } = await supabase.from("fallas").select("*").order("number");
-        // Ensure every Falla has an ID from DB if possible, fallback to local for geometry
         const merged = (fallas && fallas.length > 0) ? fallas : localFallas;
         setFallasData(merged as Falla[]);
       } catch (err) {
@@ -65,28 +65,30 @@ const MapComponent = () => {
     fetchData();
   }, []);
 
-  // 2. Instant/Optimistic Interaction Sync
+  // 2. Fetch Interactions
   const refreshInteractions = useCallback(async () => {
-    // ALWAYS start with local storage for zero-lag UI updates
-    const local = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
-    setVisitedNumbers(local);
+    const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+    const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
+    setVisitedNumbers(localV);
+    setLikedNumbers(localL);
 
-    // If logged in, sync with Supabase in the background
     if (user) {
       try {
         const { data } = await supabase
           .from("user_interactions")
-          .select("fallas(number)")
-          .eq("user_id", user.id)
-          .eq("type", "visited");
+          .select("type, fallas(number)")
+          .eq("user_id", user.id);
         
         if (data) {
-          const dbNumbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
-          setVisitedNumbers(dbNumbers);
-          localStorage.setItem("visited_fallas", JSON.stringify(dbNumbers));
+          const visited = data.filter(i => i.type === 'visited').map((i: any) => i.fallas?.number).filter(Boolean);
+          const liked = data.filter(i => i.type === 'like').map((i: any) => i.fallas?.number).filter(Boolean);
+          setVisitedNumbers(visited);
+          setLikedNumbers(liked);
+          localStorage.setItem("visited_fallas", JSON.stringify(visited));
+          localStorage.setItem("liked_fallas", JSON.stringify(liked));
         }
       } catch (e) {
-        console.warn("Could not sync with DB, using local state.");
+        console.warn("DB interaction sync failed");
       }
     }
   }, [user]);
@@ -95,7 +97,7 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Initialize Map (Strictly Once)
+  // 3. Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -116,7 +118,7 @@ const MapComponent = () => {
     };
   }, [isDarkMode]);
 
-  // 4. Reactive Marker Lifecycle (Pinned & Fast)
+  // 4. Reactive Markers
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
@@ -141,14 +143,12 @@ const MapComponent = () => {
         markerElsRef.current[falla.number] = el;
       }
 
-      // INSTANT CLASS TOGGLE
-      const isVisited = visitedNumbers.includes(falla.number);
-      el.classList.toggle('visited', isVisited);
+      el.classList.toggle('visited', visitedNumbers.includes(falla.number));
+      el.classList.toggle('liked', likedNumbers.includes(falla.number));
       el.classList.toggle('burnt', !!falla.is_burnt);
     });
-  }, [fallasData, isDarkMode, visitedNumbers]); // Re-runs on visited change for instant color
+  }, [fallasData, isDarkMode, visitedNumbers, likedNumbers]);
 
-  // 5. URL Selection Logic
   const selectedFalla = useMemo(() => {
     const num = searchParams.get("falla");
     return fallasData.find(f => f.number === num) || null;

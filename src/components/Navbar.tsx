@@ -11,7 +11,17 @@ import {
   Button,
 } from "@heroui/react";
 import { NavLink, Link } from "react-router-dom";
-import { House, MapTrifold, CalendarBlank, SquaresFour, List, X, Archive, User } from "@phosphor-icons/react";
+import { 
+  House, 
+  MapTrifold, 
+  CalendarBlank, 
+  List, 
+  X, 
+  Archive, 
+  User,
+  Fingerprint,
+  ShieldCheck
+} from "@phosphor-icons/react";
 import { cn } from "@/utils/cn";
 
 export default function AppNavbar() {
@@ -62,7 +72,7 @@ export default function AppNavbar() {
               </svg>
             </div>
             <p className="font-display text-2xl text-falla-fire hidden md:block leading-none tracking-tight">
-              FallaMap
+              fallamap
             </p>
           </Link>
         </NavbarBrand>
@@ -90,31 +100,44 @@ export default function AppNavbar() {
       <NavbarContent justify="end" className="gap-4">
         <NavbarItem className="gap-3 flex items-center">
           <Show when="signed-in">
-            <div className="flex items-center gap-2">
-              <Button 
-                as={Link} 
-                to="/profile" 
-                variant="ghost" 
-                isIconOnly
-                className="h-10 w-10 rounded-xl border-2 border-falla-ink/10 text-falla-ink/60"
-              >
-                <User size={20} weight="bold" />
-              </Button>
+            <div className="flex items-center gap-3">
               {isAdmin && (
                 <Button 
                   as={Link} 
                   to="/dashboard" 
                   variant="flat" 
                   size="sm" 
-                  className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
-                  startContent={<SquaresFour size={16} weight="bold" />}
+                  className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2 hidden md:flex"
+                  startContent={<ShieldCheck size={16} weight="bold" />}
                 >
                   Admin
                 </Button>
               )}
-            </div>
-            <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2 overflow-hidden">
-              <UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8" } }} />
+              <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2 overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                <UserButton 
+                  appearance={{ 
+                    elements: { 
+                      userButtonAvatarBox: "w-8 h-8",
+                      userButtonTrigger: "focus:shadow-none focus:ring-0" 
+                    } 
+                  }}
+                >
+                  <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="My Journey"
+                      labelIcon={<Fingerprint size={16} weight="bold" />}
+                      href="/profile"
+                    />
+                    {isAdmin && (
+                      <UserButton.Link
+                        label="Moderation"
+                        labelIcon={<ShieldCheck size={16} weight="bold" />}
+                        href="/dashboard"
+                      />
+                    )}
+                  </UserButton.MenuItems>
+                </UserButton>
+              </div>
             </div>
           </Show>
           <Show when="signed-out">

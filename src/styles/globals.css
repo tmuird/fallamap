@@ -57,6 +57,10 @@ h1, h2, h3, h4, .font-display {
   box-shadow: 4px 4px 0px 0px #1A1A1A !important;
 }
 
+.soft-shadow-sm {
+  box-shadow: 2px 2px 0px 0px #1A1A1A !important;
+}
+
 .soft-shadow-lg {
   box-shadow: 8px 8px 0px 0px #1A1A1A !important;
 }
@@ -80,6 +84,7 @@ h1, h2, h3, h4, .font-display {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .marker.visited {
@@ -89,15 +94,15 @@ h1, h2, h3, h4, .font-display {
 
 .marker.liked::after {
   content: '❤️';
-  font-size: 8px;
+  font-size: 10px;
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -10px;
+  right: -10px;
+  filter: drop-shadow(1px 1px 0px #1A1A1A);
 }
 
 .marker.burnt {
   background-color: #1A1A1A;
-  opacity: 0.8;
 }
 
 .marker:hover {
@@ -146,4 +151,14 @@ button, .heroui-button {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Lightbox Overrides */
+.yarl__container {
+  background-color: rgba(26, 26, 26, 0.95) !important;
+  backdrop-filter: blur(10px);
+}
+
+.yarl__button {
+  filter: drop-shadow(2px 2px 0px #1A1A1A);
 }
