@@ -10,6 +10,7 @@ import { MagnifyingGlass, Target, CheckCircle, X } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { useUser } from "@clerk/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -116,6 +117,9 @@ const MapComponent = () => {
     if ("geolocation" in navigator) {
       const el = document.createElement('div');
       el.className = 'user-location-marker';
+      // Custom Bat Bat Icon via innerHTML
+      el.innerHTML = `<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M232,128a104,104,0,1,1-104-104A104.11,104.11,0,0,1,232,128Z" fill="#FF7043" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" fill="#FF7043"/><path d="M176,104a8,8,0,0,1-8,8H144v16h16a8,8,0,0,1,0,16H144v16a8,8,0,0,1-16,0V104a8,8,0,0,1,8-8h32A8,8,0,0,1,176,104Z" fill="#1A1A1A"/></svg>`;
+      
       userMarkerRef.current = new mapboxgl.Marker(el)
         .setLngLat([0, 0])
         .addTo(map);
@@ -229,28 +233,52 @@ const MapComponent = () => {
   };
 
   return (
-    <div className="w-full h-full relative font-sans overflow-hidden">
+    <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      <div className="absolute top-4 md:top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-6 z-10">
-        <div className="bg-falla-paper/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-1.5 md:p-2 flex flex-col gap-1.5 md:gap-2">
+      {/* Consolidated Hub - Floating Island Aesthetic */}
+      <div className="absolute top-4 md:top-24 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-0 z-10 pointer-events-none">
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink rounded-[2rem] p-2 md:p-2.5 flex flex-col gap-2 shadow-solid pointer-events-auto"
+        >
           <div className="flex items-center gap-2">
             <div className="flex-1 relative text-falla-ink">
-              <MagnifyingGlass size={18} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 text-falla-ink/30" />
+              <MagnifyingGlass size={20} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
               <input 
-                placeholder="Search València..." 
+                placeholder="Search monuments..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 md:h-12 bg-transparent pl-11 pr-4 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink"
+                className="w-full h-12 bg-transparent pl-12 pr-10 font-bold text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink"
               />
+              <AnimatePresence>
+                {searchQuery && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-falla-ink/5 hover:bg-falla-ink/10 rounded-full transition-colors"
+                  >
+                    <X size={14} weight="bold" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
-            <Button isIconOnly variant="ghost" onClick={handleGeolocateUser} className="h-10 w-10 md:h-12 md:w-12 rounded-2xl text-falla-ink" aria-label="Locate me">
-              <Target size={20} weight="bold" />
+            <Button 
+              isIconOnly 
+              variant="ghost" 
+              onClick={handleGeolocateUser} 
+              className="h-12 w-12 rounded-[1.25rem] text-falla-ink hover:bg-falla-ink/5 border-2 border-transparent focus:border-falla-fire transition-all"
+              aria-label="Locate me"
+            >
+              <Target size={24} weight="bold" />
             </Button>
           </div>
 
-          <div className="flex items-center justify-between px-2 pb-0.5 border-t border-falla-ink/5 pt-1.5 md:pt-2">
-            <div className="flex gap-1">
+          <div className="flex items-center justify-between px-2 pb-0.5 border-t border-falla-ink/5 pt-2">
+            <div className="flex gap-1.5">
               {(['all', 'visited', 'standing'] as const).map((mode) => (
                 <Button 
                   key={mode}
@@ -258,7 +286,7 @@ const MapComponent = () => {
                   variant={filterMode === mode ? 'default' : 'ghost'} 
                   onClick={() => setFilterMode(mode)}
                   className={cn(
-                    "h-7 md:h-8 rounded-xl px-3 md:px-4 text-[9px] md:text-[10px] font-black uppercase transition-none", 
+                    "h-8 rounded-xl px-4 text-[10px] font-black uppercase transition-all", 
                     filterMode === mode ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40"
                   )}
                 >
@@ -267,55 +295,72 @@ const MapComponent = () => {
               ))}
             </div>
             
-            <div className="flex items-center gap-1.5 px-2 bg-falla-ink/5 rounded-full py-0.5 md:py-1">
-              <CheckCircle size={14} weight="fill" className="text-falla-sage" />
-              <span className="text-[9px] md:text-[10px] font-black text-falla-ink/60">
+            <motion.div 
+              layout
+              className="flex items-center gap-2 px-3 bg-falla-fire/5 dark:bg-falla-fire/10 rounded-full py-1.5 border border-falla-fire/10"
+            >
+              <CheckCircle size={16} weight="fill" className="text-falla-fire" />
+              <span className="text-[10px] font-black text-falla-ink/60">
                 {visitedNumbers.length}/{fallasData.length}
               </span>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} shouldScaleBackground autoFocus={false}>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[100]" />
-          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-12 h-[100dvh]">
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[100]" />
+          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh]">
             <Drawer.Title className="sr-only">Falla Details</Drawer.Title>
             
             {/* Mobile Handler */}
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:hidden pointer-events-auto" />
             
-            <div className="w-full h-full md:max-w-4xl bg-falla-paper rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative">
+            <motion.div 
+              layoutId="falla-card"
+              className="w-full h-full md:max-w-5xl bg-falla-paper rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative"
+            >
               {/* Desktop Close Button */}
               <button 
                 onClick={handleDrawerClose}
-                className="hidden md:flex absolute top-6 right-6 w-10 h-10 items-center justify-center bg-falla-paper ink-border rounded-xl shadow-solid-sm hover:shadow-none transition-all z-50 group text-falla-ink"
+                className="hidden md:flex absolute top-8 right-8 w-12 h-12 items-center justify-center bg-falla-paper ink-border rounded-[1.25rem] shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all z-50 group text-falla-ink"
                 aria-label="Close"
               >
-                <X size={24} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
+                <X size={28} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
               </button>
 
               {selectedFalla && (
                 <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-none">
-                  <FallaDetails 
-                    falla={selectedFalla} 
-                    onNext={() => {
-                      const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
-                      const next = fallasData[(idx + 1) % fallasData.length];
-                      setSearchParams({ falla: next.number }, { replace: true });
-                    }}
-                    onPrev={() => {
-                      const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
-                      const prev = fallasData[(idx - 1 + fallasData.length) % fallasData.length];
-                      setSearchParams({ falla: prev.number }, { replace: true });
-                    }}
-                    onClose={handleDrawerClose}
-                    onInteraction={refreshInteractions}
-                  />
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={selectedFalla.number}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3, ease: "circOut" }}
+                      className="h-full flex flex-col"
+                    >
+                      <FallaDetails 
+                        falla={selectedFalla} 
+                        onNext={() => {
+                          const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
+                          const next = fallasData[(idx + 1) % fallasData.length];
+                          setSearchParams({ falla: next.number }, { replace: true });
+                        }}
+                        onPrev={() => {
+                          const idx = fallasData.findIndex(f => f.number === selectedFalla.number);
+                          const prev = fallasData[(idx - 1 + fallasData.length) % fallasData.length];
+                          setSearchParams({ falla: prev.number }, { replace: true });
+                        }}
+                        onClose={handleDrawerClose}
+                        onInteraction={refreshInteractions}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               )}
-            </div>
+            </motion.div>
           </Drawer.Content>
         </Drawer.Portal>
       </Drawer.Root>
