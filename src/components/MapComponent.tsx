@@ -120,10 +120,12 @@ const MapComponent = () => {
       const el = document.createElement('div');
       el.className = 'user-location-marker';
       el.innerHTML = `
-        <div class="relative w-6 h-6">
-          <div class="absolute inset-0 bg-falla-fire/30 rounded-full animate-ping"></div>
-          <div class="relative w-full h-full bg-falla-fire rounded-full border-2 border-white shadow-md flex items-center justify-center">
-            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+        <div class="relative w-8 h-8">
+          <div class="absolute inset-0 bg-[#007AFF]/20 rounded-full animate-ping"></div>
+          <div class="relative w-full h-full bg-[#007AFF] rounded-full border-2 border-white shadow-solid-sm flex items-center justify-center">
+            <svg viewBox="0 0 256 256" class="w-5 h-5 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M232,104c0,0-24-16-48-16s-48,16-48,16s-4-16-8-16s-8,16-8,16s-24-16-48-16s-48,16-48,16s0,48,48,64s48,0,48,0s4,12,8,12s8-12,8-12s0,12,48,0S232,104,232,104z"/>
+            </svg>
           </div>
         </div>
       `;
