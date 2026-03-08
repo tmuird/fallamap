@@ -84,8 +84,6 @@ h1, h2, h3, h4, .font-display {
 
 .marker.visited {
   background-color: #8B9467;
-  width: 18px !important;
-  height: 18px !important;
   z-index: 5;
 }
 
@@ -95,7 +93,6 @@ h1, h2, h3, h4, .font-display {
   position: absolute;
   top: -8px;
   right: -8px;
-  filter: drop-shadow(1px 1px 0px #1A1A1A);
 }
 
 .marker.burnt {

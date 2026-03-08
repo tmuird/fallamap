@@ -35,49 +35,50 @@ const MapComponent = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
+  
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
   
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const { isDarkMode } = useContext(ThemeContext);
+  
   const [fallasData, setFallasData] = useState<Falla[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'standing'>('all');
-  
-  // Interactions State
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
-  const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
-  
   const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Initial Load
+  // 1. Initial Load of Fallas
   useEffect(() => {
     const fetchFallas = async () => {
-      const { data: fallas } = await supabase.from("fallas").select("*").order("number");
-      setFallasData(((fallas && fallas.length > 0) ? fallas : localFallas) as Falla[]);
+      try {
+        const { data: fallas } = await supabase.from("fallas").select("*").order("number");
+        setFallasData(((fallas && fallas.length > 0) ? fallas : localFallas) as Falla[]);
+      } catch (err) {
+        setFallasData(localFallas as Falla[]);
+      }
     };
     fetchFallas();
   }, []);
 
-  // 2. Fetch User Interactions
+  // 2. Fetch User Interactions (Passport)
   const refreshInteractions = useCallback(async () => {
     if (user) {
       const { data } = await supabase
         .from("user_interactions")
-        .select("type, fallas(number)")
-        .eq("user_id", user.id);
+        .select("fallas(number)")
+        .eq("user_id", user.id)
+        .eq("type", "visited");
       
       if (data) {
-        const visited = data.filter(i => i.type === 'visited').map((i: any) => i.fallas?.number).filter(Boolean);
-        const liked = data.filter(i => i.type === 'like').map((i: any) => i.fallas?.number).filter(Boolean);
-        setVisitedNumbers(visited);
-        setLikedNumbers(liked);
+        const numbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
+        setVisitedNumbers(numbers);
       }
     } else {
-      setVisitedNumbers(JSON.parse(localStorage.getItem("visited_fallas") || "[]"));
-      setLikedNumbers(JSON.parse(localStorage.getItem("liked_fallas") || "[]"));
+      const local = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+      setVisitedNumbers(local);
     }
   }, [user]);
 
@@ -85,17 +86,48 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Handle Map Deep Link
+  // 3. Initialize Map instance ONCE
   useEffect(() => {
-    const fallaNum = searchParams.get("falla");
-    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
-      const falla = fallasData.find(f => f.number === fallaNum);
-      if (falla) {
-        setSelectedFalla(falla);
-        setIsDrawerOpen(true);
+    if (!mapContainerRef.current) return;
+
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11",
+      center: [-0.37739, 39.46975],
+      zoom: 13,
+      pitch: 45,
+    });
+
+    mapRef.current = map;
+    return () => map.remove();
+  }, [isDarkMode]);
+
+  // 4. Manage Marker Lifecycle (Reactive to data and visited state)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || fallasData.length === 0) return;
+
+    fallasData.forEach((falla) => {
+      const isVisited = visitedNumbers.includes(falla.number);
+      let marker = markersRef.current[falla.number];
+
+      if (!marker) {
+        const el = document.createElement("div");
+        el.className = 'marker';
+        el.addEventListener('click', () => handleSelectFalla(falla));
+
+        marker = new mapboxgl.Marker(el)
+          .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
+          .addTo(map);
+        
+        markersRef.current[falla.number] = marker;
       }
-    }
-  }, [searchParams, fallasData, selectedFalla]);
+
+      // Sync class names for colors
+      const el = marker.getElement();
+      el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''}`;
+    });
+  }, [fallasData, visitedNumbers, isDarkMode]);
 
   const flyToFalla = (falla: Falla) => {
     mapRef.current?.flyTo({
@@ -120,54 +152,17 @@ const MapComponent = () => {
     setSelectedFalla(null);
   };
 
-  // 4. Initialize Mapbox
+  // 5. Deep Link Handling
   useEffect(() => {
-    if (!mapContainerRef.current) return;
-
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11",
-      center: [-0.37739, 39.46975],
-      zoom: 13,
-      pitch: 45,
-    });
-
-    mapRef.current = map;
-    return () => map.remove();
-  }, [isDarkMode]);
-
-  // 5. Marker Lifecycle (Reactive)
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || fallasData.length === 0) return;
-
-    // We only update markers that exist or add new ones
-    fallasData.forEach((falla) => {
-      const isVisited = visitedNumbers.includes(falla.number);
-      const isLiked = likedNumbers.includes(falla.number);
-      
-      let marker = markersRef.current[falla.number];
-
-      if (!marker) {
-        const el = document.createElement("div");
-        el.className = 'marker';
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
-          handleSelectFalla(falla);
-        });
-
-        marker = new mapboxgl.Marker(el)
-          .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
-          .addTo(map);
-        
-        markersRef.current[falla.number] = marker;
+    const fallaNum = searchParams.get("falla");
+    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
+      const falla = fallasData.find(f => f.number === fallaNum);
+      if (falla) {
+        setSelectedFalla(falla);
+        setIsDrawerOpen(true);
       }
-
-      // Update appearance without re-creating
-      const el = marker.getElement();
-      el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''} ${isLiked ? 'liked' : ''}`;
-    });
-  }, [fallasData, visitedNumbers, likedNumbers]); // Watch interactions specifically
+    }
+  }, [searchParams, fallasData, selectedFalla]);
 
   const filteredFallas = useMemo(() => {
     return fallasData.filter(f => {
@@ -178,7 +173,7 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // 6. Search Visibility Sync
+  // 6. Filter Marker Visibility
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -190,6 +185,7 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
+      {/* Consolidated Hub */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-10">
         <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-2 flex flex-col gap-2">
           <div className="flex items-center gap-2">

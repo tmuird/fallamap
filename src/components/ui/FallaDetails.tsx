@@ -60,7 +60,14 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
   useEffect(() => {
     const checkInteractions = async () => {
-      if (!user || !falla.id) return;
+      if (!user || !falla.id) {
+        // Fallback to local
+        const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+        const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
+        setVisited(localV.includes(falla.number));
+        setLiked(localL.includes(falla.number));
+        return;
+      }
       
       const { data } = await supabase
         .from("user_interactions")
@@ -74,28 +81,39 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       }
     };
     checkInteractions();
-  }, [user, falla.id]);
+  }, [user, falla.id, falla.number]);
 
   const toggleInteraction = async (type: 'like' | 'visited') => {
-    if (!user) {
-      toast.error("Please sign in to use this feature");
-      return;
-    }
-
     const currentState = type === 'like' ? liked : visited;
     const setState = type === 'like' ? setLiked : setVisited;
+
+    if (!user) {
+      // Local fallback
+      const key = type === 'like' ? "liked_fallas" : "visited_fallas";
+      const local = JSON.parse(localStorage.getItem(key) || "[]");
+      let newLocal;
+      if (currentState) {
+        newLocal = local.filter((n: string) => n !== falla.number);
+      } else {
+        newLocal = [...local, falla.number];
+      }
+      localStorage.setItem(key, JSON.stringify(newLocal));
+      setState(!currentState);
+      onInteraction?.();
+      toast.success(currentState ? "Removed" : "Added!");
+      return;
+    }
 
     try {
       if (currentState) {
         await supabase.from("user_interactions").delete().eq("user_id", user.id).eq("falla_id", falla.id).eq("type", type);
         setState(false);
-        toast.info(type === 'like' ? "Removed from collection" : "Removed from passport");
       } else {
         await supabase.from("user_interactions").insert([{ user_id: user.id, falla_id: falla.id, type }]);
         setState(true);
-        toast.success(type === 'like' ? "Saved to collection! ❤️" : "Stamped in passport! 🦇");
       }
-      onInteraction?.(); // Trigger parent refresh
+      onInteraction?.(); // Update Map!
+      toast.success(currentState ? "Removed" : "Added!");
     } catch (err) {
       console.error(err);
     }
@@ -115,7 +133,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     if (!file) return;
 
     setUploading(true);
-    const toastId = toast.loading("Igniting upload...");
+    const toastId = toast.loading("Uploading...");
     
     try {
       const fileExt = file.name.split(".").pop();
@@ -128,7 +146,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       const { data: { publicUrl } } = supabase.storage.from("community-content").getPublicUrl(filePath);
 
       await addImage(publicUrl, user?.id, isPrivate);
-      toast.success(isPrivate ? "Private photo saved!" : "Photo shared with community!", { id: toastId });
+      toast.success("Uploaded!", { id: toastId });
     } catch (error: any) {
       toast.error("Upload failed", { id: toastId });
     } finally {
