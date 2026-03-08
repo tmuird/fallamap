@@ -27,25 +27,25 @@ export default function HomePage() {
         />
       </div>
       
-      <div className="z-10 w-full flex flex-col items-center h-full px-4 overflow-y-auto scrollbar-hide relative">
+      <div className="z-10 w-full flex flex-col items-center h-full px-4 overflow-hidden relative">
         <FallamapHeader isVisible={true} />
 
-        <main className="w-full max-w-4xl flex-1 flex flex-col items-center justify-center -mt-6 md:mt-0 gap-8 md:gap-14 pb-12">
+        <main className="w-full max-w-6xl flex-1 flex flex-col items-center justify-center -mt-[4vh] md:mt-0 gap-[4vh] md:gap-[6vh] pb-[4vh]">
           {/* Main Content */}
-          <div className="flex flex-col items-center text-center gap-6 md:gap-10 w-full">
+          <div className="flex flex-col items-center text-center gap-[2vh] md:gap-[4vh] w-full">
             <motion.div 
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 120 }}
-              className="flex flex-col items-center gap-4"
+              className="flex flex-col items-center gap-2"
             >
-              <h2 className="text-[2.75rem] leading-[0.85] md:text-8xl font-display text-falla-ink italic lowercase tracking-tighter max-w-2xl">
+              <h2 className="text-fluid-xl md:text-fluid-2xl font-display text-falla-ink italic lowercase tracking-tighter max-w-2xl leading-[0.9]">
                 Feel the <span className="text-falla-fire relative inline-block">
                   heat
                   <motion.span 
                     animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.05, 1] }} 
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute -top-2 -right-4 text-falla-fire/40 text-2xl"
+                    className="absolute -top-[1vh] -right-[2vw] text-falla-fire/40 text-[2rem] md:text-[4rem]"
                   >
                     *
                   </motion.span>
@@ -57,7 +57,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="flex items-center gap-2 px-5 py-2 bg-falla-paper/80 backdrop-blur-md rounded-full border-2 border-falla-ink/10 shadow-sm mt-2 text-falla-ink"
+                className="flex items-center gap-2 px-4 py-1.5 bg-falla-paper/80 backdrop-blur-md rounded-full border-2 border-falla-ink/10 shadow-sm mt-1 text-falla-ink"
               >
                 <Sparkle size={14} weight="fill" className="text-falla-fire animate-spin-slow" />
                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-falla-ink/60">
@@ -75,14 +75,14 @@ export default function HomePage() {
               <Link to="/map" className="flex-1 sm:flex-none">
                 <Button 
                   size="lg"
-                  className="bg-falla-fire text-falla-paper h-14 md:h-18 px-10 rounded-2xl text-sm md:text-xl shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all group"
+                  className="bg-falla-fire text-falla-paper h-[7vh] min-h-[56px] px-8 md:px-12 rounded-2xl text-fluid-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all group"
                 >
                   Enter the Map 
                   <motion.div
                     animate={{ x: [0, 4, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <ArrowRight size={22} weight="bold" />
+                    <ArrowRight size={24} weight="bold" />
                   </motion.div>
                 </Button>
               </Link>
@@ -91,26 +91,26 @@ export default function HomePage() {
                 <Button 
                   variant="outline"
                   size="lg"
-                  className="bg-falla-paper text-falla-ink h-14 px-10 rounded-2xl text-sm shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all"
+                  className="bg-falla-paper text-falla-ink h-[7vh] min-h-[56px] px-8 rounded-2xl text-fluid-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all"
                 >
-                  Schedule <CalendarBlank size={20} weight="bold" />
+                  Schedule <CalendarBlank size={24} weight="bold" />
                 </Button>
               </Link>
             </motion.div>
           </div>
 
-          {/* Optimized Hero Image - No angle, no special section badge */}
+          {/* Optimized Hero Image - Proportional Height */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, type: "spring", damping: 20 }}
-            className="w-full h-[22vh] md:h-[40vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden ink-border shadow-solid bg-[url('/plaza.jpg')] bg-cover bg-center relative group max-w-5xl mx-auto"
+            className="w-full h-[25vh] md:h-[35vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden ink-border shadow-solid bg-[url('/plaza.jpg')] bg-cover bg-center relative group max-w-5xl mx-auto shrink-0"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
-            <div className="absolute bottom-5 left-6 md:bottom-10 md:left-10 text-left">
-              <p className="font-display text-2xl md:text-5xl italic tracking-tight lowercase text-white mb-1">Plaça de l'Ajuntament</p>
+            <div className="absolute bottom-[2vh] left-[2vw] md:bottom-8 md:left-8 text-left">
+              <p className="font-display text-fluid-lg md:text-fluid-xl italic tracking-tight lowercase text-white mb-1">Plaça de l'Ajuntament</p>
               <div className="flex items-center gap-2 text-white/80">
-                <MapTrifold size={12} weight="bold" />
+                <MapTrifold size={16} weight="bold" />
                 <p className="font-sans font-black uppercase tracking-[0.25em] text-[8px] md:text-xs">Falla Municipal 2026</p>
               </div>
             </div>
@@ -121,19 +121,19 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="hidden md:flex gap-16 items-center text-falla-ink/40 font-black uppercase text-[11px] tracking-[0.4em]"
+            className="hidden md:flex gap-12 items-center text-falla-ink/40 font-black uppercase text-[11px] tracking-[0.4em]"
           >
-            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><MapTrifold size={20} weight="bold" /> Map</Link>
+            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2 italic"><MapTrifold size={20} weight="bold" /> Map</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><CalendarBlank size={20} weight="bold" /> Program</Link>
+            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2 italic"><CalendarBlank size={20} weight="bold" /> Program</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> Archive</Link>
+            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2 italic"><Archive size={20} weight="bold" /> Archive</Link>
           </motion.div>
         </main>
 
         {/* Minimal Footer */}
-        <div className="py-6 md:py-8 text-center flex flex-col items-center gap-3 shrink-0">
-          <p className="text-[8px] font-black uppercase tracking-[0.6em] text-falla-ink/20 lowercase italic">
+        <div className="pb-6 text-center flex flex-col items-center gap-2 shrink-0">
+          <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.6em] text-falla-ink/20 lowercase italic">
             "Deixe'm que et conte..."
           </p>
         </div>

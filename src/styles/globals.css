@@ -36,6 +36,15 @@
   --falla-shadow: #1A1A1A;
   --falla-sand: #E9E5D6;
   --falla-sage: #8B9467;
+
+  /* Fluid Typography Scale */
+  --text-fluid-xs: clamp(0.6rem, 0.5vw + 0.5rem, 0.8rem);
+  --text-fluid-sm: clamp(0.8rem, 0.6vw + 0.7rem, 1rem);
+  --text-fluid-base: clamp(1rem, 0.8vw + 0.8rem, 1.25rem);
+  --text-fluid-lg: clamp(1.25rem, 1.2vw + 1rem, 1.75rem);
+  --text-fluid-xl: clamp(1.5rem, 2vw + 1.2rem, 2.5rem);
+  --text-fluid-2xl: clamp(2rem, 4vw + 1.5rem, 4.5rem);
+  --text-fluid-display: clamp(3.5rem, 12vw + 1rem, 14rem);
 }
 
 .dark {
@@ -55,6 +64,7 @@ body {
   letter-spacing: 0.01em;
   font-style: normal !important;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  font-size: var(--text-fluid-base);
 }
 
 h1, h2, h3, h4, .font-display {
@@ -63,6 +73,15 @@ h1, h2, h3, h4, .font-display {
   line-height: 1.1;
   font-style: normal !important;
 }
+
+/* --- Fluid Utility Classes --- */
+.text-fluid-display { font-size: var(--text-fluid-display); }
+.text-fluid-2xl { font-size: var(--text-fluid-2xl); }
+.text-fluid-xl { font-size: var(--text-fluid-xl); }
+.text-fluid-lg { font-size: var(--text-fluid-lg); }
+.text-fluid-base { font-size: var(--text-fluid-base); }
+.text-fluid-sm { font-size: var(--text-fluid-sm); }
+.text-fluid-xs { font-size: var(--text-fluid-xs); }
 
 /* --- Brutalist Core Utilities --- */
 
@@ -84,6 +103,18 @@ h1, h2, h3, h4, .font-display {
 .soft-shadow-lg {
   box-shadow: 8px 8px 0px 0px var(--falla-shadow) !important;
   transition: box-shadow 0.3s ease;
+}
+
+.shadow-solid {
+  box-shadow: 3px 3px 0px 0px var(--falla-shadow) !important;
+}
+
+.shadow-solid-sm {
+  box-shadow: 2px 2px 0px 0px var(--falla-shadow) !important;
+}
+
+.shadow-solid-lg {
+  box-shadow: 5px 5px 0px 0px var(--falla-shadow) !important;
 }
 
 .brutal-pill {
@@ -142,13 +173,11 @@ h1, h2, h3, h4, .font-display {
 
 /* User Location Marker */
 .user-location-marker {
-  width: 16px;
-  height: 16px;
-  background-color: #3b82f6; /* Blue-500 */
-  border: 3px solid white;
-  border-radius: 50%;
-  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+  width: 32px;
+  height: 32px;
   z-index: 100;
+  filter: drop-shadow(2px 2px 0px var(--falla-shadow));
+  cursor: crosshair;
 }
 
 /* Mapbox Minimal Overrides */

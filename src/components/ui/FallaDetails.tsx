@@ -179,7 +179,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         animate={{ opacity: 1, x: 0 }}
         className={cn("flex flex-col w-full h-full bg-falla-paper", className)}
       >
-        <header className="p-6 md:p-12 pb-8 border-b-2 border-falla-ink bg-falla-paper sticky top-0 z-40 flex flex-col gap-8 shadow-sm">
+        <header className="p-6 md:p-12 pb-8 border-b-2 border-falla-ink bg-falla-paper sticky top-0 z-40 flex flex-col gap-[2vh] shadow-sm">
           {/* Header Row 1: Nav & Utils */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -199,7 +199,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           </div>
           
           {/* Header Row 2: Title */}
-          <h2 className="text-3xl md:text-5xl font-display text-falla-ink leading-[0.9] tracking-tighter lowercase line-clamp-2 max-w-[90%]">
+          <h2 className="text-fluid-lg md:text-fluid-xl font-display text-falla-ink leading-[0.9] tracking-tighter lowercase line-clamp-2 max-w-[90%]">
             {falla.name}
           </h2>
           
@@ -207,7 +207,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           <div className="flex flex-wrap gap-3 items-center">
             <Button 
               variant={visited ? "secondary" : "outline"}
-              className={cn("flex-1 min-w-[130px] h-14 md:h-16 rounded-[1.25rem] border-2 text-[11px] font-black uppercase tracking-widest transition-all shadow-solid-sm hover:shadow-none", visited && "bg-falla-sage text-falla-paper shadow-none")}
+              className={cn("flex-1 min-w-[130px] h-12 md:h-16 rounded-[1.25rem] border-2 text-[11px] font-black uppercase tracking-widest transition-all shadow-solid-sm hover:shadow-none", visited && "bg-falla-sage text-falla-paper shadow-none")}
               startContent={<CheckCircle size={22} weight={visited ? "fill" : "bold"} />}
               onClick={() => toggleInteraction('visited')}
             >
@@ -216,10 +216,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
             
             <div className="flex-1 min-w-[150px] flex items-center gap-2">
               <input type="file" id={`img-${falla.number}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-              <Button className="w-full h-14 md:h-16 rounded-[1.25rem] border-2 text-[11px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={22} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
+              <Button className="w-full h-12 md:h-16 rounded-[1.25rem] border-2 text-[11px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={22} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
             </div>
 
-            <div className="h-14 md:h-16 px-5 bg-falla-paper ink-border rounded-[1.25rem] flex items-center gap-4 soft-shadow-sm border-2">
+            <div className="h-12 md:h-16 px-5 bg-falla-paper ink-border rounded-[1.25rem] flex items-center gap-4 soft-shadow-sm border-2">
               {isPrivate ? <EyeSlash size={22} weight="bold" className="text-falla-ink/30" /> : <Eye size={22} weight="bold" className="text-falla-fire" />}
               <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" disabled={!isSignedIn} />
             </div>
@@ -265,7 +265,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                       <div className="w-20 h-20 rounded-[2.5rem] bg-falla-paper ink-border flex items-center justify-center mb-6 shadow-solid text-falla-ink">
                         <LockKey size={40} weight="fill" className="text-falla-fire" />
                       </div>
-                      <h3 className="text-3xl font-display italic mb-3 lowercase text-falla-ink">Community Gallery</h3>
+                      <h3 className="text-fluid-lg font-display italic mb-3 lowercase text-falla-ink">Community Gallery</h3>
                       <p className="text-base font-bold text-falla-ink/60 max-w-[280px] mb-8">Join the community to see and share festival memories.</p>
                       <Link to="/sign-up" className="w-full max-w-[220px]">
                         <Button className="bg-falla-fire text-falla-paper w-full h-14 rounded-2xl text-xs font-black uppercase tracking-widest shadow-solid border-2">Join to unlock</Button>
@@ -287,7 +287,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                 <div className="w-14 h-14 rounded-[1.25rem] bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
                   <ChatCircleDots size={28} weight="bold" />
                 </div>
-                <span className="font-display text-3xl lowercase italic text-falla-ink">Community Notes</span>
+                <span className="font-display text-fluid-lg lowercase italic text-falla-ink">Community Notes</span>
               </div>
 
               <div className={cn("space-y-12 pb-60 pt-2", !isSignedIn && "blur-md select-none pointer-events-none")}>
@@ -302,7 +302,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                           </div>
                           <span className="text-[10px] text-falla-ink/20 font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-2xl md:text-4xl text-falla-ink font-medium leading-[1.15]">"{comment.text}"</p>
+                        <p className="text-fluid-lg md:text-fluid-xl text-falla-ink font-medium leading-[1.15]">"{comment.text}"</p>
                       </motion.div>
                     ))
                   ) : (
@@ -337,7 +337,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                 className="w-full" 
                 disabled={!isSignedIn} 
                 classNames={{ 
-                  input: "text-lg md:text-2xl p-6 md:p-10 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink leading-tight", 
+                  input: "text-fluid-base md:text-fluid-lg p-6 md:p-10 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink leading-tight", 
                   inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" 
                 }} 
               />

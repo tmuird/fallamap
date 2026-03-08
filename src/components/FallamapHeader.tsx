@@ -7,7 +7,7 @@ interface FallamapHeaderProps {
 export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
  return (
   <motion.div
-   className="w-full pt-24 md:pt-32 pb-4 md:pb-12 flex flex-col items-center justify-center relative"
+   className="w-full pt-[8vh] md:pt-[12vh] pb-4 md:pb-12 flex flex-col items-center justify-center relative"
    initial={{ opacity: 0 }}
    animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -18,7 +18,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
     transition={{ type: "spring", damping: 20, stiffness: 100 }}
     className="text-center px-4 mb-4 md:mb-10"
    >
-    <h1 className="text-6xl md:text-[10rem] font-display text-falla-fire leading-none tracking-tighter lowercase select-none">
+    <h1 className="text-fluid-display font-display text-falla-fire leading-[0.8] tracking-tighter lowercase select-none">
      fallamap
     </h1>
     
