@@ -8,7 +8,6 @@ import {
   MapPin,
   Flame,
   MusicNotes,
-  Bell,
   Sparkle,
   CalendarBlank,
   Fire,
@@ -24,7 +23,6 @@ import {
   PaperPlaneRight,
   Eye,
   EyeSlash,
-  Check,
   CalendarPlus,
 } from "@phosphor-icons/react";
 import { Drawer } from "vaul";
@@ -32,7 +30,6 @@ import { useUser } from "@clerk/react";
 import { useEventDetails } from "@/lib/hooks/useEventDetails";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { motion as m } from "framer-motion";
 // @ts-ignore
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
