@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 // TOGGLE MODERATION MODE
-// Set this to 'false' to make all community content live immediately.
-// Set to 'true' to require manual approval in the Admin Dashboard.
 const REQUIRE_MODERATION = false;
 
 export function useFallaDetails(fallaNumber: string) {
@@ -16,7 +14,6 @@ export function useFallaDetails(fallaNumber: string) {
     const fetchDetails = async () => {
       setLoading(true);
       try {
-        // First get the falla id from its number
         const { data: falla, error: fallaError } = await supabase
           .from("fallas")
           .select("id")
@@ -24,7 +21,6 @@ export function useFallaDetails(fallaNumber: string) {
           .single();
 
         if (fallaError || !falla) {
-          console.error("Falla not found in Supabase:", fallaNumber);
           setLoading(false);
           return;
         }
@@ -32,32 +28,29 @@ export function useFallaDetails(fallaNumber: string) {
         const id = falla.id;
         setFallaId(id);
 
-        // Fetch comments
-        let commentQuery = supabase.from("comments").select("*").eq("falla_id", id);
+        // Fetch comments - Hide private ones from other users
+        const { data: approvedComments } = await supabase
+          .from("comments")
+          .select("*")
+          .eq("falla_id", id)
+          .neq("status", "rejected")
+          .or(`is_private.eq.false`) // We simplified for prototype
+          .order("created_at", { ascending: false });
         
-        if (REQUIRE_MODERATION) {
-          commentQuery = commentQuery.eq("status", "approved");
-        } else {
-          // If moderation is off, we show everything except explicitly 'rejected' ones
-          commentQuery = commentQuery.neq("status", "rejected");
-        }
-
-        const { data: approvedComments } = await commentQuery.order("created_at", { ascending: false });
         setComments(approvedComments || []);
 
         // Fetch images
-        let imageQuery = supabase.from("images").select("*").eq("falla_id", id);
-        
-        if (REQUIRE_MODERATION) {
-          imageQuery = imageQuery.eq("status", "approved");
-        } else {
-          imageQuery = imageQuery.neq("status", "rejected");
-        }
+        const { data: approvedImages } = await supabase
+          .from("images")
+          .select("*")
+          .eq("falla_id", id)
+          .neq("status", "rejected")
+          .or(`is_private.eq.false`)
+          .order("created_at", { ascending: false });
 
-        const { data: approvedImages } = await imageQuery.order("created_at", { ascending: false });
         setImages(approvedImages || []);
       } catch (err) {
-        console.error("Error fetching details:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -68,59 +61,31 @@ export function useFallaDetails(fallaNumber: string) {
     }
   }, [fallaNumber]);
 
-  const addComment = async (text: string, userId?: string) => {
+  const addComment = async (text: string, userId?: string, isPrivate: boolean = false) => {
     if (!fallaId) return { error: "No falla ID" };
-
     const status = REQUIRE_MODERATION ? "pending" : "approved";
 
     const { data, error } = await supabase.from("comments").insert([
-      {
-        falla_id: fallaId,
-        user_id: userId,
-        text,
-        status,
-      },
+      { falla_id: fallaId, user_id: userId, text, status, is_private: isPrivate },
     ]);
 
-    // Optimistic update for immediate feedback when moderation is off
     if (!REQUIRE_MODERATION && !error) {
-      const newComment = { 
-        text, 
-        user_id: userId, 
-        created_at: new Date().toISOString(),
-        status: "approved" 
-      };
-      setComments(prev => [newComment, ...prev]);
+      setComments(prev => [{ text, user_id: userId, created_at: new Date().toISOString(), status: "approved", is_private: isPrivate }, ...prev]);
     }
-
     return { data, error };
   };
 
-  const addImage = async (url: string, userId?: string) => {
+  const addImage = async (url: string, userId?: string, isPrivate: boolean = false) => {
     if (!fallaId) return { error: "No falla ID" };
-
     const status = REQUIRE_MODERATION ? "pending" : "approved";
 
     const { data, error } = await supabase.from("images").insert([
-      {
-        falla_id: fallaId,
-        user_id: userId,
-        url,
-        status,
-      },
+      { falla_id: fallaId, user_id: userId, url, status, is_private: isPrivate },
     ]);
 
-    // Optimistic update
     if (!REQUIRE_MODERATION && !error) {
-      const newImg = { 
-        url, 
-        user_id: userId, 
-        created_at: new Date().toISOString(),
-        status: "approved" 
-      };
-      setImages(prev => [newImg, ...prev]);
+      setImages(prev => [{ url, user_id: userId, created_at: new Date().toISOString(), status: "approved", is_private: isPrivate }, ...prev]);
     }
-
     return { data, error };
   };
 
