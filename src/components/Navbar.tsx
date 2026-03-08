@@ -55,35 +55,35 @@ export default function AppNavbar() {
   // Modern floating navbar design
   return (
     <div className={cn(
-      "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out px-4 md:px-8",
-      scrolled ? "pt-2 md:pt-4" : "pt-4 md:pt-6"
+      "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out px-4 md:px-8 pointer-events-none",
+      scrolled ? "pt-3 md:pt-5" : "pt-6 md:pt-10"
     )}>
       <Navbar 
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen} 
         maxWidth="xl" 
         className={cn(
-          "transition-all duration-500 ease-in-out border-2 border-falla-ink rounded-[2rem] h-16 md:h-20 shadow-solid",
-          scrolled ? "bg-falla-paper/90 backdrop-blur-lg" : "bg-falla-paper/70 backdrop-blur-md"
+          "transition-all duration-500 ease-in-out border-2 border-falla-ink rounded-[2.5rem] h-16 md:h-20 shadow-solid pointer-events-auto",
+          scrolled ? "bg-falla-paper/95 backdrop-blur-xl" : "bg-falla-paper/80 backdrop-blur-md"
         )}
         classNames={{
-          wrapper: "px-4 md:px-8 max-w-full",
-          toggle: "w-10 h-10 flex items-center justify-center rounded-xl ink-border bg-falla-paper soft-shadow active:shadow-none transition-all p-0",
+          wrapper: "px-4 md:px-10 max-w-full",
+          toggle: "w-11 h-11 flex items-center justify-center rounded-xl ink-border bg-falla-paper shadow-solid-sm active:shadow-none transition-all p-0",
         }}
       >
-        <NavbarContent className="gap-4">
+        <NavbarContent className="gap-6">
           <NavbarMenuToggle
-            icon={isMenuOpen ? <X size={24} weight="bold" className="text-falla-ink" /> : <List size={24} weight="bold" className="text-falla-ink" />}
+            icon={isMenuOpen ? <X size={26} weight="bold" className="text-falla-ink" /> : <List size={26} weight="bold" className="text-falla-ink" />}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="sm:hidden"
           />
           <NavbarBrand>
-            <Link to="/" className="flex items-center gap-3 group" onClick={handleMenuClose}>
+            <Link to="/" className="flex items-center gap-4 group" onClick={handleMenuClose}>
               <motion.div 
-                whileHover={{ rotate: 15, scale: 1.1 }}
-                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center relative transition-transform"
+                whileHover={{ rotate: -10, scale: 1.15 }}
+                className="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center relative transition-transform"
               >
-                <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
                   <path 
                     d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
                     fill="var(--falla-fire)" 
@@ -98,21 +98,21 @@ export default function AppNavbar() {
                   />
                 </svg>
               </motion.div>
-              <p className="font-display text-lg md:text-2xl text-falla-fire hidden md:block leading-none tracking-tight lowercase">
+              <p className="font-display text-xl md:text-3xl text-falla-fire hidden md:block leading-none tracking-tighter lowercase">
                 fallamap
               </p>
             </Link>
           </NavbarBrand>
         </NavbarContent>
 
-        <NavbarContent className="hidden sm:flex gap-6 md:gap-8" justify="center">
+        <NavbarContent className="hidden sm:flex gap-8 md:gap-12" justify="center">
           {menuItems.map((item, index) => (
             <NavbarItem key={index}>
               <NavLink
                 to={item.path}
                 className={({ isActive }) => 
                   cn(
-                    "text-[10px] md:text-xs font-black uppercase tracking-[0.25em] transition-all hover:text-falla-fire flex items-center gap-2 italic relative group",
+                    "text-xs md:text-sm font-black uppercase tracking-[0.3em] transition-all hover:text-falla-fire flex items-center gap-2 italic relative group",
                     isActive ? "text-falla-fire" : "text-falla-ink/40"
                   )
                 }
@@ -122,10 +122,11 @@ export default function AppNavbar() {
                   {location.pathname === item.path && (
                     <motion.div 
                       layoutId="nav-underline"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-falla-fire rounded-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                      className="absolute -bottom-2 left-0 right-0 h-1 bg-falla-fire rounded-full"
+                      initial={{ opacity: 0, scaleX: 0 }}
+                      animate={{ opacity: 1, scaleX: 1 }}
+                      exit={{ opacity: 0, scaleX: 0 }}
+                      transition={{ type: "spring", damping: 15 }}
                     />
                   )}
                 </AnimatePresence>
@@ -134,20 +135,20 @@ export default function AppNavbar() {
           ))}
         </NavbarContent>
 
-        <NavbarContent justify="end" className="gap-2 md:gap-4">
-          <NavbarItem className="gap-2 md:gap-3 flex items-center">
-            <div className="scale-85 md:scale-100">
+        <NavbarContent justify="end" className="gap-3 md:gap-6">
+          <NavbarItem className="gap-3 md:gap-4 flex items-center">
+            <div className="scale-90 md:scale-110">
               <ThemeSwitcher />
             </div>
             
             <Show when="signed-in">
-              <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-3 md:gap-4">
                 <Link to="/profile">
                   <Button 
                     variant="flat" 
                     size="sm" 
-                    className="bg-falla-paper text-falla-ink font-bold uppercase tracking-widest text-[8px] md:text-[9px] rounded-xl px-2 md:px-4 h-8 md:h-9 ink-border shadow-sm hover:shadow-none transition-all border-2 hidden md:flex"
-                    startContent={<Fingerprint size={16} weight="bold" className="text-falla-fire" />}
+                    className="bg-falla-paper text-falla-ink font-bold uppercase tracking-widest text-[9px] md:text-[10px] rounded-xl px-3 md:px-5 h-9 md:h-11 ink-border shadow-solid-sm hover:shadow-none transition-all border-2 hidden md:flex"
+                    startContent={<Fingerprint size={18} weight="bold" className="text-falla-fire" />}
                   >
                     Journey
                   </Button>
@@ -158,18 +159,18 @@ export default function AppNavbar() {
                     <Button 
                       variant="flat" 
                       size="sm" 
-                      className="bg-falla-ink text-falla-paper font-bold uppercase tracking-widest text-[8px] md:text-[9px] rounded-xl px-2 md:px-4 h-8 md:h-9 ink-border soft-shadow hover:shadow-none transition-all border-2"
-                      startContent={<ShieldCheck size={16} weight="bold" />}
+                      className="bg-falla-ink text-falla-paper font-bold uppercase tracking-widest text-[9px] md:text-[10px] rounded-xl px-3 md:px-5 h-9 md:h-11 ink-border shadow-solid-sm hover:shadow-none transition-all border-2"
+                      startContent={<ShieldCheck size={18} weight="bold" />}
                     >
                       Admin
                     </Button>
                   </Link>
                 )}
-                <div className="ink-border rounded-full p-0.5 bg-falla-paper soft-shadow border-2 overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                <div className="ink-border rounded-full p-1 bg-falla-paper shadow-solid-sm border-2 overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer">
                   <UserButton 
                     appearance={{ 
                       elements: { 
-                        userButtonAvatarBox: "w-6 h-6 md:w-7 md:h-7",
+                        userButtonAvatarBox: "w-7 h-7 md:w-8 md:h-8",
                         userButtonTrigger: "focus:shadow-none focus:ring-0" 
                       } 
                     }}
@@ -182,7 +183,7 @@ export default function AppNavbar() {
                 <Button 
                   variant="light" 
                   size="sm" 
-                  className="text-falla-ink font-black uppercase tracking-widest text-[8px] md:text-[9px] h-8 md:h-9"
+                  className="text-falla-ink font-black uppercase tracking-widest text-[9px] md:text-[10px] h-9 md:h-11"
                 >
                   Sign In
                 </Button>
@@ -190,7 +191,7 @@ export default function AppNavbar() {
               <Link to="/sign-up">
                 <Button 
                   size="sm" 
-                  className="bg-falla-fire text-white font-black uppercase tracking-widest text-[8px] md:text-[9px] rounded-xl px-3 md:px-5 h-8 md:h-9 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                  className="bg-falla-fire text-white font-black uppercase tracking-widest text-[9px] md:text-[10px] rounded-xl px-4 md:px-6 h-9 md:h-11 ink-border shadow-solid active:shadow-none transition-all border-2"
                 >
                   Join
                 </Button>
@@ -199,15 +200,15 @@ export default function AppNavbar() {
           </NavbarItem>
         </NavbarContent>
 
-        <NavbarMenu className="pt-24 bg-falla-paper/98 backdrop-blur-xl border-t-2 border-falla-ink/5 rounded-b-[2rem] mx-4 shadow-solid border-x-2 border-b-2">
+        <NavbarMenu className="pt-32 bg-falla-paper/98 backdrop-blur-2xl border-t-2 border-falla-ink/5 rounded-b-[3rem] mx-4 shadow-solid-lg border-x-2 border-b-2 overflow-hidden">
           {menuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item.label}-${index}`} className="px-4">
+            <NavbarMenuItem key={`${item.label}-${index}`} className="px-6">
               <NavLink
                 to={item.path}
                 className={({ isActive }) => 
                   cn(
-                    "w-full text-4xl md:text-5xl font-display uppercase tracking-tighter py-4 md:py-6 block transition-all flex items-center gap-4 italic",
-                    isActive ? "text-falla-fire translate-x-2" : "text-falla-ink opacity-40"
+                    "w-full text-5xl md:text-7xl font-display uppercase tracking-tighter py-6 md:py-8 block transition-all flex items-center gap-6 italic",
+                    isActive ? "text-falla-fire translate-x-4 scale-105" : "text-falla-ink opacity-30"
                   )
                 }
                 onClick={handleMenuClose}
@@ -216,10 +217,10 @@ export default function AppNavbar() {
               </NavLink>
             </NavbarMenuItem>
           ))}
-          <NavbarMenuItem className="px-4 border-t border-falla-ink/5 mt-4 pt-4">
+          <NavbarMenuItem className="px-6 border-t border-falla-ink/10 mt-6 pt-6">
             <NavLink
               to="/profile"
-              className="w-full text-4xl md:text-5xl font-display uppercase tracking-tighter py-4 md:py-6 block transition-all flex items-center gap-4 text-falla-ink opacity-40 italic"
+              className="w-full text-5xl md:text-7xl font-display uppercase tracking-tighter py-6 md:py-8 block transition-all flex items-center gap-6 text-falla-ink opacity-30 italic"
               onClick={handleMenuClose}
             >
               Journey

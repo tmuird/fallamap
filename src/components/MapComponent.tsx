@@ -237,17 +237,17 @@ const MapComponent = () => {
       <div ref={mapContainerRef} className="w-full h-full" />
       
       {/* Consolidated Hub - Floating Island Aesthetic */}
-      <div className="absolute top-4 md:top-24 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-0 z-10 pointer-events-none">
+      <div className="absolute top-4 md:top-28 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-0 z-10 pointer-events-none">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink rounded-[2rem] p-2 md:p-2.5 flex flex-col gap-2 shadow-solid pointer-events-auto"
+          className="bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink rounded-[2.5rem] p-2.5 md:p-3 flex flex-col gap-3 shadow-solid pointer-events-auto"
         >
-          <div className="flex items-center gap-2">
-            <div className="flex-1 relative text-falla-ink">
-              <MagnifyingGlass size={20} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
+          <div className="flex items-center gap-2.5">
+            <div className="flex-1 relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.5rem] border border-transparent focus-within:border-falla-fire/30 transition-all">
+              <MagnifyingGlass size={22} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
               <input 
-                placeholder="Search monuments..." 
+                placeholder="Find a monument..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-12 bg-transparent pl-12 pr-10 font-bold text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink"
@@ -259,9 +259,9 @@ const MapComponent = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-falla-ink/5 hover:bg-falla-ink/10 rounded-full transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors"
                   >
-                    <X size={14} weight="bold" />
+                    <X size={16} weight="bold" />
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -270,15 +270,15 @@ const MapComponent = () => {
               isIconOnly 
               variant="ghost" 
               onClick={handleGeolocateUser} 
-              className="h-12 w-12 rounded-[1.25rem] text-falla-ink hover:bg-falla-ink/5 border-2 border-transparent focus:border-falla-fire transition-all"
+              className="h-12 w-12 rounded-[1.5rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
               aria-label="Locate me"
             >
-              <Target size={24} weight="bold" />
+              <Target size={26} weight="bold" />
             </Button>
           </div>
 
-          <div className="flex items-center justify-between px-2 pb-0.5 border-t border-falla-ink/5 pt-2">
-            <div className="flex gap-1.5">
+          <div className="flex items-center justify-between px-2 pb-1 border-t border-falla-ink/5 pt-3">
+            <div className="flex gap-2">
               {(['all', 'visited', 'standing'] as const).map((mode) => (
                 <Button 
                   key={mode}
@@ -286,8 +286,8 @@ const MapComponent = () => {
                   variant={filterMode === mode ? 'default' : 'ghost'} 
                   onClick={() => setFilterMode(mode)}
                   className={cn(
-                    "h-8 rounded-xl px-4 text-[10px] font-black uppercase transition-all", 
-                    filterMode === mode ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40"
+                    "h-9 rounded-xl px-5 text-[11px] font-black uppercase transition-all", 
+                    filterMode === mode ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
                   )}
                 >
                   {mode}
@@ -297,10 +297,10 @@ const MapComponent = () => {
             
             <motion.div 
               layout
-              className="flex items-center gap-2 px-3 bg-falla-fire/5 dark:bg-falla-fire/10 rounded-full py-1.5 border border-falla-fire/10"
+              className="flex items-center gap-2.5 px-4 bg-falla-fire/5 dark:bg-falla-fire/10 rounded-full py-2 border border-falla-fire/10 shadow-sm"
             >
-              <CheckCircle size={16} weight="fill" className="text-falla-fire" />
-              <span className="text-[10px] font-black text-falla-ink/60">
+              <CheckCircle size={18} weight="fill" className="text-falla-fire" />
+              <span className="text-[11px] font-black text-falla-ink/60">
                 {visitedNumbers.length}/{fallasData.length}
               </span>
             </motion.div>
@@ -324,10 +324,10 @@ const MapComponent = () => {
               {/* Desktop Close Button */}
               <button 
                 onClick={handleDrawerClose}
-                className="hidden md:flex absolute top-8 right-8 w-12 h-12 items-center justify-center bg-falla-paper ink-border rounded-[1.25rem] shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all z-50 group text-falla-ink"
+                className="hidden md:flex absolute top-10 right-10 w-14 h-14 items-center justify-center bg-falla-paper ink-border rounded-[1.5rem] shadow-solid hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all z-50 group text-falla-ink"
                 aria-label="Close"
               >
-                <X size={28} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
+                <X size={32} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
               </button>
 
               {selectedFalla && (

@@ -179,52 +179,58 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         animate={{ opacity: 1, x: 0 }}
         className={cn("flex flex-col w-full h-full bg-falla-paper", className)}
       >
-        <header className="p-6 md:p-12 pb-6 border-b-2 border-falla-ink bg-falla-paper sticky top-0 z-40 min-h-[200px] md:min-h-[280px] flex flex-col justify-between shadow-sm">
-          <div className="flex items-center justify-between mb-6">
+        <header className="p-6 md:p-12 pb-8 border-b-2 border-falla-ink bg-falla-paper sticky top-0 z-40 flex flex-col gap-8 shadow-sm">
+          {/* Header Row 1: Nav & Utils */}
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-falla-paper rounded-2xl ink-border p-1 shadow-sm">
-                <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-9 h-9 rounded-xl text-falla-ink" aria-label="Previous"><CaretLeft size={20} weight="bold" /></Button>
-                <div className="w-px h-5 bg-falla-ink/10 mx-0.5" />
-                <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-9 h-9 rounded-xl text-falla-ink" aria-label="Next"><CaretRight size={20} weight="bold" /></Button>
+              <div className="flex items-center gap-2.5 bg-falla-paper rounded-[1.25rem] ink-border p-2 shadow-sm">
+                <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-10 h-10 rounded-xl text-falla-ink hover:bg-falla-ink/5" aria-label="Previous"><CaretLeft size={22} weight="bold" /></Button>
+                <div className="w-px h-6 bg-falla-ink/10" />
+                <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-10 h-10 rounded-xl text-falla-ink hover:bg-falla-ink/5" aria-label="Next"><CaretRight size={22} weight="bold" /></Button>
               </div>
-              <div className="brutal-pill px-3 py-1 bg-falla-paper shadow-none text-[10px] font-black border-2 text-falla-ink rounded-xl">#{falla.number}</div>
+              <div className="brutal-pill px-4 py-1.5 bg-falla-paper shadow-none text-xs font-black border-2 text-falla-ink rounded-[1rem] flex items-center justify-center">#{falla.number}</div>
             </div>
             
-            <div className="flex items-center gap-3">
-              <Button isIconOnly variant="neutral" size="sm" className={cn("w-10 h-10 rounded-2xl border-2 transition-all shadow-solid-sm hover:shadow-none", liked && "text-red-500 border-red-500 bg-red-50 dark:bg-red-950/20")} onClick={() => toggleInteraction('like')} aria-label="Like"><Heart size={22} weight={liked ? "fill" : "bold"} /></Button>
-              <Button isIconOnly variant="neutral" size="sm" className="w-10 h-10 rounded-2xl border-2 text-falla-ink shadow-solid-sm hover:shadow-none" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })} aria-label="Share"><ShareNetwork size={22} weight="bold" /></Button>
-              {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-10 h-10 rounded-2xl border-2 bg-falla-ink text-falla-paper ml-1 md:hidden shadow-solid-sm hover:shadow-none" onClick={onClose} aria-label="Close"><X size={22} weight="bold" /></Button>}
+            <div className="flex items-center gap-2.5">
+              <Button isIconOnly variant="neutral" size="sm" className={cn("w-11 h-11 rounded-[1.25rem] border-2 transition-all shadow-solid-sm hover:shadow-none", liked && "text-red-500 border-red-500 bg-red-50 dark:bg-red-950/20")} onClick={() => toggleInteraction('like')} aria-label="Like"><Heart size={24} weight={liked ? "fill" : "bold"} /></Button>
+              <Button isIconOnly variant="neutral" size="sm" className="w-11 h-11 rounded-[1.25rem] border-2 text-falla-ink shadow-solid-sm hover:shadow-none" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })} aria-label="Share"><ShareNetwork size={24} weight="bold" /></Button>
+              {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-11 h-11 rounded-[1.25rem] border-2 bg-falla-ink text-falla-paper shadow-solid-sm hover:shadow-none md:hidden" onClick={onClose} aria-label="Close"><X size={24} weight="bold" /></Button>}
             </div>
           </div>
           
-          <h2 className="text-3xl md:text-5xl font-display text-falla-ink leading-[0.95] mb-8 tracking-tighter lowercase line-clamp-2 min-h-[2em] md:min-h-[1.8em] flex items-center">
+          {/* Header Row 2: Title */}
+          <h2 className="text-3xl md:text-5xl font-display text-falla-ink leading-[0.9] tracking-tighter lowercase line-clamp-2 max-w-[90%]">
             {falla.name}
           </h2>
           
+          {/* Header Row 3: Action Bar */}
           <div className="flex flex-wrap gap-3 items-center">
             <Button 
               variant={visited ? "secondary" : "outline"}
-              className={cn("flex-1 min-w-[120px] h-12 md:h-14 rounded-2xl border-2 text-[11px] font-black uppercase tracking-widest transition-all shadow-solid-sm hover:shadow-none", visited && "bg-falla-sage text-falla-paper shadow-none")}
-              startContent={<CheckCircle size={20} weight={visited ? "fill" : "bold"} />}
+              className={cn("flex-1 min-w-[130px] h-14 md:h-16 rounded-[1.25rem] border-2 text-[11px] font-black uppercase tracking-widest transition-all shadow-solid-sm hover:shadow-none", visited && "bg-falla-sage text-falla-paper shadow-none")}
+              startContent={<CheckCircle size={22} weight={visited ? "fill" : "bold"} />}
               onClick={() => toggleInteraction('visited')}
             >
               {visited ? "Visited" : "Passport"}
             </Button>
             
-            <div className="flex-1 min-w-[140px] flex items-center gap-2">
+            <div className="flex-1 min-w-[150px] flex items-center gap-2">
               <input type="file" id={`img-${falla.number}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-              <Button className="w-full h-12 md:h-14 rounded-2xl border-2 text-[11px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={20} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
+              <Button className="w-full h-14 md:h-16 rounded-[1.25rem] border-2 text-[11px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={22} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
             </div>
 
-            <div className="h-12 md:h-14 px-4 bg-falla-paper ink-border rounded-2xl flex items-center gap-3 soft-shadow-sm border-2">
-              {isPrivate ? <EyeSlash size={20} weight="bold" className="text-falla-ink/30" /> : <Eye size={20} weight="bold" className="text-falla-fire" />}
+            <div className="h-14 md:h-16 px-5 bg-falla-paper ink-border rounded-[1.25rem] flex items-center gap-4 soft-shadow-sm border-2">
+              {isPrivate ? <EyeSlash size={22} weight="bold" className="text-falla-ink/30" /> : <Eye size={22} weight="bold" className="text-falla-fire" />}
               <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" disabled={!isSignedIn} />
             </div>
           </div>
         </header>
         
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-falla-paper relative">
-          <div className="flex flex-col w-full min-h-full">
+          {/* Background Texture for Content Area */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')] z-0" />
+          
+          <div className="flex flex-col w-full min-h-full relative z-10">
             {/* Gallery with Content Wall for Guests */}
             <div className="w-full aspect-square md:aspect-video bg-falla-sand border-b-2 border-falla-ink overflow-hidden relative shrink-0">
               {images.length > 0 ? (
@@ -240,89 +246,111 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                               </div>
                             </PhotoView>
                             
-                            <div className="absolute top-6 left-6 flex gap-3 z-50">
-                              <button onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }} className="bg-falla-paper/90 backdrop-blur-md ink-border p-3 rounded-2xl shadow-solid-sm hover:scale-110 active:scale-95 transition-all flex items-center gap-3 text-falla-ink border-2">
-                                <Heart size={22} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
-                                <span className="text-sm font-black">{img.likeCount}</span>
+                            {/* Refined Image Interaction Overlay */}
+                            <div className="absolute top-8 left-8 flex gap-3 z-50">
+                              <button onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }} className="bg-falla-paper/90 backdrop-blur-md ink-border p-3.5 rounded-[1.25rem] shadow-solid-sm hover:scale-110 active:scale-95 transition-all flex items-center gap-3 text-falla-ink border-2">
+                                <Heart size={24} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
+                                <span className="text-sm font-black tracking-tighter">{img.likeCount}</span>
                               </button>
                             </div>
                           </CarouselItem>
                         ))}
                       </CarouselContent>
-                      {images.length > 1 && isSignedIn && <><CarouselPrevious className="left-6 bg-falla-paper/90 ink-border shadow-none border-2 z-30 text-falla-ink w-12 h-12 rounded-2xl" /><CarouselNext className="right-6 bg-falla-paper/90 ink-border shadow-none border-2 z-30 text-falla-ink w-12 h-12 rounded-2xl" /></>}
+                      {images.length > 1 && isSignedIn && <><CarouselPrevious className="left-8 bg-falla-paper/90 ink-border shadow-none border-2 z-30 text-falla-ink w-14 h-14 rounded-[1.25rem]" /><CarouselNext className="right-8 bg-falla-paper/90 ink-border shadow-none border-2 z-30 text-falla-ink w-14 h-14 rounded-[1.25rem]" /></>}
                     </Carousel>
                   </div>
 
                   {!isSignedIn && (
                     <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center bg-falla-paper/10 backdrop-blur-[2px]">
-                      <div className="w-16 h-16 rounded-[2rem] bg-falla-paper ink-border flex items-center justify-center mb-6 shadow-solid text-falla-ink">
-                        <LockKey size={32} weight="fill" className="text-falla-fire" />
+                      <div className="w-20 h-20 rounded-[2.5rem] bg-falla-paper ink-border flex items-center justify-center mb-6 shadow-solid text-falla-ink">
+                        <LockKey size={40} weight="fill" className="text-falla-fire" />
                       </div>
-                      <h3 className="text-2xl font-display italic mb-3 lowercase text-falla-ink">Community Gallery</h3>
-                      <p className="text-sm font-bold text-falla-ink/60 max-w-[240px] mb-8">Join the community to see and share festival memories.</p>
-                      <Link to="/sign-up" className="w-full max-w-[200px]">
-                        <Button className="bg-falla-fire text-falla-paper w-full h-12 rounded-xl text-xs font-black uppercase tracking-widest shadow-solid border-2">Join to unlock</Button>
+                      <h3 className="text-3xl font-display italic mb-3 lowercase text-falla-ink">Community Gallery</h3>
+                      <p className="text-base font-bold text-falla-ink/60 max-w-[280px] mb-8">Join the community to see and share festival memories.</p>
+                      <Link to="/sign-up" className="w-full max-w-[220px]">
+                        <Button className="bg-falla-fire text-falla-paper w-full h-14 rounded-2xl text-xs font-black uppercase tracking-widest shadow-solid border-2">Join to unlock</Button>
                       </Link>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-falla-paper/30">
-                  <MapPin size={48} weight="thin" className="mb-4 opacity-5" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Gallery Empty</p>
+                <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-16 text-center bg-falla-paper/30">
+                  <MapPin size={64} weight="thin" className="mb-6 opacity-5" />
+                  <p className="text-xs font-black uppercase tracking-[0.5em] opacity-30">Gallery Empty</p>
                 </div>
               )}
             </div>
 
             {/* Community Feed with Guest Blur */}
-            <div className="w-full p-8 md:p-16 flex flex-col bg-falla-paper min-h-[400px] relative">
-              <div className="flex items-center gap-4 mb-10">
-                <div className="w-12 h-12 rounded-2xl bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
-                  <ChatCircleDots size={24} weight="bold" />
+            <div className="w-full p-8 md:p-20 flex flex-col bg-falla-paper min-h-[500px] relative">
+              <div className="flex items-center gap-5 mb-14">
+                <div className="w-14 h-14 rounded-[1.25rem] bg-falla-fire/10 text-falla-fire flex items-center justify-center border-2 border-falla-fire/20">
+                  <ChatCircleDots size={28} weight="bold" />
                 </div>
-                <span className="font-display text-2xl lowercase italic text-falla-ink">Community Notes</span>
+                <span className="font-display text-3xl lowercase italic text-falla-ink">Community Notes</span>
               </div>
 
-              <div className={cn("space-y-10 pb-48 pt-2", !isSignedIn && "blur-md select-none pointer-events-none")}>
+              <div className={cn("space-y-12 pb-60 pt-2", !isSignedIn && "blur-md select-none pointer-events-none")}>
                 <AnimatePresence mode="popLayout">
                   {comments.length > 0 ? (
                     comments.map((comment, i) => (
-                      <motion.div key={comment.id || i} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="group border-b-2 border-falla-ink/5 pb-8 last:border-0 relative">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">Verified contributor</span>
-                            {comment.is_private && <EyeSlash size={16} weight="bold" className="text-falla-ink/20" />}
+                      <motion.div key={comment.id || i} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="group border-b-2 border-falla-ink/5 pb-10 last:border-0 relative">
+                        <div className="flex items-center justify-between mb-5">
+                          <div className="flex items-center gap-4">
+                            <span className="text-xs font-black uppercase tracking-widest text-falla-fire">Verified contributor</span>
+                            {comment.is_private && <EyeSlash size={18} weight="bold" className="text-falla-ink/20" />}
                           </div>
-                          <span className="text-[9px] text-falla-ink/20 font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
+                          <span className="text-[10px] text-falla-ink/20 font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-xl md:text-3xl text-falla-ink font-medium leading-tight">"{comment.text}"</p>
+                        <p className="text-2xl md:text-4xl text-falla-ink font-medium leading-[1.15]">"{comment.text}"</p>
                       </motion.div>
                     ))
                   ) : (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-16 text-center opacity-10">
-                      <ChatCircleDots size={56} weight="thin" className="mb-6" />
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-falla-ink">Be the first to speak</p>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-20 text-center opacity-10">
+                      <ChatCircleDots size={72} weight="thin" className="mb-8" />
+                      <p className="text-xs font-black uppercase tracking-[0.4em] text-falla-ink">Be the first to speak</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
               {!isSignedIn && comments.length > 0 && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-t from-falla-paper via-transparent to-transparent pt-20">
-                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-falla-fire bg-falla-paper border-2 border-falla-fire px-6 py-3 rounded-2xl shadow-solid">Sign up to read more notes</p>
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-t from-falla-paper via-transparent to-transparent pt-32">
+                   <p className="text-xs font-black uppercase tracking-[0.4em] text-falla-fire bg-falla-paper border-2 border-falla-fire px-8 py-4 rounded-[1.5rem] shadow-solid">Sign up to read more notes</p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Sticky Bottom Input */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 bg-gradient-to-t from-falla-paper via-falla-paper to-transparent pt-20 z-40 pointer-events-none">
-          <div className="flex gap-3 pointer-events-auto max-w-4xl mx-auto w-full items-end">
+        {/* Sticky Bottom Input - Modern Integrated Floating Bar */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 bg-gradient-to-t from-falla-paper via-falla-paper to-transparent pt-24 z-40 pointer-events-none">
+          <div className="flex gap-4 pointer-events-auto max-w-4xl mx-auto w-full items-end">
             <div className={cn("flex-1 bg-falla-paper ink-border rounded-[2.5rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2", !isSignedIn && "opacity-50 grayscale")}>
-              <Textarea variant="flat" placeholder={isSignedIn ? "Tell a story..." : "Sign in to share..."} value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={3} className="w-full" disabled={!isSignedIn} classNames={{ input: "text-lg md:text-2xl p-5 md:p-8 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
+              <Textarea 
+                variant="flat" 
+                placeholder={isSignedIn ? "Tell a story..." : "Sign in to share..."} 
+                value={newComment} 
+                onChange={(e) => setNewComment(e.target.value)} 
+                minRows={1} 
+                maxRows={4} 
+                className="w-full" 
+                disabled={!isSignedIn} 
+                classNames={{ 
+                  input: "text-lg md:text-2xl p-6 md:p-10 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink leading-tight", 
+                  inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" 
+                }} 
+              />
             </div>
-            <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim() || !isSignedIn} className="w-16 h-16 md:w-24 md:h-24 rounded-[2rem] md:rounded-[3rem] shrink-0 border-2 bg-falla-fire text-falla-paper shadow-solid active:shadow-none transition-all" aria-label="Send"><PaperPlaneRight size={28} weight="bold" /></Button>
+            <Button 
+              isIconOnly 
+              onClick={handleCommentSubmit} 
+              disabled={!newComment.trim() || !isSignedIn} 
+              className="w-16 h-16 md:w-28 md:h-28 rounded-[2rem] md:rounded-[3rem] shrink-0 border-2 bg-falla-fire text-falla-paper shadow-solid active:shadow-none transition-all" 
+              aria-label="Send"
+            >
+              <PaperPlaneRight size={window.innerWidth > 768 ? 36 : 28} weight="bold" />
+            </Button>
           </div>
         </div>
       </motion.div>
