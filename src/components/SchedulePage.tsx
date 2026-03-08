@@ -84,9 +84,9 @@ export default function SchedulePage() {
             {events.map((event, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0.5, y: 10 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+                transition={{ duration: 0.3, delay: index * 0.05, ease: "easeOut" }}
                 className={cn(
                   "relative flex flex-col md:flex-row items-center justify-between w-full gap-12 md:gap-0",
                   index % 2 === 0 ? "md:flex-row-reverse" : ""
