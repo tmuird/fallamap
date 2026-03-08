@@ -17,7 +17,7 @@ export default {
       },
       colors: {
         falla: {
-          paper: "#FDFBF7", 
+          paper: "#FAF7F2", 
           ink: "#1A1A1A",
           fire: "#FF7043",
           sage: "#8B9467",
@@ -50,15 +50,15 @@ export default {
       themes: {
         light: {
           colors: {
-            background: "#FDFBF7",
+            background: "#FAF7F2",
             foreground: "#1A1A1A",
             primary: {
               DEFAULT: "#FF7043",
-              foreground: "#FDFBF7",
+              foreground: "#FAF7F2",
             },
             secondary: {
               DEFAULT: "#8B9467",
-              foreground: "#FDFBF7",
+              foreground: "#FAF7F2",
             },
             focus: "#FF7043",
           },
@@ -75,6 +75,16 @@ export default {
             },
           }
         },
+        dark: {
+          colors: {
+            background: "#FAF7F2", // Force light background even in dark mode for Soft Brutalist theme
+            foreground: "#1A1A1A",
+            primary: {
+              DEFAULT: "#FF7043",
+              foreground: "#FAF7F2",
+            },
+          }
+        }
       },
     }),
     addVariablesForColors,

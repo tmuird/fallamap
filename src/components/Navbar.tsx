@@ -37,8 +37,13 @@ export default function AppNavbar() {
     { label: "Archive", path: "/archive", icon: <Archive size={20} weight="bold" /> },
   ];
 
+  const handleMenuClose = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <Navbar 
+      isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen} 
       maxWidth="xl" 
       className="bg-[#FAF7F2] border-b-2 border-falla-ink sticky top-0 h-20"
@@ -54,12 +59,12 @@ export default function AppNavbar() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group" onClick={handleMenuClose}>
             <div className="w-10 h-10 flex items-center justify-center relative group-hover:scale-110 transition-transform">
               <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path 
                   d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
-                  fill="#FF5F1F" 
+                  fill="#FF7043" 
                   stroke="#1A1A1A" 
                   strokeWidth="8"
                 />
@@ -71,7 +76,7 @@ export default function AppNavbar() {
                 />
               </svg>
             </div>
-            <p className="font-display text-2xl text-falla-fire hidden md:block leading-none tracking-tight">
+            <p className="font-display text-2xl text-[#FF7043] hidden md:block leading-none tracking-tight">
               fallamap
             </p>
           </Link>
@@ -101,17 +106,28 @@ export default function AppNavbar() {
         <NavbarItem className="gap-3 flex items-center">
           <Show when="signed-in">
             <div className="flex items-center gap-3">
-              {isAdmin && (
+              <Link to="/profile">
                 <Button 
-                  as={Link} 
-                  to="/dashboard" 
                   variant="flat" 
                   size="sm" 
-                  className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2 hidden md:flex"
-                  startContent={<ShieldCheck size={16} weight="bold" />}
+                  className="bg-white text-falla-ink font-bold uppercase tracking-widest text-[10px] rounded-xl px-4 h-10 ink-border shadow-sm hover:shadow-none transition-all border-2"
+                  startContent={<Fingerprint size={18} weight="bold" className="text-falla-fire" />}
                 >
-                  Admin
+                  My Journey
                 </Button>
+              </Link>
+              
+              {isAdmin && (
+                <Link to="/dashboard" className="hidden md:block">
+                  <Button 
+                    variant="flat" 
+                    size="sm" 
+                    className="bg-falla-ink text-[#FAF7F2] font-bold uppercase tracking-widest text-[10px] rounded-xl px-5 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                    startContent={<ShieldCheck size={16} weight="bold" />}
+                  >
+                    Admin
+                  </Button>
+                </Link>
               )}
               <div className="ink-border rounded-full p-0.5 bg-white soft-shadow border-2 overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                 <UserButton 
@@ -121,43 +137,28 @@ export default function AppNavbar() {
                       userButtonTrigger: "focus:shadow-none focus:ring-0" 
                     } 
                   }}
-                >
-                  <UserButton.MenuItems>
-                    <UserButton.Link
-                      label="My Journey"
-                      labelIcon={<Fingerprint size={16} weight="bold" />}
-                      href="/profile"
-                    />
-                    {isAdmin && (
-                      <UserButton.Link
-                        label="Moderation"
-                        labelIcon={<ShieldCheck size={16} weight="bold" />}
-                        href="/dashboard"
-                      />
-                    )}
-                  </UserButton.MenuItems>
-                </UserButton>
+                />
               </div>
             </div>
           </Show>
           <Show when="signed-out">
-            <Button 
-              as={Link} 
-              to="/sign-in" 
-              variant="light" 
-              size="sm" 
-              className="text-falla-ink font-bold uppercase tracking-widest text-[10px] h-10"
-            >
-              Sign In
-            </Button>
-            <Button 
-              as={Link} 
-              to="/sign-up" 
-              size="sm" 
-              className="bg-falla-fire text-white font-bold uppercase tracking-widest text-[10px] rounded-xl px-6 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
-            >
-              Join
-            </Button>
+            <Link to="/sign-in">
+              <Button 
+                variant="light" 
+                size="sm" 
+                className="text-falla-ink font-bold uppercase tracking-widest text-[10px] h-10"
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link to="/sign-up">
+              <Button 
+                size="sm" 
+                className="bg-falla-fire text-white font-bold uppercase tracking-widest text-[10px] rounded-xl px-6 h-10 ink-border soft-shadow hover:shadow-none transition-all border-2"
+              >
+                Join
+              </Button>
+            </Link>
           </Show>
         </NavbarItem>
       </NavbarContent>
@@ -173,7 +174,7 @@ export default function AppNavbar() {
                   isActive ? "text-falla-fire translate-x-2" : "text-falla-ink opacity-60"
                 )
               }
-              onClick={() => setIsMenuOpen(false)}
+              onClick={handleMenuClose}
             >
               {item.icon}
               {item.label}
@@ -184,9 +185,9 @@ export default function AppNavbar() {
           <NavLink
             to="/profile"
             className="w-full text-5xl font-display uppercase tracking-tight py-6 block transition-all flex items-center gap-4 text-falla-ink opacity-60"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={handleMenuClose}
           >
-            <User size={40} weight="bold" /> Profile
+            <User size={40} weight="bold" /> My Journey
           </NavLink>
         </NavbarMenuItem>
       </NavbarMenu>
