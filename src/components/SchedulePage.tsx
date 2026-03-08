@@ -68,7 +68,7 @@ export default function SchedulePage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-32"
         >
-          <div className="brutal-pill inline-block mb-6 bg-falla-paper border-falla-ink/20 shadow-none px-4 py-1">
+          <div className="brutal-pill inline-block mb-6">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire">The Agenda</span>
           </div>
           <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight tracking-normal italic lowercase">
@@ -84,10 +84,9 @@ export default function SchedulePage() {
             {events.map((event, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-20px" }}
-                transition={{ duration: 0.5, ease: "circOut" }}
+                initial={{ opacity: 0.5, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
                 className={cn(
                   "relative flex flex-col md:flex-row items-center justify-between w-full gap-12 md:gap-0",
                   index % 2 === 0 ? "md:flex-row-reverse" : ""
@@ -98,7 +97,7 @@ export default function SchedulePage() {
                 
                 {/* Content Card Side */}
                 <div className="w-full md:w-[42%] relative z-20">
-                  <Card className="hover:translate-y-[-4px] transition-all duration-300 bg-falla-paper border-2">
+                  <Card className="hover:translate-y-[-4px] transition-all duration-300 bg-falla-paper border-2 border-falla-ink soft-shadow">
                     <CardBody className="p-8">
                       <div className="flex items-center justify-between mb-8">
                         <p className="text-falla-fire font-black uppercase tracking-widest text-2xl">{event.date}</p>

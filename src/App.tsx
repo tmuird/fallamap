@@ -108,7 +108,7 @@ export default function App() {
         <AppNavbar />
         
         <main className="flex-grow flex flex-col relative">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
               <Route path="/map" element={<PageWrapper><MapPage /></PageWrapper>} />

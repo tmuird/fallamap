@@ -258,7 +258,8 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       {/* Consolidated Hub - Unified Container Aesthetic */}
-      <div className="absolute top-2 md:top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+      <div className="absolute top-8 md:top-12 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col">
+
 
         <motion.div 
           initial={{ y: -20, opacity: 0 }}

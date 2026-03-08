@@ -10,7 +10,7 @@ export default function ArchivePage() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-8"
         >
-          <div className="brutal-pill inline-block bg-falla-paper border-falla-ink/20 shadow-none px-6 py-2">
+          <div className="brutal-pill inline-block">
             <span className="text-xs font-black uppercase tracking-[0.4em] text-falla-fire">legacy archive</span>
           </div>
           

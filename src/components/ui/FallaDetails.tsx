@@ -190,25 +190,25 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           {/* Header Row 1: Nav & Utils (Now Static) */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 bg-falla-paper rounded-xl ink-border p-1 shadow-sm border-2">
-                <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-lg text-falla-ink hover:bg-falla-ink/5" aria-label="Previous"><CaretLeft size={18} weight="bold" /></Button>
+              <div className="flex items-center gap-1.5 bg-falla-paper rounded-full ink-border p-1 shadow-sm border-2">
+                <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-full text-falla-ink hover:bg-falla-ink/5" aria-label="Previous"><CaretLeft size={18} weight="bold" /></Button>
                 <div className="w-px h-4 bg-falla-ink/10" />
-                <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-8 h-8 rounded-lg text-falla-ink hover:bg-falla-ink/5" aria-label="Next"><CaretRight size={18} weight="bold" /></Button>
+                <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-8 h-8 rounded-full text-falla-ink hover:bg-falla-ink/5" aria-label="Next"><CaretRight size={18} weight="bold" /></Button>
               </div>
               <motion.div 
                 key={falla.number}
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="px-3 py-1 bg-falla-paper shadow-none text-[10px] font-black border-2 text-falla-ink rounded-lg flex items-center justify-center"
+                className="px-3 py-1 bg-falla-paper shadow-none text-[10px] font-black border-2 text-falla-ink rounded-full flex items-center justify-center"
               >
                 #{falla.number}
               </motion.div>
             </div>
             
             <div className="flex items-center gap-2">
-              <Button isIconOnly variant="neutral" size="sm" className={cn("w-9 h-9 rounded-xl border-2 transition-all shadow-solid-sm hover:shadow-none", liked && "text-red-500 border-red-500 bg-red-50 dark:bg-red-950/20")} onClick={() => toggleInteraction('like')} aria-label="Like"><Heart size={20} weight={liked ? "fill" : "bold"} /></Button>
-              <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2 text-falla-ink shadow-solid-sm hover:shadow-none" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })} aria-label="Share"><ShareNetwork size={20} weight="bold" /></Button>
-              {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-xl border-2 bg-falla-ink text-falla-paper shadow-solid-sm hover:shadow-none" onClick={onClose} aria-label="Close"><X size={20} weight="bold" /></Button>}
+              <Button isIconOnly variant="neutral" size="sm" className={cn("w-9 h-9 rounded-full border-2 transition-all shadow-solid-sm hover:shadow-none", liked && "text-red-500 border-red-500 bg-red-50 dark:bg-red-950/20")} onClick={() => toggleInteraction('like')} aria-label="Like"><Heart size={20} weight={liked ? "fill" : "bold"} /></Button>
+              <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-full border-2 text-falla-ink shadow-solid-sm hover:shadow-none" onClick={() => navigator.share?.({ title: falla.name, url: window.location.href })} aria-label="Share"><ShareNetwork size={20} weight="bold" /></Button>
+              {onClose && <Button isIconOnly variant="neutral" size="sm" className="w-9 h-9 rounded-full border-2 bg-falla-ink text-falla-paper shadow-solid-sm hover:shadow-none" onClick={onClose} aria-label="Close"><X size={20} weight="bold" /></Button>}
             </div>
           </div>
           
@@ -229,7 +229,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           <div className="flex flex-wrap gap-2 items-center">
             <Button 
               variant={visited ? "secondary" : "outline"}
-              className={cn("flex-1 min-w-[100px] h-10 md:h-12 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all shadow-solid-sm hover:shadow-none", visited && "bg-falla-sage text-falla-paper shadow-none")}
+              className={cn("flex-1 min-w-[100px] h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest transition-all shadow-solid-sm hover:shadow-none", visited && "bg-falla-sage text-falla-paper shadow-none")}
               startContent={<CheckCircle size={18} weight={visited ? "fill" : "bold"} />}
               onClick={() => toggleInteraction('visited')}
             >
@@ -238,10 +238,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
             
             <div className="flex-1 min-w-[120px] flex items-center gap-2">
               <input type="file" id={`img-${falla.number}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-              <Button className="w-full h-10 md:h-12 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
+              <Button className="w-full h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${falla.number}`)?.click()}>Upload</Button>
             </div>
 
-            <div className="h-10 md:h-12 px-3 bg-falla-paper ink-border rounded-xl flex items-center gap-3 soft-shadow-sm border-2">
+            <div className="h-10 md:h-12 px-3 bg-falla-paper ink-border rounded-full flex items-center gap-3 soft-shadow-sm border-2">
               {isPrivate ? <EyeSlash size={18} weight="bold" className="text-falla-ink/30" /> : <Eye size={18} weight="bold" className="text-falla-fire" />}
               <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" disabled={!isSignedIn} />
             </div>
@@ -324,9 +324,15 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                   )}
                 </div>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-falla-ink/10 p-12 text-center bg-falla-paper/30 min-h-[300px]">
-                  <MapPin size={48} weight="thin" className="mb-4 opacity-5" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-30">Gallery Empty</p>
+                <div className="w-full h-full flex flex-col items-center justify-center p-12 text-center bg-falla-paper relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/felt.png')] z-0" />
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-full bg-falla-fire/5 border-2 border-falla-fire/10 flex items-center justify-center mb-6 shadow-soft-sm">
+                      <Camera size={40} weight="thin" className="text-falla-fire/30" />
+                    </div>
+                    <h3 className="text-2xl font-display italic text-falla-ink/40 mb-2 lowercase">Empty Gallery</h3>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink/20 max-w-[240px]">Be the first to capture festival memories</p>
+                  </div>
                 </div>
               )}
             </div>
