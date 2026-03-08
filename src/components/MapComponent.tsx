@@ -48,17 +48,17 @@ const MapComponent = () => {
   const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Load Initial Data
+  // Load Fallas Data
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFallas = async () => {
       const { data: fallas } = await supabase.from("fallas").select("*").order("number");
       setFallasData(((fallas && fallas.length > 0) ? fallas : localFallas) as Falla[]);
     };
-    fetchData();
+    fetchFallas();
   }, []);
 
-  // Sync Visited Numbers (DB + Local)
-  const refreshInteractions = useCallback(async () => {
+  // Sync Visited State
+  const refreshVisited = useCallback(async () => {
     if (user) {
       const { data } = await supabase
         .from("user_interactions")
@@ -75,20 +75,8 @@ const MapComponent = () => {
   }, [user]);
 
   useEffect(() => {
-    refreshInteractions();
-  }, [refreshInteractions]);
-
-  // Handle Deep Linking
-  useEffect(() => {
-    const fallaNum = searchParams.get("falla");
-    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
-      const falla = fallasData.find(f => f.number === fallaNum);
-      if (falla) {
-        setSelectedFalla(falla);
-        setIsDrawerOpen(true);
-      }
-    }
-  }, [searchParams, fallasData, selectedFalla]);
+    refreshVisited();
+  }, [refreshVisited]);
 
   const flyToFalla = (falla: Falla) => {
     mapRef.current?.flyTo({
@@ -113,7 +101,7 @@ const MapComponent = () => {
     setSelectedFalla(null);
   };
 
-  // Initialize Map (Only once or on Theme change)
+  // Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -129,12 +117,24 @@ const MapComponent = () => {
     return () => map.remove();
   }, [isDarkMode]);
 
-  // Manage Markers (Reactive to Data and Visited state)
+  // Deep Link Handling
+  useEffect(() => {
+    const fallaNum = searchParams.get("falla");
+    if (fallaNum && fallasData.length > 0 && !selectedFalla) {
+      const falla = fallasData.find(f => f.number === fallaNum);
+      if (falla) {
+        setSelectedFalla(falla);
+        setIsDrawerOpen(true);
+      }
+    }
+  }, [searchParams, fallasData, selectedFalla]);
+
+  // Marker Management (Reactive to data and visited status)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
 
-    // Clear existing markers
+    // Remove existing
     Object.values(markersRef.current).forEach(m => m.remove());
     markersRef.current = {};
 
@@ -142,18 +142,14 @@ const MapComponent = () => {
       if (falla.coordinates?.lat && falla.coordinates?.lng) {
         const isVisited = visitedNumbers.includes(falla.number);
         const el = document.createElement("div");
-        el.className = `marker ${isVisited ? 'visited' : ''}`;
-        el.style.backgroundColor = falla.is_burnt ? "#1A1A1A" : (isVisited ? "#6B705C" : "#FF5F1F");
         
-        // Add specific sizing for visual priority
-        el.style.width = isVisited ? '12px' : '16px';
-        el.style.height = isVisited ? '12px' : '16px';
-        el.style.borderRadius = '50%';
-        el.style.border = '2px solid white';
-        el.style.cursor = 'pointer';
-        el.style.transition = 'all 0.3s ease';
-
-        el.addEventListener('click', () => handleSelectFalla(falla));
+        // Clean CSS classes - No manual style overrides
+        el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''}`;
+        
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleSelectFalla(falla);
+        });
 
         const marker = new mapboxgl.Marker(el)
           .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
@@ -162,7 +158,7 @@ const MapComponent = () => {
         markersRef.current[falla.number] = marker;
       }
     });
-  }, [fallasData, visitedNumbers, isDarkMode]); // Marker update loop
+  }, [fallasData, visitedNumbers, isDarkMode]);
 
   const filteredFallas = useMemo(() => {
     return fallasData.filter(f => {
@@ -173,7 +169,7 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // Handle Search Filtering (Hide/Show markers)
+  // Sync marker visibility with filtering
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -182,9 +178,10 @@ const MapComponent = () => {
   }, [filteredFallas]);
 
   return (
-    <div className="w-full h-full relative group font-sans overflow-hidden">
+    <div className="w-full h-full relative font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
+      {/* Consolidated Control Center */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-10">
         <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-2 flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -210,7 +207,7 @@ const MapComponent = () => {
                   size="sm" 
                   variant={filterMode === mode ? 'default' : 'ghost'} 
                   onClick={() => setFilterMode(mode)}
-                  className={cn("h-8 rounded-xl px-4 text-[10px] font-black uppercase", filterMode === mode ? "bg-falla-fire text-white" : "text-falla-ink/40")}
+                  className={cn("h-8 rounded-xl px-4 text-[10px] font-black uppercase transition-none", filterMode === mode ? "bg-falla-fire text-white shadow-none" : "text-falla-ink/40")}
                 >
                   {mode}
                 </Button>
@@ -247,7 +244,7 @@ const MapComponent = () => {
                       handleSelectFalla(fallasData[(idx - 1 + fallasData.length) % fallasData.length]);
                     }}
                     onClose={handleDrawerClose}
-                    onInteraction={refreshInteractions}
+                    onInteraction={refreshVisited}
                   />
                 </div>
               )}
