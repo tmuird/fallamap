@@ -60,25 +60,26 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
   useEffect(() => {
     const checkInteractions = async () => {
-      if (!user || !falla.id) {
-        // Fallback to local
-        const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
-        const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
-        setVisited(localV.includes(falla.number));
-        setLiked(localL.includes(falla.number));
-        return;
+      // Priority 1: Supabase
+      if (user && falla.id) {
+        const { data } = await supabase
+          .from("user_interactions")
+          .select("type")
+          .eq("user_id", user.id)
+          .eq("falla_id", falla.id);
+        
+        if (data) {
+          setVisited(data.some(i => i.type === "visited"));
+          setLiked(data.some(i => i.type === "like"));
+          return;
+        }
       }
       
-      const { data } = await supabase
-        .from("user_interactions")
-        .select("type")
-        .eq("user_id", user.id)
-        .eq("falla_id", falla.id);
-      
-      if (data) {
-        setVisited(data.some(i => i.type === "visited"));
-        setLiked(data.some(i => i.type === "like"));
-      }
+      // Priority 2: Local Fallback
+      const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+      const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
+      setVisited(localV.includes(falla.number));
+      setLiked(localL.includes(falla.number));
     };
     checkInteractions();
   }, [user, falla.id, falla.number]);
@@ -112,7 +113,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         await supabase.from("user_interactions").insert([{ user_id: user.id, falla_id: falla.id, type }]);
         setState(true);
       }
-      onInteraction?.(); // Update Map!
+      onInteraction?.(); // Trigger map refresh
       toast.success(currentState ? "Removed" : "Added!");
     } catch (err) {
       console.error(err);

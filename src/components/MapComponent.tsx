@@ -35,6 +35,7 @@ const MapComponent = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
+  const markerElsRef = useRef<{ [key: string]: HTMLDivElement }>({});
   
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
@@ -50,7 +51,7 @@ const MapComponent = () => {
   const [selectedFalla, setSelectedFalla] = useState<Falla | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Initial Load of Fallas
+  // 1. Fetch data
   useEffect(() => {
     const fetchFallas = async () => {
       try {
@@ -63,7 +64,7 @@ const MapComponent = () => {
     fetchFallas();
   }, []);
 
-  // 2. Fetch User Interactions (Passport)
+  // 2. Interaction Sync (Passport)
   const refreshInteractions = useCallback(async () => {
     if (user) {
       const { data } = await supabase
@@ -73,12 +74,10 @@ const MapComponent = () => {
         .eq("type", "visited");
       
       if (data) {
-        const numbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
-        setVisitedNumbers(numbers);
+        setVisitedNumbers(data.map((i: any) => i.fallas?.number).filter(Boolean));
       }
     } else {
-      const local = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
-      setVisitedNumbers(local);
+      setVisitedNumbers(JSON.parse(localStorage.getItem("visited_fallas") || "[]"));
     }
   }, [user]);
 
@@ -86,7 +85,7 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Initialize Map instance ONCE
+  // 3. Initialize Map (Strictly Once per Theme)
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -99,35 +98,55 @@ const MapComponent = () => {
     });
 
     mapRef.current = map;
-    return () => map.remove();
+
+    // Clean up markers ref when map is destroyed
+    return () => {
+      Object.values(markersRef.current).forEach(m => m.remove());
+      markersRef.current = {};
+      markerElsRef.current = {};
+      map.remove();
+    };
   }, [isDarkMode]);
 
-  // 4. Manage Marker Lifecycle (Reactive to data and visited state)
+  // 4. Reactive Marker Logic (No lag version)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
 
     fallasData.forEach((falla) => {
-      const isVisited = visitedNumbers.includes(falla.number);
       let marker = markersRef.current[falla.number];
+      let el = markerElsRef.current[falla.number];
 
       if (!marker) {
-        const el = document.createElement("div");
+        el = document.createElement("div");
         el.className = 'marker';
-        el.addEventListener('click', () => handleSelectFalla(falla));
+        el.addEventListener('click', (e) => {
+          e.stopPropagation(); // Fix "multiple cards" issue
+          handleSelectFalla(falla);
+        });
 
         marker = new mapboxgl.Marker(el)
           .setLngLat([falla.coordinates.lng, falla.coordinates.lat])
           .addTo(map);
         
         markersRef.current[falla.number] = marker;
+        markerElsRef.current[falla.number] = el;
       }
 
-      // Sync class names for colors
-      const el = marker.getElement();
-      el.className = `marker ${isVisited ? 'visited' : ''} ${falla.is_burnt ? 'burnt' : ''}`;
+      // SYNC STATES FAST (No JS inline styles, just class toggle)
+      const isVisited = visitedNumbers.includes(falla.number);
+      el.classList.toggle('visited', isVisited);
+      el.classList.toggle('burnt', !!falla.is_burnt);
     });
-  }, [fallasData, visitedNumbers, isDarkMode]);
+  }, [fallasData, isDarkMode]); // Only re-run when data or theme changes
+
+  // 5. Secondary update for visited (Instant, no marker re-creation)
+  useEffect(() => {
+    Object.entries(markerElsRef.current).forEach(([num, el]) => {
+      const isVisited = visitedNumbers.includes(num);
+      el.classList.toggle('visited', isVisited);
+    });
+  }, [visitedNumbers]);
 
   const flyToFalla = (falla: Falla) => {
     mapRef.current?.flyTo({
@@ -152,7 +171,7 @@ const MapComponent = () => {
     setSelectedFalla(null);
   };
 
-  // 5. Deep Link Handling
+  // 6. Search Params / Deep Link
   useEffect(() => {
     const fallaNum = searchParams.get("falla");
     if (fallaNum && fallasData.length > 0 && !selectedFalla) {
@@ -173,7 +192,7 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // 6. Filter Marker Visibility
+  // 7. Sync Visibility
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -185,7 +204,6 @@ const MapComponent = () => {
     <div className="w-full h-full relative font-sans overflow-hidden">
       <div ref={mapContainerRef} className="w-full h-full" />
       
-      {/* Consolidated Hub */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-10">
         <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-2 flex flex-col gap-2">
           <div className="flex items-center gap-2">
