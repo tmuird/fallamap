@@ -6,7 +6,7 @@ import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { MagnifyingGlass, Target, CheckCircle } from "@phosphor-icons/react";
+import { MagnifyingGlass, Target, CheckCircle, X } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { useUser } from "@clerk/react";
@@ -51,9 +51,9 @@ const MapComponent = () => {
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Initial Load of Fallas
+  // 1. Authoritative Data Load
   useEffect(() => {
-    const fetchFallas = async () => {
+    const fetchData = async () => {
       try {
         const { data: fallas } = await supabase.from("fallas").select("*").order("number");
         const merged = (fallas && fallas.length > 0) ? fallas : localFallas;
@@ -62,10 +62,10 @@ const MapComponent = () => {
         setFallasData(localFallas as Falla[]);
       }
     };
-    fetchFallas();
+    fetchData();
   }, []);
 
-  // 2. Fetch User Interactions (Passport & Likes)
+  // 2. Interaction Sync (Passport & Likes)
   const refreshInteractions = useCallback(async () => {
     const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
     const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
@@ -97,7 +97,7 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Initialize Map instance ONCE
+  // 3. Initialize Map (Strictly Once)
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -118,7 +118,7 @@ const MapComponent = () => {
     };
   }, [isDarkMode]);
 
-  // 4. Manage Marker Lifecycle (Creation)
+  // 4. Reactive Markers (Pinned & Fast)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
@@ -142,21 +142,15 @@ const MapComponent = () => {
         markersRef.current[falla.number] = marker;
         markerElsRef.current[falla.number] = el;
       }
-    });
-  }, [fallasData, isDarkMode]);
 
-  // 5. Update Marker States (Reactive to Passport and Likes)
-  useEffect(() => {
-    Object.entries(markerElsRef.current).forEach(([num, el]) => {
-      const isVisited = visitedNumbers.includes(num);
-      const isLiked = likedNumbers.includes(num);
-      const falla = fallasData.find(f => f.number === num);
-      
+      // SYNC STATES FAST (No re-creation)
+      const isVisited = visitedNumbers.includes(falla.number);
+      const isLiked = likedNumbers.includes(falla.number);
       el.classList.toggle('visited', isVisited);
       el.classList.toggle('liked', isLiked);
-      el.classList.toggle('burnt', !!falla?.is_burnt);
+      el.classList.toggle('burnt', !!falla.is_burnt);
     });
-  }, [visitedNumbers, likedNumbers, fallasData]);
+  }, [fallasData, isDarkMode, visitedNumbers, likedNumbers]);
 
   const selectedFalla = useMemo(() => {
     const num = searchParams.get("falla");
@@ -191,7 +185,7 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
-  // 6. Filter Marker Visibility
+  // 6. Sync Visibility
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
@@ -248,10 +242,21 @@ const MapComponent = () => {
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} shouldScaleBackground autoFocus={false}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[100]" />
-          <Drawer.Content className="bg-[#FAF7F2] flex flex-col rounded-t-[3rem] h-[85vh] fixed bottom-0 left-0 right-0 z-[101] outline-none max-w-5xl mx-auto border-x-2 border-t-2 border-falla-ink shadow-solid">
+          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-12 h-screen">
             <Drawer.Title className="sr-only">Falla Details</Drawer.Title>
-            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:my-6" />
-            <div className="flex-1 overflow-hidden relative flex flex-col">
+            
+            {/* Mobile Handler */}
+            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:hidden pointer-events-auto" />
+            
+            <div className="w-full h-full md:max-w-4xl bg-[#FAF7F2] rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative">
+              {/* Desktop Close Button */}
+              <button 
+                onClick={handleDrawerClose}
+                className="hidden md:flex absolute top-6 right-6 w-10 h-10 items-center justify-center bg-white ink-border rounded-xl soft-shadow-sm hover:shadow-none transition-all z-50 group"
+              >
+                <X size={24} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+
               {selectedFalla && (
                 <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-none">
                   <FallaDetails 
