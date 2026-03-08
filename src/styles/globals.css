@@ -92,13 +92,21 @@ h1, h2, h3, h4, .font-display {
   z-index: 5;
 }
 
+/* Phosphor-style Heart Overlay */
 .marker.liked::after {
-  content: '❤️';
-  font-size: 10px;
+  content: '';
   position: absolute;
   top: -10px;
   right: -10px;
-  filter: drop-shadow(1px 1px 0px #1A1A1A);
+  width: 16px;
+  height: 16px;
+  background-color: #ef4444; /* red-500 */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M240,102c0,70-103.79,126.66-108.21,128.9a8,8,0,0,1-7.58,0C119.79,228.66,16,172,16,102A62.07,62.07,0,0,1,78,40c20.65,0,38.73,8.88,50,23.89C139.27,48.88,157.35,40,178,40A62.07,62.07,0,0,1,240,102Z'%3E%3C/path%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  border: 1px solid white; /* subtle border for the heart */
+  filter: drop-shadow(1.5px 1.5px 0px #1A1A1A);
+  z-index: 20;
 }
 
 .marker.burnt {

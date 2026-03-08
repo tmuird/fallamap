@@ -51,9 +51,9 @@ const MapComponent = () => {
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Fetch data
+  // 1. Initial Load of Fallas
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFallas = async () => {
       try {
         const { data: fallas } = await supabase.from("fallas").select("*").order("number");
         const merged = (fallas && fallas.length > 0) ? fallas : localFallas;
@@ -62,10 +62,10 @@ const MapComponent = () => {
         setFallasData(localFallas as Falla[]);
       }
     };
-    fetchData();
+    fetchFallas();
   }, []);
 
-  // 2. Fetch Interactions
+  // 2. Fetch User Interactions (Passport & Likes)
   const refreshInteractions = useCallback(async () => {
     const localV = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
     const localL = JSON.parse(localStorage.getItem("liked_fallas") || "[]");
@@ -97,7 +97,7 @@ const MapComponent = () => {
     refreshInteractions();
   }, [refreshInteractions]);
 
-  // 3. Initialize Map
+  // 3. Initialize Map instance ONCE
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -118,7 +118,7 @@ const MapComponent = () => {
     };
   }, [isDarkMode]);
 
-  // 4. Reactive Markers
+  // 4. Manage Marker Lifecycle (Creation)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
@@ -142,12 +142,21 @@ const MapComponent = () => {
         markersRef.current[falla.number] = marker;
         markerElsRef.current[falla.number] = el;
       }
-
-      el.classList.toggle('visited', visitedNumbers.includes(falla.number));
-      el.classList.toggle('liked', likedNumbers.includes(falla.number));
-      el.classList.toggle('burnt', !!falla.is_burnt);
     });
-  }, [fallasData, isDarkMode, visitedNumbers, likedNumbers]);
+  }, [fallasData, isDarkMode]);
+
+  // 5. Update Marker States (Reactive to Passport and Likes)
+  useEffect(() => {
+    Object.entries(markerElsRef.current).forEach(([num, el]) => {
+      const isVisited = visitedNumbers.includes(num);
+      const isLiked = likedNumbers.includes(num);
+      const falla = fallasData.find(f => f.number === num);
+      
+      el.classList.toggle('visited', isVisited);
+      el.classList.toggle('liked', isLiked);
+      el.classList.toggle('burnt', !!falla?.is_burnt);
+    });
+  }, [visitedNumbers, likedNumbers, fallasData]);
 
   const selectedFalla = useMemo(() => {
     const num = searchParams.get("falla");
@@ -182,6 +191,7 @@ const MapComponent = () => {
     });
   }, [fallasData, searchQuery, filterMode, visitedNumbers]);
 
+  // 6. Filter Marker Visibility
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
       const isVisible = filteredFallas.some(f => f.number === num);
