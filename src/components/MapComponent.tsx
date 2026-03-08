@@ -50,35 +50,44 @@ const MapComponent = () => {
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // 1. Fetch data
+  // 1. Authoritative Data Load
   useEffect(() => {
-    const fetchFallas = async () => {
+    const fetchData = async () => {
       try {
         const { data: fallas } = await supabase.from("fallas").select("*").order("number");
-        setFallasData(((fallas && fallas.length > 0) ? fallas : localFallas) as Falla[]);
+        // Ensure every Falla has an ID from DB if possible, fallback to local for geometry
+        const merged = (fallas && fallas.length > 0) ? fallas : localFallas;
+        setFallasData(merged as Falla[]);
       } catch (err) {
         setFallasData(localFallas as Falla[]);
       }
     };
-    fetchFallas();
+    fetchData();
   }, []);
 
-  // 2. Fetch Passport State
+  // 2. Instant/Optimistic Interaction Sync
   const refreshInteractions = useCallback(async () => {
+    // ALWAYS start with local storage for zero-lag UI updates
+    const local = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
+    setVisitedNumbers(local);
+
+    // If logged in, sync with Supabase in the background
     if (user) {
-      const { data } = await supabase
-        .from("user_interactions")
-        .select("fallas(number)")
-        .eq("user_id", user.id)
-        .eq("type", "visited");
-      
-      if (data) {
-        const numbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
-        setVisitedNumbers(numbers);
-        localStorage.setItem("visited_fallas", JSON.stringify(numbers)); // Keep local in sync
+      try {
+        const { data } = await supabase
+          .from("user_interactions")
+          .select("fallas(number)")
+          .eq("user_id", user.id)
+          .eq("type", "visited");
+        
+        if (data) {
+          const dbNumbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
+          setVisitedNumbers(dbNumbers);
+          localStorage.setItem("visited_fallas", JSON.stringify(dbNumbers));
+        }
+      } catch (e) {
+        console.warn("Could not sync with DB, using local state.");
       }
-    } else {
-      setVisitedNumbers(JSON.parse(localStorage.getItem("visited_fallas") || "[]"));
     }
   }, [user]);
 
@@ -99,10 +108,15 @@ const MapComponent = () => {
     });
 
     mapRef.current = map;
-    return () => map.remove();
+    return () => {
+      Object.values(markersRef.current).forEach(m => m.remove());
+      markersRef.current = {};
+      markerElsRef.current = {};
+      map.remove();
+    };
   }, [isDarkMode]);
 
-  // 4. Stable Marker Logic
+  // 4. Reactive Marker Lifecycle (Pinned & Fast)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || fallasData.length === 0) return;
@@ -116,7 +130,7 @@ const MapComponent = () => {
         el.className = 'marker';
         el.addEventListener('click', (e) => {
           e.stopPropagation();
-          setSearchParams({ falla: falla.number }, { replace: true }); // Let URL drive the open
+          setSearchParams({ falla: falla.number }, { replace: true });
         });
 
         marker = new mapboxgl.Marker(el)
@@ -127,12 +141,14 @@ const MapComponent = () => {
         markerElsRef.current[falla.number] = el;
       }
 
-      el.classList.toggle('visited', visitedNumbers.includes(falla.number));
+      // INSTANT CLASS TOGGLE
+      const isVisited = visitedNumbers.includes(falla.number);
+      el.classList.toggle('visited', isVisited);
       el.classList.toggle('burnt', !!falla.is_burnt);
     });
-  }, [fallasData, isDarkMode, visitedNumbers]);
+  }, [fallasData, isDarkMode, visitedNumbers]); // Re-runs on visited change for instant color
 
-  // 5. URL driven selection (Solves double popup)
+  // 5. URL Selection Logic
   const selectedFalla = useMemo(() => {
     const num = searchParams.get("falla");
     return fallasData.find(f => f.number === num) || null;
