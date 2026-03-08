@@ -6,7 +6,7 @@ import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { Drawer } from "vaul";
-import { MagnifyingGlass, Target, CheckCircle, X } from "@phosphor-icons/react";
+import { MagnifyingGlass, Target, CheckCircle, X, Star, Heart } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { useUser } from "@clerk/react";
@@ -26,6 +26,7 @@ interface Falla {
   name: string;
   time: string;
   is_burnt?: boolean;
+  is_special?: boolean;
   coordinates: {
     lng: number;
     lat: number;
@@ -48,10 +49,11 @@ const MapComponent = () => {
   
   const [fallasData, setFallasData] = useState<Falla[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'standing'>('all');
+  const [filterMode, setFilterMode] = useState<'all' | 'visited' | 'special' | 'liked'>('all');
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // 1. Initial Load
   useEffect(() => {
@@ -117,7 +119,6 @@ const MapComponent = () => {
     if ("geolocation" in navigator) {
       const el = document.createElement('div');
       el.className = 'user-location-marker';
-      // Custom Bat Bat Icon via innerHTML
       el.innerHTML = `<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M232,128a104,104,0,1,1-104-104A104.11,104.11,0,0,1,232,128Z" fill="#FF7043" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Z" fill="#FF7043"/><path d="M176,104a8,8,0,0,1-8,8H144v16h16a8,8,0,0,1,0,16H144v16a8,8,0,0,1-16,0V104a8,8,0,0,1,8-8h32A8,8,0,0,1,176,104Z" fill="#1A1A1A"/></svg>`;
       
       userMarkerRef.current = new mapboxgl.Marker(el)
@@ -208,10 +209,18 @@ const MapComponent = () => {
     return fallasData.filter(f => {
       const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase()) || f.number.includes(searchQuery);
       if (filterMode === 'visited') return matchesSearch && visitedNumbers.includes(f.number);
-      if (filterMode === 'standing') return matchesSearch && !f.is_burnt;
+      if (filterMode === 'special') return matchesSearch && f.is_special;
+      if (filterMode === 'liked') return matchesSearch && likedNumbers.includes(f.number);
       return matchesSearch;
     });
-  }, [fallasData, searchQuery, filterMode, visitedNumbers]);
+  }, [fallasData, searchQuery, filterMode, visitedNumbers, likedNumbers]);
+
+  const autocompleteResults = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    return fallasData
+      .filter(f => f.name.toLowerCase().includes(searchQuery.toLowerCase()) || f.number.includes(searchQuery))
+      .slice(0, 5);
+  }, [searchQuery, fallasData]);
 
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([num, marker]) => {
@@ -232,25 +241,36 @@ const MapComponent = () => {
     }
   };
 
+  const handleAutocompleteClick = (falla: Falla) => {
+    setSearchQuery("");
+    setSearchParams({ falla: falla.number }, { replace: true });
+    setIsSearchFocused(false);
+  };
+
   return (
     <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
       <div ref={mapContainerRef} className="w-full h-full" />
       
       {/* Consolidated Hub - Floating Island Aesthetic */}
-      <div className="absolute top-4 md:top-28 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-0 z-10 pointer-events-none">
+      <div className="absolute top-4 md:top-32 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-0 z-[100] pointer-events-none">
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink rounded-[2.5rem] p-2.5 md:p-3 flex flex-col gap-3 shadow-solid pointer-events-auto"
+          className={cn(
+            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-xl border-2 border-falla-ink p-2.5 md:p-3 flex flex-col gap-3 shadow-solid pointer-events-auto transition-all duration-300",
+            autocompleteResults.length > 0 && isSearchFocused ? "rounded-t-[2.5rem] rounded-b-none border-b-transparent" : "rounded-[2.5rem]"
+          )}
         >
-          <div className="flex items-center gap-2.5">
-            <div className="flex-1 relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.5rem] border border-transparent focus-within:border-falla-fire/30 transition-all">
-              <MagnifyingGlass size={22} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
+          <div className="flex items-center gap-3 h-12">
+            <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.5rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-4 h-full overflow-hidden">
+              <MagnifyingGlass size={22} weight="bold" className="opacity-30 shrink-0" />
               <input 
                 placeholder="Find a monument..." 
                 value={searchQuery}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 bg-transparent pl-12 pr-10 font-bold text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink"
+                className="flex-1 bg-transparent px-3 font-bold text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink h-full"
               />
               <AnimatePresence>
                 {searchQuery && (
@@ -259,7 +279,7 @@ const MapComponent = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors"
+                    className="w-7 h-7 flex items-center justify-center bg-falla-ink/10 hover:bg-falla-ink/20 rounded-full transition-colors shrink-0 mr-[-4px]"
                   >
                     <X size={16} weight="bold" />
                   </motion.button>
@@ -270,7 +290,7 @@ const MapComponent = () => {
               isIconOnly 
               variant="ghost" 
               onClick={handleGeolocateUser} 
-              className="h-12 w-12 rounded-[1.5rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+              className="h-full w-12 rounded-[1.5rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all shrink-0"
               aria-label="Locate me"
             >
               <Target size={26} weight="bold" />
@@ -278,26 +298,32 @@ const MapComponent = () => {
           </div>
 
           <div className="flex items-center justify-between px-2 pb-1 border-t border-falla-ink/5 pt-3">
-            <div className="flex gap-2">
-              {(['all', 'visited', 'standing'] as const).map((mode) => (
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mb-1">
+              {[
+                { id: 'all', label: 'All' },
+                { id: 'special', label: 'Special', icon: <Star size={12} weight="fill" /> },
+                { id: 'liked', label: 'Liked', icon: <Heart size={12} weight="fill" /> },
+                { id: 'visited', label: 'Visited', icon: <CheckCircle size={12} weight="fill" /> }
+              ].map((mode) => (
                 <Button 
-                  key={mode}
+                  key={mode.id}
                   size="sm" 
-                  variant={filterMode === mode ? 'default' : 'ghost'} 
-                  onClick={() => setFilterMode(mode)}
+                  variant={filterMode === mode.id ? 'default' : 'ghost'} 
+                  onClick={() => setFilterMode(mode.id as any)}
+                  startContent={mode.icon}
                   className={cn(
-                    "h-9 rounded-xl px-5 text-[11px] font-black uppercase transition-all", 
-                    filterMode === mode ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
+                    "h-9 rounded-xl px-4 text-[11px] font-black uppercase transition-all whitespace-nowrap", 
+                    filterMode === mode.id ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
                   )}
                 >
-                  {mode}
+                  {mode.label}
                 </Button>
               ))}
             </div>
             
             <motion.div 
               layout
-              className="flex items-center gap-2.5 px-4 bg-falla-fire/5 dark:bg-falla-fire/10 rounded-full py-2 border border-falla-fire/10 shadow-sm"
+              className="hidden md:flex items-center gap-2.5 px-4 bg-falla-fire/5 dark:bg-falla-fire/10 rounded-full py-2 border border-falla-fire/10 shadow-sm ml-2"
             >
               <CheckCircle size={18} weight="fill" className="text-falla-fire" />
               <span className="text-[11px] font-black text-falla-ink/60">
@@ -306,6 +332,39 @@ const MapComponent = () => {
             </motion.div>
           </div>
         </motion.div>
+
+        {/* Autocomplete Dropdown */}
+        <AnimatePresence>
+          {isSearchFocused && autocompleteResults.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="bg-falla-paper/95 dark:bg-zinc-950/95 backdrop-blur-xl border-x-2 border-b-2 border-falla-ink rounded-b-[2.5rem] shadow-solid overflow-hidden pointer-events-auto mt-[-2px]"
+            >
+              <div className="flex flex-col">
+                {autocompleteResults.map((result) => (
+                  <button
+                    key={result.number}
+                    onClick={() => handleAutocompleteClick(result)}
+                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-falla-fire/5 transition-colors border-b border-falla-ink/5 last:border-0 group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-falla-ink/5 flex items-center justify-center font-display text-lg text-falla-fire group-hover:scale-110 transition-transform">
+                        #{result.number}
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-sm text-falla-ink leading-none mb-1 group-hover:text-falla-fire transition-colors">{result.name}</p>
+                        <p className="text-[10px] font-black uppercase text-falla-ink/30 tracking-widest">{result.is_special ? 'Special Section' : 'Monument'}</p>
+                      </div>
+                    </div>
+                    {visitedNumbers.includes(result.number) && <CheckCircle size={20} weight="fill" className="text-falla-sage" />}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} shouldScaleBackground autoFocus={false}>
@@ -321,15 +380,6 @@ const MapComponent = () => {
               layoutId="falla-card"
               className="w-full h-full md:max-w-5xl bg-falla-paper rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative"
             >
-              {/* Desktop Close Button */}
-              <button 
-                onClick={handleDrawerClose}
-                className="hidden md:flex absolute top-10 right-10 w-14 h-14 items-center justify-center bg-falla-paper ink-border rounded-[1.5rem] shadow-solid hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all z-50 group text-falla-ink"
-                aria-label="Close"
-              >
-                <X size={32} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />
-              </button>
-
               {selectedFalla && (
                 <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-none">
                   <AnimatePresence mode="wait">
