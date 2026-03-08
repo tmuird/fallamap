@@ -57,7 +57,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="flex items-center gap-2 px-5 py-2 bg-white dark:bg-zinc-900 backdrop-blur-md rounded-full border-2 border-falla-ink/10 shadow-sm mt-2"
+                className="flex items-center gap-2 px-5 py-2 bg-falla-paper/80 backdrop-blur-md rounded-full border-2 border-falla-ink/10 shadow-sm mt-2 text-falla-ink"
               >
                 <Sparkle size={14} weight="fill" className="text-falla-fire animate-spin-slow" />
                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-falla-ink/60">
@@ -75,7 +75,7 @@ export default function HomePage() {
               <Link to="/map" className="flex-1 sm:flex-none">
                 <Button 
                   size="lg"
-                  className="bg-falla-fire text-white h-14 md:h-18 px-10 rounded-2xl text-sm md:text-xl shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all group"
+                  className="bg-falla-fire text-falla-paper h-14 md:h-18 px-10 rounded-2xl text-sm md:text-xl shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all group"
                 >
                   Enter the Map 
                   <motion.div
@@ -91,7 +91,7 @@ export default function HomePage() {
                 <Button 
                   variant="outline"
                   size="lg"
-                  className="bg-white dark:bg-zinc-900 text-falla-ink h-14 px-10 rounded-2xl text-sm shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all"
+                  className="bg-falla-paper text-falla-ink h-14 px-10 rounded-2xl text-sm shadow-solid border-2 border-falla-ink flex items-center justify-center gap-3 w-full hover:translate-y-[-2px] hover:shadow-solid-lg active:translate-y-0 transition-all"
                 >
                   Schedule <CalendarBlank size={20} weight="bold" />
                 </Button>
@@ -123,11 +123,11 @@ export default function HomePage() {
             transition={{ delay: 0.6 }}
             className="hidden md:flex gap-16 items-center text-falla-ink/40 font-black uppercase text-[11px] tracking-[0.4em]"
           >
-            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2 italic"><MapTrifold size={20} weight="bold" /> Map</Link>
+            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><MapTrifold size={20} weight="bold" /> Map</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2 italic"><CalendarBlank size={20} weight="bold" /> Program</Link>
+            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><CalendarBlank size={20} weight="bold" /> Program</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2 italic"><Archive size={20} weight="bold" /> Archive</Link>
+            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> Archive</Link>
           </motion.div>
         </main>
 

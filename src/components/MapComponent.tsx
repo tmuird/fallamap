@@ -233,18 +233,18 @@ const MapComponent = () => {
       <div ref={mapContainerRef} className="w-full h-full" />
       
       <div className="absolute top-4 md:top-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 md:px-6 z-10">
-        <div className="bg-white/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-1.5 md:p-2 flex flex-col gap-1.5 md:gap-2">
+        <div className="bg-falla-paper/95 backdrop-blur-md ink-border shadow-solid rounded-3xl p-1.5 md:p-2 flex flex-col gap-1.5 md:gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex-1 relative">
+            <div className="flex-1 relative text-falla-ink">
               <MagnifyingGlass size={18} weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 text-falla-ink/30" />
               <input 
                 placeholder="Search València..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 md:h-12 bg-transparent pl-11 pr-4 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20"
+                className="w-full h-10 md:h-12 bg-transparent pl-11 pr-4 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/20 text-falla-ink"
               />
             </div>
-            <Button isIconOnly variant="ghost" onClick={handleGeolocateUser} className="h-10 w-10 md:h-12 md:w-12 rounded-2xl" aria-label="Locate me">
+            <Button isIconOnly variant="ghost" onClick={handleGeolocateUser} className="h-10 w-10 md:h-12 md:w-12 rounded-2xl text-falla-ink" aria-label="Locate me">
               <Target size={20} weight="bold" />
             </Button>
           </div>
@@ -259,7 +259,7 @@ const MapComponent = () => {
                   onClick={() => setFilterMode(mode)}
                   className={cn(
                     "h-7 md:h-8 rounded-xl px-3 md:px-4 text-[9px] md:text-[10px] font-black uppercase transition-none", 
-                    filterMode === mode ? "bg-falla-fire text-white shadow-none" : "text-falla-ink/40"
+                    filterMode === mode ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40"
                   )}
                 >
                   {mode}
@@ -286,11 +286,11 @@ const MapComponent = () => {
             {/* Mobile Handler */}
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:hidden pointer-events-auto" />
             
-            <div className="w-full h-full md:max-w-4xl bg-[#FAF7F2] rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative">
+            <div className="w-full h-full md:max-w-4xl bg-falla-paper rounded-t-[3rem] md:rounded-[3rem] border-x-2 border-t-2 md:border-2 border-falla-ink shadow-solid flex flex-col overflow-hidden pointer-events-auto relative">
               {/* Desktop Close Button */}
               <button 
                 onClick={handleDrawerClose}
-                className="hidden md:flex absolute top-6 right-6 w-10 h-10 items-center justify-center bg-white ink-border rounded-xl soft-shadow-sm hover:shadow-none transition-all z-50 group"
+                className="hidden md:flex absolute top-6 right-6 w-10 h-10 items-center justify-center bg-falla-paper ink-border rounded-xl shadow-solid-sm hover:shadow-none transition-all z-50 group text-falla-ink"
                 aria-label="Close"
               >
                 <X size={24} weight="bold" className="group-hover:rotate-90 transition-transform duration-300" />

@@ -45,9 +45,9 @@ export function MascletaCountdown() {
       animate={{ opacity: 1, scale: 1 }}
       className="fixed bottom-6 right-6 z-50 pointer-events-none md:pointer-events-auto"
     >
-      <div className="bg-white/90 backdrop-blur-md ink-border shadow-solid rounded-3xl p-4 md:p-6 flex flex-col gap-3 min-w-[180px]">
+      <div className="bg-falla-paper/90 backdrop-blur-md ink-border shadow-solid rounded-3xl p-4 md:p-6 flex flex-col gap-3 min-w-[180px]">
         <div className="flex items-center gap-3">
-          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 ${isLive ? 'bg-falla-fire text-white border-falla-ink animate-pulse' : 'bg-falla-fire/10 text-falla-fire border-falla-fire/20'}`}>
+          <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 ${isLive ? 'bg-falla-fire text-falla-paper border-falla-ink animate-pulse' : 'bg-falla-fire/10 text-falla-fire border-falla-fire/20'}`}>
             {isLive ? <SpeakerHigh size={18} weight="fill" /> : <Timer size={18} weight="bold" />}
           </div>
           <div>

@@ -46,31 +46,31 @@ export function CollectionView() {
 
   return (
     <div className="space-y-8 mt-16 pt-16 border-t-2 border-falla-ink/5">
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-3xl italic text-falla-ink">Saved Collection</h2>
-        <div className="brutal-pill px-4 py-1 text-[10px] font-black uppercase text-red-500 bg-white shadow-none border-2">
+      <div className="flex items-center justify-between text-falla-ink">
+        <h2 className="font-display text-3xl italic lowercase">saved collection</h2>
+        <div className="brutal-pill px-4 py-1 text-[10px] font-black uppercase text-red-500 shadow-none border-2">
           {likedNumbers.length} Favorites
         </div>
       </div>
 
       {likedFallas.length === 0 ? (
-        <div className="p-12 text-center bg-white/30 ink-border rounded-3xl border-dashed border-2">
-          <p className="font-bold opacity-40 italic text-falla-ink">Your collection is empty. Heart monuments on the map to save them.</p>
+        <div className="p-12 text-center bg-falla-paper/30 ink-border rounded-3xl border-dashed border-2 text-falla-ink">
+          <p className="font-bold opacity-40 italic">Your collection is empty. Heart monuments on the map to save them.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {likedFallas.map((falla) => (
             <Link to={`/map?falla=${falla.number}`} key={falla.number} className="group">
-              <Card className="hover:translate-y-[-4px] transition-all border-2 group-hover:shadow-none group-active:translate-y-0">
+              <Card className="hover:translate-y-[-4px] transition-all border-2 group-hover:shadow-none group-active:translate-y-0 bg-falla-paper">
                 <CardBody className="p-5 flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center border-2 border-red-100">
+                  <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-500 flex items-center justify-center border-2 border-red-100 dark:border-red-900/30">
                     <Heart size={24} weight="fill" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 text-falla-ink">
                     <p className="text-[10px] font-black uppercase text-falla-fire mb-0.5">#{falla.number}</p>
-                    <h3 className="text-lg font-display italic text-falla-ink leading-tight">{falla.name}</h3>
+                    <h3 className="text-lg font-display italic leading-tight lowercase">{falla.name}</h3>
                   </div>
-                  <MapTrifold size={20} weight="bold" className="text-falla-ink/10 group-hover:text-falla-ink/30 transition-colors" />
+                  <MapTrifold size={20} weight="bold" className="text-falla-ink/10 group-hover:text-falla-fire transition-colors" />
                 </CardBody>
               </Card>
             </Link>

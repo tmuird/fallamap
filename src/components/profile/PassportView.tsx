@@ -61,7 +61,7 @@ export function PassportView() {
     <div className="space-y-10">
       {/* Achievement Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-8 bg-falla-fire text-white ink-border rounded-[2.5rem] border-2 flex flex-col items-center text-center gap-4 shadow-solid">
+        <div className="p-8 bg-falla-fire text-falla-paper ink-border rounded-[2.5rem] border-2 flex flex-col items-center text-center gap-4 shadow-solid">
           <Trophy size={40} weight="fill" />
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Discovery Progress</p>
@@ -69,15 +69,15 @@ export function PassportView() {
           </div>
         </div>
         
-        <div className="md:col-span-2 p-8 bg-white dark:bg-zinc-900 ink-border rounded-[2.5rem] border-2 flex flex-col justify-center relative overflow-hidden">
+        <div className="md:col-span-2 p-8 bg-falla-paper ink-border rounded-[2.5rem] border-2 flex flex-col justify-center relative overflow-hidden text-falla-ink">
           <div className="absolute top-[-20px] right-[-20px] opacity-5">
             <Trophy size={120} weight="fill" />
           </div>
           <p className="text-falla-ink/40 font-bold uppercase text-[10px] tracking-widest mb-2">Explorer Rank</p>
-          <h3 className="text-2xl md:text-4xl font-display italic lowercase leading-tight text-falla-ink">
+          <h3 className="text-2xl md:text-4xl font-display italic lowercase leading-tight">
             {visitedData.length > 50 ? "Legend of the Cremà" : visitedData.length > 10 ? "Dedicated Faller" : "Amateur Scout"}
           </h3>
-          <p className="text-sm font-medium text-falla-ink/60 mt-2">You've explored {((visitedData.length / localFallas.length) * 100).toFixed(1)}% of the city.</p>
+          <p className="text-sm font-medium opacity-60 mt-2">You've explored {((visitedData.length / localFallas.length) * 100).toFixed(1)}% of the city.</p>
         </div>
       </div>
 
@@ -85,7 +85,7 @@ export function PassportView() {
         <h2 className="font-display text-3xl italic text-falla-ink lowercase">digital passport</h2>
 
         {visitedData.length === 0 ? (
-          <div className="p-12 text-center bg-white/30 ink-border rounded-3xl border-dashed border-2">
+          <div className="p-12 text-center bg-falla-paper/30 ink-border rounded-3xl border-dashed border-2 text-falla-ink">
             <p className="font-bold opacity-40 italic">Your passport is empty. Check-in at monuments on the map!</p>
           </div>
         ) : (
@@ -94,10 +94,10 @@ export function PassportView() {
               <Link to={`/map?falla=${falla.number}`} key={falla.number} className="group">
                 <motion.div 
                   whileHover={{ y: -8 }}
-                  className="bg-white dark:bg-zinc-900 ink-border rounded-3xl flex flex-col overflow-hidden soft-shadow-sm h-full group-hover:shadow-none transition-all border-2 relative"
+                  className="bg-falla-paper ink-border rounded-3xl flex flex-col overflow-hidden soft-shadow-sm h-full group-hover:shadow-none transition-all border-2 relative"
                 >
                   {/* Square Background for Stamp */}
-                  <div className="aspect-square w-full relative bg-falla-sand/20 dark:bg-zinc-800 overflow-hidden border-b-2 border-falla-ink">
+                  <div className="aspect-square w-full relative bg-falla-sand overflow-hidden border-b-2 border-falla-ink">
                     {falla.topImage ? (
                       <Image 
                         src={falla.topImage} 

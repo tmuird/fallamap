@@ -46,10 +46,10 @@ export default function AppNavbar() {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen} 
       maxWidth="xl" 
-      className="bg-[#FAF7F2]/80 dark:bg-zinc-950/80 backdrop-blur-md border-b-2 border-falla-ink/5 sticky top-0 h-20"
+      className="bg-falla-paper/80 backdrop-blur-md border-b-2 border-falla-ink/5 sticky top-0 h-20"
       classNames={{
         wrapper: "px-4 md:px-8 max-w-full",
-        toggle: "w-10 h-10 flex items-center justify-center rounded-xl ink-border bg-white dark:bg-zinc-900 soft-shadow active:shadow-none transition-all p-0",
+        toggle: "w-10 h-10 flex items-center justify-center rounded-xl ink-border bg-falla-paper soft-shadow active:shadow-none transition-all p-0",
       }}
     >
       <NavbarContent className="gap-4">
@@ -64,19 +64,19 @@ export default function AppNavbar() {
               <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path 
                   d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
-                  fill="#FF7043" 
-                  stroke="currentColor" 
+                  fill="var(--falla-fire)" 
+                  stroke="var(--falla-stroke)" 
                   strokeWidth="8"
                 />
                 <path 
                   d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z" 
                   fill="#FFB600" 
-                  stroke="currentColor" 
+                  stroke="var(--falla-stroke)" 
                   strokeWidth="6"
                 />
               </svg>
             </div>
-            <p className="font-display text-2xl text-[#FF7043] hidden md:block leading-none tracking-tight lowercase">
+            <p className="font-display text-2xl text-falla-fire hidden md:block leading-none tracking-tight lowercase">
               fallamap
             </p>
           </Link>
@@ -111,7 +111,7 @@ export default function AppNavbar() {
                 <Button 
                   variant="flat" 
                   size="sm" 
-                  className="bg-white dark:bg-zinc-900 text-falla-ink font-bold uppercase tracking-widest text-[9px] rounded-xl px-4 h-9 ink-border shadow-sm hover:shadow-none transition-all border-2 hidden md:flex"
+                  className="bg-falla-paper text-falla-ink font-bold uppercase tracking-widest text-[9px] rounded-xl px-4 h-9 ink-border shadow-sm hover:shadow-none transition-all border-2 hidden md:flex"
                   startContent={<Fingerprint size={16} weight="bold" className="text-falla-fire" />}
                 >
                   Journey
@@ -123,14 +123,14 @@ export default function AppNavbar() {
                   <Button 
                     variant="flat" 
                     size="sm" 
-                    className="bg-falla-ink text-white dark:text-zinc-900 font-bold uppercase tracking-widest text-[9px] rounded-xl px-4 h-9 ink-border soft-shadow hover:shadow-none transition-all border-2"
+                    className="bg-falla-ink text-falla-paper font-bold uppercase tracking-widest text-[9px] rounded-xl px-4 h-9 ink-border soft-shadow hover:shadow-none transition-all border-2"
                     startContent={<ShieldCheck size={16} weight="bold" />}
                   >
                     Admin
                   </Button>
                 </Link>
               )}
-              <div className="ink-border rounded-full p-0.5 bg-white dark:bg-zinc-900 soft-shadow border-2 overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+              <div className="ink-border rounded-full p-0.5 bg-falla-paper soft-shadow border-2 overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                 <UserButton 
                   appearance={{ 
                     elements: { 
@@ -164,7 +164,7 @@ export default function AppNavbar() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu className="pt-12 bg-[#FAF7F2]/98 dark:bg-zinc-950/98 backdrop-blur-xl border-t-2 border-falla-ink/5">
+      <NavbarMenu className="pt-12 bg-falla-paper/98 backdrop-blur-xl border-t-2 border-falla-ink/5">
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item.label}-${index}`} className="px-4">
             <NavLink

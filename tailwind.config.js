@@ -17,19 +17,19 @@ export default {
       },
       colors: {
         falla: {
-          paper: "#FAF7F2", 
-          ink: "#1A1A1A",
-          fire: "#FF7043",
-          sage: "#8B9467",
-          sand: "#E9E5D6",
+          paper: "var(--falla-paper)", 
+          ink: "var(--falla-ink)",
+          fire: "var(--falla-fire)",
+          sage: "var(--falla-sage)",
+          sand: "var(--falla-sand)",
         },
       },
       borderWidth: {
         '2.5': '2.5px',
       },
       boxShadow: {
-        'solid': '3px 3px 0px 0px #1A1A1A',
-        'solid-lg': '5px 5px 0px 0px #1A1A1A',
+        'solid': '3px 3px 0px 0px var(--falla-shadow)',
+        'solid-lg': '5px 5px 0px 0px var(--falla-shadow)',
       },
       animation: {
         scroll: "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
@@ -77,11 +77,28 @@ export default {
         },
         dark: {
           colors: {
-            background: "#FAF7F2", // Force light background even in dark mode for Soft Brutalist theme
-            foreground: "#1A1A1A",
+            background: "#1A1A1A",
+            foreground: "#FAF7F2",
             primary: {
               DEFAULT: "#FF7043",
               foreground: "#FAF7F2",
+            },
+            secondary: {
+              DEFAULT: "#8B9467",
+              foreground: "#FAF7F2",
+            },
+            focus: "#FF7043",
+          },
+          layout: {
+            borderWidth: {
+              small: "1.5px",
+              medium: "2.5px",
+              large: "3px",
+            },
+            radius: {
+              small: "12px",
+              medium: "20px",
+              large: "9999px", 
             },
           }
         }
