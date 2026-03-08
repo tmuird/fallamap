@@ -30,6 +30,7 @@ import {
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 // @ts-ignore
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
@@ -56,6 +57,7 @@ interface FallaDetailsProps {
 
 export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInteraction }: FallaDetailsProps) {
   const { user } = useUser();
+  const navigate = useNavigate();
   const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number);
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -108,7 +110,15 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         console.error("Sync error:", err);
       }
     }
-    toast.success(currentState ? "Removed" : "Added!");
+    
+    toast.success(currentState ? "Removed" : "Added!", {
+      description: currentState ? "Unmarked from your journey" : "View your passport 🦇",
+      action: {
+        label: "View",
+        onClick: () => navigate("/profile")
+      },
+      duration: 4000
+    });
   };
 
   const handleCommentSubmit = async () => {
@@ -116,7 +126,12 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     const { error } = await addComment(newComment, user?.id, isPrivate);
     if (!error) {
       setNewComment("");
-      toast.success(isPrivate ? "Private note saved!" : "Note shared!");
+      toast.success("Note shared!", {
+        action: {
+          label: "View Profile",
+          onClick: () => navigate("/profile")
+        }
+      });
     }
   };
 
@@ -143,7 +158,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
   return (
     <PhotoProvider 
-      maskOpacity={0.95}
+      maskClosable={true}
+      maskOpacity={0.9}
       bannerVisible={false}
       speed={() => 300}
     >
@@ -199,7 +215,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         
         <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2]">
           <div className="flex flex-col w-full min-h-full">
-            {/* Gallery with higher z-index overlays */}
+            {/* Gallery with fixed aspect ratio */}
             <div className="w-full aspect-square md:aspect-video bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">
               {images.length > 0 ? (
                 <Carousel className="w-full h-full">
@@ -217,21 +233,21 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                           </div>
                         </PhotoView>
                         
-                        {/* Image Specific Interaction Overlay - High z-index to avoid being obscured */}
-                        <div className="absolute top-4 left-4 flex gap-2 z-20">
+                        {/* Image Interaction Layer - Always visible z-index */}
+                        <div className="absolute top-4 left-4 flex gap-2 z-50">
                           <button 
                             onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }}
-                            className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm hover:scale-110 transition-transform flex items-center gap-2 shadow-solid-sm"
+                            className="bg-white/90 backdrop-blur-md ink-border p-2.5 rounded-xl shadow-solid-sm hover:scale-110 active:scale-95 transition-all flex items-center gap-2"
                           >
-                            <Heart size={18} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
-                            <span className="text-[10px] font-black">{img.likeCount}</span>
+                            <Heart size={20} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
+                            <span className="text-xs font-black">{img.likeCount}</span>
                           </button>
-                          <div className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <ArrowsOut size={18} weight="bold" />
+                          <div className="bg-white/90 backdrop-blur-md ink-border p-2.5 rounded-xl shadow-solid-sm pointer-events-none flex items-center justify-center">
+                            <ArrowsOut size={20} weight="bold" />
                           </div>
                         </div>
                         {img.is_private && (
-                          <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20 z-20">
+                          <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20 z-50">
                             <EyeSlash size={18} weight="bold" />
                           </div>
                         )}
