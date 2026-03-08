@@ -55,7 +55,7 @@ interface FallaDetailsProps {
 
 export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInteraction }: FallaDetailsProps) {
   const { user } = useUser();
-  const { comments, images, addComment, addImage } = useFallaDetails(falla.number);
+  const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number);
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -193,7 +193,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-[#FAF7F2]">
         <div className="flex flex-col w-full min-h-full">
-          {/* Gallery with fixed aspect ratio */}
+          {/* Gallery with PhotoProvider and Like Overlay */}
           <div className="w-full aspect-square md:aspect-video bg-falla-sand/10 border-b-2 border-falla-ink overflow-hidden relative shrink-0">
             {images.length > 0 ? (
               <PhotoProvider 
@@ -203,16 +203,27 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                 <Carousel className="w-full h-full">
                   <CarouselContent className="h-full">
                     {images.map((img, index) => (
-                      <CarouselItem key={index} className="h-full relative">
+                      <CarouselItem key={index} className="h-full relative group">
                         <PhotoView src={img.url}>
-                          <div className="w-full h-full cursor-zoom-in group">
+                          <div className="w-full h-full cursor-zoom-in">
                             <Image src={img.url} className="object-cover w-full h-full rounded-none" removeWrapper />
-                            <div className="absolute top-4 left-4 bg-white/80 p-2 rounded-xl border-2 border-falla-ink shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                              <ArrowsOut size={18} weight="bold" />
-                            </div>
-                            {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20"><EyeSlash size={18} weight="bold" /></div>}
                           </div>
                         </PhotoView>
+                        
+                        {/* Image Specific Interaction Overlay */}
+                        <div className="absolute top-4 left-4 flex gap-2">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }}
+                            className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm hover:scale-110 transition-transform flex items-center gap-2"
+                          >
+                            <Heart size={18} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-falla-ink"} />
+                            <span className="text-[10px] font-black">{img.likeCount}</span>
+                          </button>
+                          <div className="bg-white/90 backdrop-blur-md ink-border p-2 rounded-xl soft-shadow-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ArrowsOut size={18} weight="bold" />
+                          </div>
+                        </div>
+                        {img.is_private && <div className="absolute top-4 right-4 bg-falla-ink/80 text-white p-2 rounded-xl backdrop-blur-md border-2 border-white/20"><EyeSlash size={18} weight="bold" /></div>}
                       </CarouselItem>
                     ))}
                   </CarouselContent>
