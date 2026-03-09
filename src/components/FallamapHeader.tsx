@@ -7,7 +7,7 @@ interface FallamapHeaderProps {
 export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
  return (
   <motion.div
-   className="w-full pt-[12vh] md:pt-[15vh] pb-8 md:pb-16 flex flex-col items-center justify-center relative"
+   className="w-full pt-[8vh] md:pt-[10vh] pb-4 md:pb-10 flex flex-col items-center justify-center relative"
    initial={{ opacity: 0 }}
    animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -16,13 +16,13 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
     initial={{ y: 10, scale: 0.95 }}
     animate={{ y: 0, scale: 1 }}
     transition={{ type: "spring", damping: 20, stiffness: 100 }}
-    className="text-center px-4 mb-4 md:mb-10"
+    className="text-center px-4 mb-2 md:mb-6"
    >
     <h1 className="text-fluid-display font-display text-falla-fire leading-[0.8] lowercase select-none">
      fallamap
     </h1>
     
-    <div className="flex items-center justify-center gap-2 mt-4 md:mt-6">
+    <div className="flex items-center justify-center gap-2 mt-2 md:mt-4">
       <span className="w-2 h-2 rounded-full bg-falla-sage animate-pulse" />
       <p className="text-xs md:text-base text-falla-ink font-bold uppercase tracking-[0.2em] opacity-40">
         Live from <span className="opacity-100">València</span>

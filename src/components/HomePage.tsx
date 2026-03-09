@@ -30,7 +30,7 @@ export default function HomePage() {
       <div className="z-10 w-full flex flex-col items-center px-4 relative">
         <FallamapHeader isVisible={true} />
 
-        <main className="w-full max-w-6xl flex flex-col items-center justify-center -mt-[2vh] md:mt-0 gap-[4vh] md:gap-[6vh] pb-12">
+        <main className="w-full max-w-6xl flex flex-col items-center justify-center gap-[3vh] md:gap-[4vh] pb-12">
           {/* Main Content */}
           <div className="flex flex-col items-center text-center gap-[2vh] md:gap-[4vh] w-full">
             <motion.div 
