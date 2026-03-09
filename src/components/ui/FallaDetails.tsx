@@ -27,7 +27,8 @@ import {
   MapPin,
   ChatCircleDots,
   LockKey,
-  CalendarBlank
+  CalendarBlank,
+  NavigationArrow
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -69,6 +70,12 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const [visited, setVisited] = useState(false);
 
   const identifier = falla.number || falla.id || falla.name;
+
+  const handleGetDirections = () => {
+    const { lat, lng } = falla.coordinates;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    window.open(url, '_blank');
+  };
 
   useEffect(() => {
     const checkInteractions = async () => {
@@ -233,6 +240,17 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
             </Button>
             
             <div className="flex-1 min-w-[120px] flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                className="w-full h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none transition-all active:scale-95" 
+                startContent={<NavigationArrow size={18} weight="bold" className="text-falla-fire" />}
+                onClick={handleGetDirections}
+              >
+                Directions
+              </Button>
+            </div>
+
+            <div className="flex-1 min-w-[120px] flex items-center gap-2">
               <input type="file" id={`img-${identifier}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
               <Button className="w-full h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${identifier}`)?.click()}>Upload</Button>
             </div>
@@ -262,13 +280,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                           {images.map((img, index) => (
                             <CarouselItem key={index} className="h-full relative group">
                               <PhotoView src={img.url}>
-                                <div className="w-full h-full cursor-zoom-in flex items-center justify-center relative">
-                                  <div className="absolute inset-0 z-0 blur-3xl opacity-40 scale-125" style={{ backgroundImage: `url(${img.url})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
-                                  <div className="absolute inset-0 bg-black/20 z-1" />
-                                  <div className="relative z-10 w-full h-full flex items-center justify-center p-2 md:p-4">
-                                    <img src={img.url} alt={falla.name} className="max-h-[95%] max-w-[95%] w-auto h-auto object-contain rounded-lg shadow-2xl relative z-20 flex-shrink-0" loading="lazy" />
-                                  </div>
-                                </div>
+                                <img src={img.url} alt={falla.name} className="w-full h-full object-contain rounded-lg cursor-zoom-in relative z-20" loading="lazy" />
                               </PhotoView>
                               <div className="absolute top-4 left-4 flex gap-2 z-50">
                                 <button onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }} className="bg-black/40 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center gap-2 text-white">
