@@ -123,6 +123,48 @@ const MapComponent = () => {
 
     mapRef.current = map;
 
+    map.on('load', () => {
+      // Add 3D buildings layer
+      const layers = map.getStyle().layers;
+      const labelLayerId = layers?.find(
+        (layer) => layer.type === 'symbol' && layer.layout?.['text-field']
+      )?.id;
+
+      map.addLayer(
+        {
+          'id': 'add-3d-buildings',
+          'source': 'composite',
+          'source-layer': 'building',
+          'filter': ['==', 'extrude', 'true'],
+          'type': 'fill-extrusion',
+          'minzoom': 15,
+          'paint': {
+            'fill-extrusion-color': '#aaa',
+            'fill-extrusion-height': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'height']
+            ],
+            'fill-extrusion-base': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'min_height']
+            ],
+            'fill-extrusion-opacity': 0.6
+          }
+        },
+        labelLayerId
+      );
+    });
+
     const updateMarkerScale = () => {
       const zoom = map.getZoom();
       // Base zoom 14 = scale 1.0
@@ -327,13 +369,13 @@ const MapComponent = () => {
       
       <div 
         className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col"
-        style={{ top: 'calc(3rem + env(safe-area-inset-top, 0px))' }}
+        style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
       >
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={cn(
-            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-md border-2 border-falla-ink shadow-solid pointer-events-auto transition-all duration-300 overflow-hidden flex flex-col",
+            "bg-falla-paper/90 dark:bg-zinc-950/90 backdrop-blur-md border-2 border-falla-ink shadow-solid pointer-events-auto transition-all duration-300 overflow-hidden flex flex-col md:mt-12",
             "rounded-[2rem] md:rounded-[2.5rem]"
           )}
         >

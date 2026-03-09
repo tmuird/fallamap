@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Chip, Switch } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import {
   MapPin,
   Flame,
@@ -21,8 +21,6 @@ import {
   NavigationArrow,
   Heart,
   PaperPlaneRight,
-  Eye,
-  EyeSlash,
   CalendarPlus,
 } from "@phosphor-icons/react";
 import { Drawer } from "vaul";
@@ -342,7 +340,6 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
     useEventDetails(event.id);
 
   const [newComment, setNewComment] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -356,7 +353,7 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
       return;
     }
     if (!newComment.trim()) return;
-    const { error } = await addComment(newComment, user.id, isPrivate);
+    const { error } = await addComment(newComment, user.id, false);
     if (!error) {
       setNewComment("");
       toast.success("Note shared!");
@@ -387,7 +384,7 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
       const {
         data: { publicUrl },
       } = supabase.storage.from("community-content").getPublicUrl(path);
-      const { error } = await addImage(publicUrl, user.id, isPrivate);
+      const { error } = await addImage(publicUrl, user.id, false);
       if (error) throw error;
       toast.success("Photo shared!", { id: toastId });
     } catch {
@@ -423,7 +420,7 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
   };
 
   return (
-    <PhotoProvider maskOpacity={0.85} bannerVisible={false} speed={() => 300}>
+    <PhotoProvider maskClosable={true} maskOpacity={0.85} bannerVisible={false} speed={() => 300}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t-2 border-falla-ink/5 pt-12">
         {/* ── Photo stream ── */}
         <div className="lg:col-span-7 space-y-8">
@@ -440,22 +437,6 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
               </h3>
             </div>
             <div className="flex items-center gap-2">
-              {isSignedIn && (
-                <div className="h-9 px-3 bg-falla-paper ink-border rounded-full flex items-center gap-2 border-2 shrink-0">
-                  {isPrivate ? (
-                    <EyeSlash size={16} weight="bold" className="text-falla-ink/30" />
-                  ) : (
-                    <Eye size={16} weight="bold" className="text-falla-fire" />
-                  )}
-                  <Switch
-                    size="sm"
-                    color="warning"
-                    isSelected={isPrivate}
-                    onValueChange={setIsPrivate}
-                    aria-label="Private"
-                  />
-                </div>
-              )}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -499,14 +480,12 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
               {images.map((img) => (
                 <div key={img.id || img.url} className="relative group aspect-square">
                   <PhotoView src={img.url}>
-                    <div className="w-full h-full cursor-zoom-in rounded-3xl overflow-hidden border-2 border-falla-ink/5 bg-falla-sand/10">
-                      <img
-                        src={img.url}
-                        alt="Community photo"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    </div>
+                    <img
+                      src={img.url}
+                      alt="Community photo"
+                      className="w-full h-full object-cover cursor-zoom-in rounded-3xl border-2 border-falla-ink/5 bg-falla-sand/10"
+                      loading="lazy"
+                    />
                   </PhotoView>
                   {img.id && (
                     <button
@@ -613,9 +592,6 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
                         <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">
                           {c.user_id ? "Community" : "Anonymous"}
                         </span>
-                        {c.is_private && (
-                          <EyeSlash size={12} weight="bold" className="text-falla-ink/20" />
-                        )}
                       </div>
                       <span className="text-[9px] font-bold text-falla-ink/20">
                         {new Date(c.created_at).toLocaleTimeString([], {
@@ -642,25 +618,10 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
 
           {/* Comment input */}
           <div className="pt-4 border-t-2 border-falla-ink/5 space-y-3">
-            {isSignedIn && (
-              <div className="flex items-center gap-2 justify-end">
-                <span className="text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
-                  {isPrivate ? "Private" : "Public"}
-                </span>
-                {isPrivate ? (
-                  <EyeSlash size={14} weight="bold" className="text-falla-ink/30" />
-                ) : (
-                  <Eye size={14} weight="bold" className="text-falla-fire" />
-                )}
-                <Switch
-                  size="sm"
-                  color="warning"
-                  isSelected={isPrivate}
-                  onValueChange={setIsPrivate}
-                  aria-label="Private note"
-                />
-              </div>
-            )}
+            <div className="flex items-center gap-2 px-2 text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
+              <ChatCircleDots size={12} weight="bold" />
+              <span>Public Community Note</span>
+            </div>
             <div className="flex gap-3">
               <input
                 value={newComment}
@@ -753,7 +714,7 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="min-h-screen bg-falla-paper pt-32 pb-20 px-4 md:px-8 transition-colors duration-300">
+    <div className="min-h-screen bg-falla-paper pt-32 md:pt-48 pb-20 px-4 md:px-8 transition-colors duration-300">
       <div className="max-w-4xl mx-auto antialiased relative">
         {/* Header */}
         <motion.div
@@ -772,7 +733,7 @@ export default function SchedulePage() {
         </motion.div>
 
         {/* Sticky day selector */}
-        <div className="sticky top-20 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
+        <div className="sticky top-24 md:top-36 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
           <div className="flex bg-falla-sand/20 p-1.5 rounded-[2rem] border-2 border-falla-ink shadow-solid-sm overflow-x-auto scrollbar-hide max-w-full">
             {scheduleData.map((day) => (
               <button

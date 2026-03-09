@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { Textarea, Switch } from "@heroui/react";
+import { Textarea } from "@heroui/react";
 import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
 import { supabase } from "@/lib/supabase";
@@ -22,8 +22,6 @@ import {
   CaretRight, 
   X,
   CheckCircle,
-  EyeSlash,
-  Eye,
   MapPin,
   ChatCircleDots,
   LockKey,
@@ -65,7 +63,6 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
   const [liked, setLiked] = useState(false);
   const [visited, setVisited] = useState(false);
 
@@ -147,7 +144,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       return;
     }
     if (!newComment.trim()) return;
-    const { error } = await addComment(newComment, user?.id, isPrivate);
+    const { error } = await addComment(newComment, user?.id, false);
     if (!error) {
       setNewComment("");
       toast.success("Note shared!", { action: { label: "Passport", onClick: () => { if (onClose) onClose(); navigate("/profile"); } } });
@@ -170,7 +167,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       const { error: uploadError } = await supabase.storage.from("community-content").upload(filePath, file);
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from("community-content").getPublicUrl(filePath);
-      await addImage(publicUrl, user?.id, isPrivate);
+      await addImage(publicUrl, user?.id, false);
       toast.success("Done!", { id: toastId });
     } catch (error: any) {
       toast.error("Failed", { id: toastId });
@@ -252,12 +249,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
             <div className="flex-1 min-w-[120px] flex items-center gap-2">
               <input type="file" id={`img-${identifier}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-              <Button className="w-full h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${identifier}`)?.click()}>Upload</Button>
-            </div>
-
-            <div className="h-10 md:h-12 px-3 bg-falla-paper ink-border rounded-full flex items-center gap-3 soft-shadow-sm border-2">
-              {isPrivate ? <EyeSlash size={18} weight="bold" className="text-falla-ink/30" /> : <Eye size={18} weight="bold" className="text-falla-fire" />}
-              <Switch size="sm" color="warning" isSelected={isPrivate} onValueChange={setIsPrivate} aria-label="Private mode" disabled={!isSignedIn} />
+              <Button className="w-full h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none transition-all" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${identifier}`)?.click()}>Upload</Button>
             </div>
           </div>
         </header>
@@ -338,7 +330,6 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <span className="text-[9px] font-black uppercase tracking-widest text-falla-fire">Verified contributor</span>
-                              {comment.is_private && <EyeSlash size={14} weight="bold" className="text-falla-ink/20" />}
                             </div>
                             <span className="text-[9px] text-falla-ink/20 font-bold uppercase">{new Date(comment.created_at).toLocaleDateString()}</span>
                           </div>
@@ -360,11 +351,19 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 bg-gradient-to-t from-falla-paper via-falla-paper to-transparent pt-24 z-40 pointer-events-none">
-          <div className="flex gap-4 pointer-events-auto max-w-4xl mx-auto w-full items-end">
-            <div className={cn("flex-1 bg-falla-paper ink-border rounded-[2.5rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2", !isSignedIn && "opacity-50 grayscale")}>
-              <Textarea variant="flat" placeholder={isSignedIn ? "Tell a story..." : "Sign in to share..."} value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={4} className="w-full" disabled={!isSignedIn} classNames={{ input: "text-fluid-base md:text-fluid-lg p-6 md:p-10 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink leading-tight", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
+          <div className="flex flex-col gap-3 pointer-events-auto max-w-4xl mx-auto w-full">
+            <div className="flex items-center justify-between px-2">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-falla-ink/30">
+                <ChatCircleDots size={14} weight="bold" />
+                <span>Public Community Note</span>
+              </div>
             </div>
-            <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim() || !isSignedIn} className="w-16 h-16 md:w-28 md:h-28 rounded-[2rem] md:rounded-[3rem] shrink-0 border-2 bg-falla-fire text-falla-paper shadow-solid active:shadow-none transition-all" aria-label="Send"><PaperPlaneRight size={window.innerWidth > 768 ? 36 : 28} weight="bold" /></Button>
+            <div className="flex gap-4 items-end">
+              <div className={cn("flex-1 bg-falla-paper ink-border rounded-[2.5rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2", !isSignedIn && "opacity-50 grayscale")}>
+                <Textarea variant="flat" placeholder={isSignedIn ? "Tell a story..." : "Sign in to share..."} value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={4} className="w-full" disabled={!isSignedIn} classNames={{ input: "text-fluid-base md:text-fluid-lg p-6 md:p-10 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink leading-tight", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
+              </div>
+              <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim() || !isSignedIn} className="w-16 h-16 md:w-28 md:h-28 rounded-[2rem] md:rounded-[3rem] shrink-0 border-2 bg-falla-fire text-falla-paper shadow-solid active:shadow-none transition-all" aria-label="Send"><PaperPlaneRight size={window.innerWidth > 768 ? 36 : 28} weight="bold" /></Button>
+            </div>
           </div>
         </div>
       </div>

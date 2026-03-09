@@ -212,10 +212,21 @@ h2, h3, h4 {
   scrollbar-width: none;
 }
 
-/* Lightbox Overrides */
+/* Lightbox Overrides - Fixing the Z-Index and Pointer Events issues */
+.PhotoView-Portal,
+.PhotoView-Slider,
+.PhotoView-Mask {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
 .PhotoView-Slider {
   background-color: rgba(26, 26, 26, 0.95) !important;
   backdrop-filter: blur(10px);
+}
+
+.PhotoView-Slider * {
+  pointer-events: auto !important;
 }
 
 .PhotoView__Photo {
