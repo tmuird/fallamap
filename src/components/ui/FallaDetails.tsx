@@ -186,8 +186,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         </button>
       </div>
     )}>
-      <div className={cn("flex flex-col w-full h-full bg-falla-paper", className)}>
-        <header className="p-4 md:p-8 pb-6 border-b-2 border-falla-ink bg-falla-paper sticky top-0 z-40 flex flex-col gap-3 shadow-sm shrink-0">
+      <div className={cn("flex flex-col w-full h-full bg-falla-paper relative overflow-hidden", className)}>
+        {/* DESIGN: Glassmorphism Header */}
+        <header className="p-4 md:p-8 pb-6 border-b-2 border-falla-ink bg-falla-paper/80 backdrop-blur-xl sticky top-0 z-40 flex flex-col gap-3 shrink-0">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 bg-falla-paper rounded-full ink-border p-1 shadow-sm border-2">
@@ -254,7 +255,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           </div>
         </header>
         
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-falla-paper relative pb-32">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-falla-paper relative pb-48">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')] z-0" />
           
           <AnimatePresence mode="wait">
@@ -263,7 +264,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3, ease: "circOut" }}
               className="flex flex-col lg:flex-row w-full min-h-full relative z-10"
             >
-              <div className="w-full lg:w-1/2 h-[35vh] md:h-[45vh] lg:h-[calc(100vh-250px)] lg:sticky lg:top-0 bg-zinc-900 border-b-2 lg:border-b-0 lg:border-r-2 border-falla-ink overflow-hidden relative shrink-0">
+              <div className="w-full lg:w-1/2 h-[35vh] md:h-[45vh] lg:h-[calc(100vh-300px)] lg:sticky lg:top-0 bg-zinc-900 border-b-2 lg:border-b-0 lg:border-r-2 border-falla-ink overflow-hidden relative shrink-0">
                 {images.length > 0 ? (
                   <div className="w-full h-full relative">
                     <div className={cn("w-full h-full", !isSignedIn && "blur-xl grayscale pointer-events-none")}>
@@ -350,7 +351,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           </AnimatePresence>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 bg-gradient-to-t from-falla-paper via-falla-paper to-transparent pt-24 z-40 pointer-events-none">
+        {/* DESIGN: Sticky Input with Blur */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 bg-falla-paper/80 backdrop-blur-xl border-t-2 border-falla-ink/10 pt-12 z-40 pointer-events-none">
           <div className="flex flex-col gap-3 pointer-events-auto max-w-4xl mx-auto w-full">
             <div className="flex items-center justify-between px-2">
               <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-falla-ink/30">

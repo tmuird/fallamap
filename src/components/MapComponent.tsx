@@ -369,7 +369,7 @@ const MapComponent = () => {
       
       <div 
         className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col"
-        style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
+        style={{ top: 'calc(2.5rem + env(safe-area-inset-top, 0px))' }}
       >
         <motion.div 
           initial={{ y: -20, opacity: 0 }}
