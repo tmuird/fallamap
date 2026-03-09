@@ -9,6 +9,7 @@ export function MascletaCountdown() {
   const [isLive, setIsLive] = useState(false);
   const location = useLocation();
   const isMap = location.pathname === "/map";
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -42,6 +43,7 @@ export function MascletaCountdown() {
   }, []);
 
   if (!timeLeft && !isLive) return null;
+  if (isHome) return null;
 
   return (
     <motion.div 

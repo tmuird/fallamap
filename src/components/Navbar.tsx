@@ -210,7 +210,7 @@ export default function AppNavbar() {
               
               <Show when="signed-in">
                 <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-                  <Link to="/profile" className="flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
+                  <Link to="/profile" className="hidden sm:flex flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
                     <Button
                       variant="neutral"
                       size="sm"
@@ -221,9 +221,9 @@ export default function AppNavbar() {
                       <Fingerprint size={16} weight="bold" className="text-falla-fire" />
                     </Button>
                   </Link>
-                  
+
                   {isAdmin && (
-                    <Link to="/dashboard" className="flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
+                    <Link to="/dashboard" className="hidden sm:flex flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
                       <Button
                         variant="default"
                         size="sm"
