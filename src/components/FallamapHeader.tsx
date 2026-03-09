@@ -23,36 +23,37 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
     </h1>
    </motion.div>
 
-   {/* Pills + live indicator in a single horizontal row */}
-   <div className="flex items-center gap-3 md:gap-5 px-4">
-    <motion.div
-     initial={{ opacity: 0, x: -10 }}
-     animate={{ opacity: 1, x: 0 }}
-     transition={{ delay: 0.3 }}
-     className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
-    >
-     <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">80 Monuments</p>
-    </motion.div>
+   <div className="flex flex-col items-center gap-4 px-4">
+    <div className="flex items-center gap-3 md:gap-5">
+     <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.3 }}
+      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
+     >
+      <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">80 Monuments</p>
+     </motion.div>
+
+     <motion.div
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.4 }}
+      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
+     >
+      <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">Official Program</p>
+     </motion.div>
+    </div>
 
     <motion.div
-     initial={{ opacity: 0 }}
-     animate={{ opacity: 1 }}
-     transition={{ delay: 0.35 }}
+     initial={{ opacity: 0, y: 5 }}
+     animate={{ opacity: 1, y: 0 }}
+     transition={{ delay: 0.45 }}
      className="flex items-center gap-1.5 shrink-0"
     >
      <span className="w-1.5 h-1.5 rounded-full bg-falla-sage animate-pulse" />
      <p className="text-[8px] md:text-xs text-falla-ink font-bold uppercase tracking-[0.2em] opacity-40 whitespace-nowrap">
-      Live · <span className="opacity-100">València</span>
+      Live from <span className="opacity-100">València</span>
      </p>
-    </motion.div>
-
-    <motion.div
-     initial={{ opacity: 0, x: 10 }}
-     animate={{ opacity: 1, x: 0 }}
-     transition={{ delay: 0.4 }}
-     className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
-    >
-     <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">Schedule</p>
     </motion.div>
    </div>
   </motion.div>

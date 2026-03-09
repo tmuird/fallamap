@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Show, UserButton, useUser } from "@clerk/react";
 import {
   Navbar,
@@ -26,32 +26,30 @@ export default function AppNavbar() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
 
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // Determine if scrolled enough to change background
       setScrolled(currentScrollY > 20);
 
-      // Smart Navbar logic
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        // Scrolling down - hide navbar
-        setIsVisible(false);
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        if (!isMenuOpen) setIsVisible(false);
       } else {
-        // Scrolling up - show navbar
         setIsVisible(true);
       }
       
-      setLastScrollY(currentScrollY);
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, [isMenuOpen]);
 
   const menuItems = [
     { label: "Home", path: "/", icon: <House size={20} weight="bold" /> },
@@ -90,13 +88,13 @@ export default function AppNavbar() {
           isMenuOpen={isMenuOpen}
           onMenuOpenChange={setIsMenuOpen} 
           maxWidth="full" 
-          className="bg-transparent h-12 md:h-16"
+          className="bg-transparent h-14 md:h-20"
           classNames={{
-            wrapper: "px-2 md:px-6 gap-1 md:gap-4 bg-transparent",
+            wrapper: "px-2 md:px-8 gap-1 md:gap-4 bg-transparent",
           }}
         >
           <NavbarContent className="gap-1 md:gap-4 flex-shrink-0" justify="start">
-            {/* Mobile Menu Toggle - Back to Left */}
+            {/* Mobile Menu Toggle - Left */}
             <Button
               isIconOnly
               variant="neutral"
@@ -113,62 +111,47 @@ export default function AppNavbar() {
                   className="w-5 h-0.5 bg-falla-ink rounded-full"
                 />
                 <motion.div 
-                  animate={isMenuOpen ? { rotate: -45, y: -0 } : { rotate: 0, y: 0 }}
+                  animate={isMenuOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 0 }}
                   className={cn("w-5 h-0.5 bg-falla-ink rounded-full", isMenuOpen ? "" : "w-3 ml-auto")}
                 />
               </div>
             </Button>
 
-            {/* Desktop Brand — flame logomark only */}
+            {/* Desktop Brand */}
             <NavbarBrand className="hidden sm:flex flex-shrink-0 w-auto">
-              <Link to="/" className="flex items-center group" onClick={handleMenuClose} aria-label="Home">
-                <motion.div
-                  whileHover={{ rotate: -12, scale: 1.1 }}
+              <Link to="/" className="flex items-center gap-1.5 md:gap-4 group" onClick={handleMenuClose}>
+                <motion.div 
+                  whileHover={{ rotate: -10, scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="w-8 h-8 flex items-center justify-center flex-shrink-0"
+                  className="w-7 h-7 md:w-11 md:h-11 flex items-center justify-center relative transition-transform flex-shrink-0"
                 >
-                  <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                    <path
-                      d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z"
-                      fill="var(--falla-fire)"
-                      stroke="var(--falla-ink)"
+                  <svg width="32" height="36" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-sm">
+                    <path 
+                      d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z" 
+                      fill="var(--falla-fire)" 
+                      stroke="var(--falla-ink)" 
                       strokeWidth="8"
                     />
-                    <path
-                      d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z"
-                      fill="#FFB600"
-                      stroke="var(--falla-ink)"
+                    <path 
+                      d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z" 
+                      fill="#FFB600" 
+                      stroke="var(--falla-ink)" 
                       strokeWidth="6"
                     />
                   </svg>
                 </motion.div>
+                <p className="font-display text-base md:text-3xl text-falla-fire leading-none lowercase flex-shrink-0">
+                  fallamap
+                </p>
               </Link>
             </NavbarBrand>
           </NavbarContent>
 
-          {/* Mobile Centre Brand — flame logomark */}
+          {/* Mobile Center Brand - No Flame */}
           <NavbarContent className="sm:hidden" justify="center">
-            <Link to="/" onClick={handleMenuClose} aria-label="Home">
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                className="w-7 h-7 flex items-center justify-center"
-              >
-                <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path
-                    d="M60 135C90 135 110 110 110 80C110 40 85 10 60 5C35 10 10 40 10 80C10 110 30 135 60 135Z"
-                    fill="var(--falla-fire)"
-                    stroke="var(--falla-ink)"
-                    strokeWidth="8"
-                  />
-                  <path
-                    d="M60 115C75 115 85 100 85 85C85 65 70 50 60 45C50 50 35 65 35 85C35 100 45 115 60 115Z"
-                    fill="#FFB600"
-                    stroke="var(--falla-ink)"
-                    strokeWidth="6"
-                  />
-                </svg>
-              </motion.div>
-            </Link>
+            <p className="font-display text-2xl text-falla-fire leading-none lowercase select-none">
+              fallamap
+            </p>
           </NavbarContent>
 
           {/* Desktop Nav */}

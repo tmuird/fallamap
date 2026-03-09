@@ -438,7 +438,7 @@ const MapComponent = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="w-6 flex justify-end shrink-0">
+                        <div className="w-8 flex justify-end shrink-0">
                           {result.number && visitedNumbers.includes(result.number) && (
                             <CheckCircle size={20} weight="fill" className="text-falla-sage drop-shadow-sm" />
                           )}

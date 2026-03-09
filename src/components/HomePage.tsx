@@ -39,13 +39,13 @@ export default function HomePage() {
               transition={{ type: "spring", damping: 25, stiffness: 120 }}
               className="flex flex-col items-center gap-2"
             >
-              <h2 className="text-fluid-xl md:text-fluid-2xl font-display text-falla-ink lowercase tracking-tight max-w-2xl leading-[0.9]">
-                Feel the <span className="text-falla-fire relative inline-block italic">
+              <h2 className="text-fluid-lg md:text-fluid-xl font-display text-falla-ink lowercase max-w-2xl leading-[0.9]">
+                Feel the <span className="text-falla-fire relative inline-block">
                   heat
                   <motion.span 
                     animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.05, 1] }} 
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute -top-[1vh] -right-[2vw] text-falla-fire/40 text-[2rem] md:text-[4rem] not-italic"
+                    className="absolute -top-[1vh] -right-[2vw] text-falla-fire/40 text-[2rem] md:text-[4rem]"
                   >
                     *
                   </motion.span>

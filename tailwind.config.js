@@ -16,9 +16,10 @@ export default {
         display: ["MatzyFood", "cursive"],
       },
       fontSize: {
-        'fluid-display': ['clamp(5.5rem, 22vw, 18rem)', { lineHeight: '0.75' }],
-        'fluid-xl': ['clamp(3rem, 10vw, 6rem)', { lineHeight: '0.85' }],
-        'fluid-2xl': ['clamp(4.5rem, 12vw, 10rem)', { lineHeight: '0.8' }],
+        'fluid-display': ['clamp(2.5rem, 8vw, 6rem)', { lineHeight: '0.8' }],
+        'fluid-lg': ['clamp(1.5rem, 4vw, 2.5rem)', { lineHeight: '1' }],
+        'fluid-xl': ['clamp(1.75rem, 5vw, 3rem)', { lineHeight: '0.9' }],
+        'fluid-2xl': ['clamp(2.25rem, 7vw, 4.5rem)', { lineHeight: '0.85' }],
       },
       colors: {
         falla: {
