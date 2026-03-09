@@ -69,6 +69,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const identifier = falla.number || falla.id || falla.name;
 
   const handleGetDirections = () => {
+    if (!falla.coordinates) return;
     const { lat, lng } = falla.coordinates;
     const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
     window.open(url, '_blank');
