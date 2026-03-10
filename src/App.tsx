@@ -64,6 +64,11 @@ export default function App() {
       <Toaster 
         position="top-center" 
         richColors 
+        expand={true}
+        gap={12}
+        containerStyle={{
+          zIndex: 9999,
+        }}
         theme={isDarkMode ? 'dark' : 'light'}
         toastOptions={{
           className: "ink-border soft-shadow-lg font-sans font-bold !bg-falla-paper !text-falla-ink border-2",

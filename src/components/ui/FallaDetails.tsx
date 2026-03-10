@@ -126,6 +126,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     }
     
     toast.success(currentState ? "Removed" : "Added!", {
+      id: `interaction-${identifier}-${type}`,
       description: currentState ? "Unmarked from your journey" : "View your passport 🦇",
       action: {
         label: "Passport",
@@ -134,7 +135,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           navigate("/profile");
         }
       },
-      duration: 4000
+      duration: 5000
     });
   };
 
