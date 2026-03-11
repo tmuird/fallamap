@@ -212,6 +212,11 @@ h2, h3, h4 {
   scrollbar-width: none;
 }
 
+[data-sonner-toaster] {
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
 /* Lightbox Overrides - Fixing the Z-Index and Pointer Events issues */
 .PhotoView-Portal,
 .PhotoView-Slider,

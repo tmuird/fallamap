@@ -68,6 +68,10 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
   const identifier = falla.number || falla.id || falla.name;
 
+  useEffect(() => {
+    setNewComment("");
+  }, [identifier]);
+
   const handleGetDirections = () => {
     if (!falla.coordinates) return;
     const { lat, lng } = falla.coordinates;
@@ -149,7 +153,15 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     const { error } = await addComment(newComment, user?.id, false);
     if (!error) {
       setNewComment("");
-      toast.success("Note shared!", { action: { label: "Passport", onClick: () => { if (onClose) onClose(); navigate("/profile"); } } });
+      toast.success("Note shared!", { 
+        action: { 
+          label: "Passport", 
+          onClick: () => { 
+            if (onClose) onClose(); 
+            navigate("/profile"); 
+          } 
+        } 
+      });
     }
   };
 

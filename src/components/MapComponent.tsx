@@ -72,6 +72,15 @@ const MapComponent = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      setIsDrawerOpen(false);
+      // Force remove any body classes or attributes left by Vaul/Radix
+      document.body.style.pointerEvents = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   const allPOIs = useMemo(() => {
     const hubs = (officialHubs as any[]).map(h => ({ ...h, is_hub: true }));
     return [...fallasData, ...hubs];
@@ -501,7 +510,7 @@ const MapComponent = () => {
         </motion.div>
       </div>
 
-      <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} shouldScaleBackground autoFocus={false}>
+      <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} autoFocus={false}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[100]" />
           <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh]">

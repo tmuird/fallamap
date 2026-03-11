@@ -348,7 +348,14 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
   const handleCommentSubmit = async () => {
     if (!user) {
       toast.error("Please sign in to share notes", {
-        action: { label: "Join", onClick: () => navigate("/sign-up") },
+        action: { 
+          label: "Join", 
+          onClick: () => {
+            // If this were in a drawer we'd close it, but SchedulePage hub is in-page.
+            // However, we should ensure consistent toast behavior.
+            navigate("/sign-up");
+          } 
+        },
       });
       return;
     }
@@ -511,7 +518,10 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
                   onClick={() => {
                     if (!isSignedIn) {
                       toast.error("Sign in to post photos", {
-                        action: { label: "Join", onClick: () => navigate("/sign-up") },
+                        action: { 
+                          label: "Join", 
+                          onClick: () => navigate("/sign-up") 
+                        },
                       });
                       return;
                     }
