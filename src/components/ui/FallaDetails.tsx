@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/utils/cn";
 import {
   Carousel,
@@ -26,7 +26,8 @@ import {
   ChatCircleDots,
   LockKey,
   CalendarBlank,
-  NavigationArrow
+  NavigationArrow,
+  Flame
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -60,6 +61,7 @@ interface FallaDetailsProps {
 export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInteraction }: FallaDetailsProps) {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -70,7 +72,17 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
   useEffect(() => {
     setNewComment("");
+    // QoL: Auto-scroll content to top when the monument changes
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [identifier]);
+
+  const handleNav = (dir: 'next' | 'prev') => {
+    if (navigator.vibrate) navigator.vibrate(30);
+    if (dir === 'next') onNext?.();
+    else onPrev?.();
+  };
 
   const handleGetDirections = () => {
     if (!falla.coordinates) return;
@@ -205,22 +217,39 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         <header className="p-4 md:p-8 pb-6 border-b-2 border-falla-ink bg-falla-paper/80 backdrop-blur-xl sticky top-0 z-40 flex flex-col gap-3 shrink-0">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 bg-falla-paper rounded-full ink-border p-1 shadow-sm border-2">
-                <Button isIconOnly variant="ghost" size="sm" onClick={onPrev} className="w-8 h-8 rounded-full text-falla-ink hover:bg-falla-ink/5" aria-label="Previous"><CaretLeft size={18} weight="bold" /></Button>
-                <div className="w-px h-4 bg-falla-ink/10" />
-                <Button isIconOnly variant="ghost" size="sm" onClick={onNext} className="w-8 h-8 rounded-full text-falla-ink hover:bg-falla-ink/5" aria-label="Next"><CaretRight size={18} weight="bold" /></Button>
+              <div className="flex items-center gap-3">
+                <Button 
+                  isIconOnly 
+                  variant="neutral" 
+                  size="sm" 
+                  onClick={() => handleNav('prev')} 
+                  className="w-10 h-10 rounded-xl border-2 shadow-solid-sm hover:shadow-none transition-all active:translate-x-[1px] active:translate-y-[1px]" 
+                  aria-label="Previous"
+                >
+                  <CaretLeft size={20} weight="bold" />
+                </Button>
+                <Button 
+                  isIconOnly 
+                  variant="neutral" 
+                  size="sm" 
+                  onClick={() => handleNav('next')} 
+                  className="w-10 h-10 rounded-xl border-2 shadow-solid-sm hover:shadow-none transition-all active:translate-x-[1px] active:translate-y-[1px]" 
+                  aria-label="Next"
+                >
+                  <CaretRight size={20} weight="bold" />
+                </Button>
               </div>
               <motion.div 
                 key={identifier}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
                 className={cn(
-                  "px-3 py-1 shadow-none text-[10px] font-black border-2 rounded-full flex items-center justify-center gap-1.5",
-                  falla.is_hub ? "bg-falla-fire text-falla-paper border-falla-ink" : "bg-falla-paper text-falla-ink border-falla-ink"
+                  "px-4 py-1.5 shadow-solid-sm text-[10px] font-black border-2 rounded-xl flex items-center justify-center gap-2 ml-2",
+                  falla.is_hub ? "bg-falla-fire text-falla-paper border-falla-ink" : "bg-falla-sand/20 text-falla-ink border-falla-ink"
                 )}
               >
-                {falla.is_hub ? <CalendarBlank size={12} weight="bold" /> : `#${falla.number}`}
-                <span>{falla.is_hub ? "Official Hub" : "Monument"}</span>
+                {falla.is_hub ? <CalendarBlank size={14} weight="bold" /> : <Flame size={14} weight="bold" />}
+                <span>{falla.is_hub ? "Official Hub" : `Monument #${falla.number}`}</span>
               </motion.div>
             </div>
             
@@ -269,7 +298,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           </div>
         </header>
         
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-falla-paper relative pb-48">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-falla-paper relative pb-48">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')] z-0" />
           
           <AnimatePresence mode="wait">

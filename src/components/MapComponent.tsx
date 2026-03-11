@@ -512,8 +512,8 @@ const MapComponent = () => {
 
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} autoFocus={false}>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[100]" />
-          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh]">
+          <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[500]" />
+          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[501] outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh]">
             <Drawer.Title className="sr-only">POI Details</Drawer.Title>
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:hidden pointer-events-auto" />
             
