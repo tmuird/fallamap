@@ -217,6 +217,15 @@ h2, h3, h4 {
   pointer-events: auto !important;
 }
 
+.drawer-overlay {
+  z-index: 5000 !important;
+  pointer-events: auto !important;
+}
+
+.drawer-content {
+  z-index: 5001 !important;
+}
+
 /* Lightbox Overrides - Fixing the Z-Index and Pointer Events issues */
 .PhotoView-Portal,
 .PhotoView-Slider,
