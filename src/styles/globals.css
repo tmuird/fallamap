@@ -218,12 +218,21 @@ h2, h3, h4 {
 }
 
 .drawer-overlay {
-  z-index: 5000 !important;
+  z-index: 9000 !important;
   pointer-events: auto !important;
 }
 
 .drawer-content {
-  z-index: 5001 !important;
+  z-index: 9001 !important;
+}
+
+/* 
+  SAFETY: Prevent Mapbox markers and canvas from stealing focus 
+  when the drawer is active.
+*/
+[data-drawer-open="true"] .mapboxgl-marker,
+[data-drawer-open="true"] .mapboxgl-canvas {
+  pointer-events: none !important;
 }
 
 /* Lightbox Overrides - Fixing the Z-Index and Pointer Events issues */

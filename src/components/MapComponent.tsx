@@ -379,8 +379,11 @@ const MapComponent = () => {
   };
 
   return (
-    <div className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500">
-      <div ref={mapContainerRef} className="w-full h-full" />
+    <div 
+      className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500"
+      data-drawer-open={isDrawerOpen}
+    >
+      <div ref={mapContainerRef} className="w-full h-full z-0" />
       
       <div 
         className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col"
