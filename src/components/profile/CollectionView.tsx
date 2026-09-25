@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import localFallas from "../fallas.json";
+import { hubs } from "@/lib/eventData";
 import { Heart, MapTrifold } from "@phosphor-icons/react";
 import { Card, CardBody } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -22,12 +23,14 @@ export function CollectionView() {
         try {
           const { data } = await supabase
             .from("user_interactions")
-            .select("fallas(number)")
+            .select("fallas(number), hubs(id)")
             .eq("user_id", user.id)
             .eq("type", "like");
-          
+        
           if (data) {
-            const numbers = data.map((i: any) => i.fallas?.number).filter(Boolean);
+            // Hub likes carry no `fallas` join — mapping only `fallas?.number` and
+            // rewriting localStorage with the result erased them (T1.7).
+            const numbers = data.map((i: any) => i.fallas?.number ?? i.hubs?.id ?? null).filter(Boolean);
             setLikedNumbers(numbers);
             localStorage.setItem("liked_fallas", JSON.stringify(numbers));
           }
@@ -40,7 +43,14 @@ export function CollectionView() {
     fetchLiked();
   }, [user]);
 
+  // Liked keys are monument `number`s or hub `id`s (FallaDetails `identifier`).
+  // Resolve both kinds so hub favorites render instead of silently vanishing (T1.7).
   const likedFallas = localFallas.filter(f => likedNumbers.includes(f.number));
+  const likedHubs = hubs.filter(h => likedNumbers.includes(h.id));
+  const entries = [
+    ...likedFallas.map(f => ({ key: f.number as string, number: f.number as string, name: f.name as string })),
+    ...likedHubs.map(h => ({ key: h.id, hubId: h.id, name: h.name })),
+  ] as { key: string; number?: string; hubId?: string; name: string }[];
 
   if (loading && likedNumbers.length === 0) return null;
 
@@ -53,22 +63,22 @@ export function CollectionView() {
         </div>
       </div>
 
-      {likedFallas.length === 0 ? (
+      {entries.length === 0 ? (
         <div className="p-12 text-center bg-falla-paper/30 ink-border rounded-3xl border-dashed border-2 text-falla-ink">
           <p className="font-bold opacity-40 italic">Your collection is empty. Heart monuments on the map to save them.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {likedFallas.map((falla) => (
-            <Link to={`/map?falla=${falla.number}`} key={falla.number} className="group">
+          {entries.map((entry) => (
+            <Link to={entry.hubId ? `/map?hub=${entry.hubId}` : `/map?falla=${entry.number}`} key={entry.key} className="group">
               <Card className="hover:translate-y-[-4px] transition-all border-2 group-hover:shadow-none group-active:translate-y-0 bg-falla-paper">
                 <CardBody className="p-5 flex items-center gap-5">
                   <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-500 flex items-center justify-center border-2 border-red-100 dark:border-red-900/30">
                     <Heart size={24} weight="fill" />
                   </div>
                   <div className="flex-1 text-falla-ink">
-                    <p className="text-[10px] font-black uppercase text-falla-fire mb-0.5">#{falla.number}</p>
-                    <h3 className="text-lg font-display italic leading-tight lowercase">{falla.name}</h3>
+                    <p className="text-[10px] font-black uppercase text-falla-fire mb-0.5">{entry.hubId ? "Hub" : `#${entry.number}`}</p>
+                    <h3 className="text-lg font-display italic leading-tight lowercase">{entry.name}</h3>
                   </div>
                   <MapTrifold size={20} weight="bold" className="text-falla-ink/10 group-hover:text-falla-fire transition-colors" />
                 </CardBody>

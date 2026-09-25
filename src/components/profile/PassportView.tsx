@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import localFallas from "../fallas.json";
+import { hubs } from "@/lib/eventData";
 import { MapTrifold, Trophy, Image as ImageIcon } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -7,16 +8,32 @@ import { supabase } from "@/lib/supabase";
 import { useUser } from "@clerk/react";
 import { Image } from "@heroui/react";
 
+// A passport entry is a monument (keyed by `number`) or an event hub (keyed by
+// `id`) — localStorage holds both kinds under the same keys (FallaDetails
+// `identifier`), and interaction DB rows target either `falla_id` or `hub_id`.
+interface PassportStamp {
+  key: string;
+  name: string;
+  number?: string;
+  hubId?: string;
+  topImage?: string;
+}
+
 export function PassportView() {
   const { user } = useUser();
-  const [visitedData, setVisitedData] = useState<any[]>([]);
+  const [visitedData, setVisitedData] = useState<PassportStamp[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     const fetchPassport = async () => {
       if (!user) {
         const local = JSON.parse(localStorage.getItem("visited_fallas") || "[]");
-        setVisitedData(local.map((n: string) => ({ number: n })));
+        setVisitedData(local.map((n: string): PassportStamp => {
+          const hub = hubs.find(h => h.id === n);
+          return hub
+            ? { key: hub.id, hubId: hub.id, name: hub.name }
+            : { key: n, number: n, name: localFallas.find(l => l.number === n)?.name ?? "" };
+        }));
         setLoading(false);
         return;
       }
@@ -33,16 +50,28 @@ export function PassportView() {
                 url,
                 status
               )
+            ),
+            hubs (
+              id,
+              name
             )
           `)
           .eq("user_id", user.id)
           .eq("type", "visited");
         
         if (data) {
-          const processed = data.map((item: any) => {
-            const f = item.fallas;
-            const topImage = f.images?.find((img: any) => img.status === 'approved')?.url;
-            return { ...f, topImage };
+          // Rows target a monument (`fallas` join) or a hub (`hubs` join). Hub
+          // rows come back with `fallas: null`; the old code dereferenced it
+          // unconditionally, so one hub check-in threw on the null join and the
+          // catch dropped the ENTIRE passport (T1.7).
+          const processed = data.flatMap((item: any): PassportStamp[] => {
+            if (item.fallas) {
+              const f = item.fallas;
+              const topImage = f.images?.find((img: any) => img.status === 'approved')?.url;
+              return [{ key: f.number ?? f.id, number: f.number, name: f.name, topImage }];
+            }
+            if (item.hubs) return [{ key: item.hubs.id, hubId: item.hubs.id, name: item.hubs.name }];
+            return [];
           });
           setVisitedData(processed);
         }
@@ -54,6 +83,10 @@ export function PassportView() {
     };
     fetchPassport();
   }, [user]);
+
+  // "Explored % of the city" counts monuments only — hub stamps aren't part of
+  // the monument dataset and could push the number past 100%.
+  const monumentStamps = visitedData.filter(v => !v.hubId).length;
 
   if (loading && visitedData.length === 0) return null;
 
@@ -77,7 +110,7 @@ export function PassportView() {
           <h3 className="text-2xl md:text-4xl font-display italic lowercase leading-tight">
             {visitedData.length > 50 ? "Legend of the Cremà" : visitedData.length > 10 ? "Dedicated Faller" : "Amateur Scout"}
           </h3>
-          <p className="text-sm font-medium opacity-60 mt-2">You've explored {((visitedData.length / localFallas.length) * 100).toFixed(1)}% of the city.</p>
+          <p className="text-sm font-medium opacity-60 mt-2">You've explored {((monumentStamps / localFallas.length) * 100).toFixed(1)}% of the city.</p>
         </div>
       </div>
 
@@ -91,7 +124,7 @@ export function PassportView() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
             {visitedData.map((falla) => (
-              <Link to={`/map?falla=${falla.number}`} key={falla.number} className="group">
+              <Link to={falla.hubId ? `/map?hub=${falla.hubId}` : `/map?falla=${falla.number}`} key={falla.key} className="group">
                 <motion.div 
                   whileHover={{ y: -8 }}
                   className="bg-falla-paper ink-border rounded-3xl flex flex-col overflow-hidden soft-shadow-sm h-full group-hover:shadow-none transition-all border-2 relative"
@@ -113,7 +146,7 @@ export function PassportView() {
                   </div>
 
                   <div className="p-4 flex flex-col gap-1 items-center text-center">
-                    <p className="text-[9px] font-black uppercase text-falla-fire">#{falla.number}</p>
+                    <p className="text-[9px] font-black uppercase text-falla-fire">{falla.hubId ? "Hub" : `#${falla.number}`}</p>
                     <p className="text-[11px] font-bold leading-[1.1] line-clamp-2 text-falla-ink lowercase">
                       {falla.name || localFallas.find(l => l.number === falla.number)?.name}
                     </p>

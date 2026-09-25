@@ -104,12 +104,17 @@ const MapComponent = () => {
       try {
         const { data } = await supabase
           .from("user_interactions")
-          .select("type, fallas(number)")
+          .select("type, fallas(number), hubs(id)")
           .eq("user_id", user.id);
         
         if (data) {
-          const visited = data.filter(i => i.type === 'visited').map((i: any) => i.fallas?.number).filter(Boolean);
-          const liked = data.filter(i => i.type === 'like').map((i: any) => i.fallas?.number).filter(Boolean);
+          // Interaction targets are monuments (join → `number`) or hubs (join →
+          // `id`); hub rows have no `fallas` join, so mapping only `fallas?.number`
+          // dropped them and the localStorage rewrite below erased hub likes/visits
+          // on every sync (T1.7).
+          const key = (i: any) => i.fallas?.number ?? i.hubs?.id ?? null;
+          const visited = data.filter(i => i.type === 'visited').map(key).filter(Boolean);
+          const liked = data.filter(i => i.type === 'like').map(key).filter(Boolean);
           setVisitedNumbers(visited);
           setLikedNumbers(liked);
           localStorage.setItem("visited_fallas", JSON.stringify(visited));

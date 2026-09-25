@@ -44,6 +44,8 @@ insert into user_interactions (user_id, type, falla_id)
   values ('user_test', 'visited', (select id from fallas where number = '1'));
 insert into user_interactions (user_id, type, hub_id)
   values ('user_test', 'like', 'hub-ajuntament');
+insert into user_interactions (user_id, type, hub_id)
+  values ('user_test', 'visited', 'hub-ajuntament');
 
 -- FallaDetails interaction sync (T1.4): rows are resolved by `number` before
 -- read/write (useFallaDetails dbId); localStorage keys stay on `number`
@@ -59,16 +61,37 @@ delete from user_interactions
   where user_id = 'user_test' and type = 'like'
     and falla_id = (select id from fallas where number = '3');
 
--- MapComponent refreshInteractions: select("type, fallas(number)")
-select ui.type, f.number
-  from user_interactions ui left join fallas f on f.id = ui.falla_id
-  where ui.user_id = 'user_test';
-
--- PassportView nested embed: user_interactions → fallas → images(url, status)
-select f.id, f.number, f.name, i.url, i.status
+-- MapComponent refreshInteractions / CollectionView (T1.7):
+-- select("type, fallas(number), hubs(id)") — mixed monument+hub targets must
+-- ALL resolve (hub rows join `hubs`, not `fallas`)
+select ui.type, f.number, h.id
   from user_interactions ui
-  join fallas f on f.id = ui.falla_id
+  left join fallas f on f.id = ui.falla_id
+  left join hubs h on h.id = ui.hub_id
+  where ui.user_id = 'user_test';
+do $$
+declare n int;
+begin
+  select count(*) into n from user_interactions ui
+    left join fallas f on f.id = ui.falla_id
+    left join hubs h on h.id = ui.hub_id
+    where ui.user_id = 'user_test' and coalesce(f.number, h.id) is null;
+  if n <> 0 then raise exception 'FAIL: % interaction rows resolved to no target', n; end if;
+  select count(*) into n from user_interactions ui
+    where ui.user_id = 'user_test' and ui.type = 'visited' and ui.falla_id is not null;
+  if n <> 1 then raise exception 'FAIL: monument visited rows % (expected 1)', n; end if;
+  select count(*) into n from user_interactions ui
+    where ui.user_id = 'user_test' and ui.type = 'visited' and ui.falla_id is null and ui.hub_id is not null;
+  if n <> 1 then raise exception 'FAIL: hub-targeted visited rows % (expected 1 — the PassportView crash shape)', n; end if;
+end $$;
+
+-- PassportView nested embed (T1.7): user_interactions → fallas → images OR hubs;
+-- hub rows have a NULL `fallas` join and must not break the projection
+select f.id, f.number, f.name, i.url, i.status, h.id as hub_id, h.name as hub_name
+  from user_interactions ui
+  left join fallas f on f.id = ui.falla_id
   left join images i on i.falla_id = f.id
+  left join hubs h on h.id = ui.hub_id
   where ui.user_id = 'user_test' and ui.type = 'visited';
 
 -- ActivityView / admin embeds: comments|images → fallas(name, number)
