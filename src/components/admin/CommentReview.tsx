@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Check, X, ChatCircleDots } from "@phosphor-icons/react";
 
 export function CommentReview() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [pendingComments, setPendingComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Hardcoded admin check for demo purposes.
+  // Client-side gate (UX only) — server-side enforcement lives in RLS:
+  // scripts/schema.sql grants status updates to admins via the Clerk
+  // session-token claim `public_metadata.role = 'admin'` (public.is_admin()).
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   const fetchPendingComments = async () => {
@@ -31,19 +33,25 @@ export function CommentReview() {
   };
 
   useEffect(() => {
-    fetchPendingComments();
-  }, []);
+    // Only fetch once Clerk has loaded AND the user is an admin — fetching
+    // earlier fires queries (and console errors) for signed-out visitors.
+    if (isLoaded && isAdmin) fetchPendingComments();
+  }, [isLoaded, isAdmin]);
 
   const handleUpdateStatus = async (id: string, newStatus: "approved" | "rejected") => {
     try {
-      const { error } = await supabase
+      // .select() returns the updated row: an RLS denial updates 0 rows
+      // without an error, so an empty result means the flip did not happen.
+      const { data, error } = await supabase
         .from("comments")
         .update({ status: newStatus })
-        .eq("id", id);
+        .eq("id", id)
+        .select("id");
 
       if (error) throw error;
-      
-      // Remove from list optimistically
+      if (!data || data.length === 0) throw new Error("Update blocked (RLS)");
+
+      // Remove from list only after the update is confirmed
       setPendingComments(prev => prev.filter(comment => comment.id !== id));
     } catch (err) {
       console.error("Error updating comment:", err);

@@ -61,18 +61,45 @@ The anon key is public by design — RLS is the security boundary, not the key.
 
 - `fallas`, `hubs` (map data): readable by anyone.
 - `comments`, `images`: approved + non-private rows readable by anyone; a user
-  always sees their own rows (incl. private/pending). Insert/update/delete:
-  `authenticated`, owner only (`user_id = auth.jwt()->>'sub'`).
+  always sees their own rows (incl. private/pending). Inserts: `authenticated`,
+  owner only (`user_id = auth.jwt()->>'sub'`), and non-admins may only insert
+  `status = 'pending'` — new content always enters the moderation queue.
+  Status flips are admin-only (below); deletes are owner only.
 - `image_likes`: counts readable by anyone (embedded `likes:image_likes(count)`);
   writes owner only.
 - `user_interactions` (like/visited): fully private to their owner.
 - `contact_submissions`: insert-only for anyone (public form; no user identity).
 - Storage `community-content` bucket: public read (the app uses `getPublicUrl`),
   upload requires `authenticated`.
+- Column-level UPDATE grants restrict `comments`/`images` updates to the
+  `status` column alone — even admins cannot rewrite `text`/`url`/`user_id`
+  through the API (per-user upload paths land in T2.6).
 
-Known gap (T1.2): moderation needs a JWT-claim override so admins can read the
-pending queue and update other users' `status`; uploads aren't yet keyed to
-per-user paths (T2.6).
+## Admin moderation (JWT claim)
+
+The moderation dashboard (`/dashboard`, `src/components/admin/`) reads the
+pending queue and approves/rejects rows. The client-side check
+(`user.publicMetadata.role === 'admin'`) is UX only — enforcement is
+server-side via `public.is_admin()` in `scripts/schema.sql`, which reads the
+Clerk session-token claim `public_metadata.role`. One-time setup:
+
+1. **Expose the role in the session token** — Clerk Dashboard → Configure →
+   Sessions → **Customize session token** → add a claim:
+   ```json
+   {
+     "public_metadata": "{{user.public_metadata}}"
+   }
+   ```
+   The exact key matters: RLS reads `auth.jwt()->'public_metadata'->>'role'`.
+2. **Promote a user** — Clerk Dashboard → Users → (user) → **Metadata
+   (public)** → `{ "role": "admin" }` (or `user.update({ publicMetadata:
+   { role: 'admin' } })` from code).
+3. Re-run `scripts/schema.sql` (idempotent) so the policies land.
+
+What an admin can then do: read all rows (incl. pending/private) and update
+`status` on any comment/image. What an admin cannot do: rewrite content,
+impersonate users, or touch other columns — enforced by both RLS and the
+column-level grants. A `role` claim outside `public_metadata` grants nothing.
 
 ## Why there is no `supabase` JWT template
 
@@ -96,10 +123,14 @@ way since they only read `sub`.
 
 ## Verifying the integration live
 
-1. Sign up / sign in (Clerk), then post a comment — it should appear after
-   moderation (or immediately while hooks still insert `status:'approved'`).
+1. Sign up / sign in (Clerk), then post a comment — it enters the queue as
+   `pending`, is visible only to its author, and appears publicly after an
+   admin approves it on `/dashboard`.
 2. In Supabase → Table editor, the row's `user_id` must equal the Clerk user id.
 3. As a second account, the first account's private comments must be invisible,
    and writing a row with the first account's `user_id` must fail with an RLS
    violation (42501).
 4. Signed out: community content reads still work, writes are rejected.
+5. As a non-admin, PATCHing another user's `status` must affect 0 rows; as an
+   admin (with the session-token claim from step 1 above) the flip must work,
+   and PATCHing `text` must fail with a permission error.

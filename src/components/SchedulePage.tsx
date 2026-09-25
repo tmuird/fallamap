@@ -363,7 +363,7 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
     const { error } = await addComment(newComment, user.id, false);
     if (!error) {
       setNewComment("");
-      toast.success("Note shared!");
+      toast.success("Note shared — awaiting review");
     } else {
       toast.error("Couldn't post note — check DB migration.");
     }
@@ -393,7 +393,7 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
       } = supabase.storage.from("community-content").getPublicUrl(path);
       const { error } = await addImage(publicUrl, user.id, false);
       if (error) throw error;
-      toast.success("Photo shared!", { id: toastId });
+      toast.success("Photo shared — awaiting review", { id: toastId });
     } catch {
       toast.error("Upload failed", { id: toastId });
     } finally {

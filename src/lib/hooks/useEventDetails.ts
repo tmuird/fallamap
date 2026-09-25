@@ -76,11 +76,13 @@ export function useEventDetails(eventId?: string) {
     isPrivate: boolean = false
   ) => {
     if (!eventId) return { error: "No event ID" };
+    // 'pending': new content enters the moderation queue (admins approve via
+    // /dashboard). RLS only permits non-admins to insert status='pending'.
     const payload = {
       event_id: eventId,
       user_id: userId,
       text,
-      status: "approved",
+      status: "pending",
       is_private: isPrivate,
     };
     const { data, error } = await supabase.from("comments").insert([payload]);
@@ -103,7 +105,7 @@ export function useEventDetails(eventId?: string) {
       event_id: eventId,
       user_id: userId,
       url,
-      status: "approved",
+      status: "pending",
       is_private: isPrivate,
     };
     const { data, error } = await supabase.from("images").insert([payload]);

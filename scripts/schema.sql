@@ -18,8 +18,9 @@
 -- "user_2abc…") into `user_id` columns — hence TEXT, not UUID. RLS compares
 -- `user_id` against the Clerk JWT `sub` via auth.jwt()->>'sub': users write
 -- only their own rows and read private content only when they own it.
--- Open item (T1.2): admin moderation needs a JWT-claim policy override so the
--- pending-review queue can read and update other users' rows.
+-- Moderation: new content is inserted 'pending' (non-admins cannot insert any
+-- other status); admins read the full queue and flip `status` via the
+-- public.is_admin() JWT-claim override below.
 
 -- ============================================================
 -- Tables
@@ -154,10 +155,27 @@ create unique index if not exists interactions_user_type_event_idx
 --   * reads: map data (fallas/hubs) and approved-public community content are
 --     readable by anyone; own rows (incl. private/pending) only by their owner
 --   * writes: `authenticated` only, and only for rows whose user_id is the
---     caller's own `sub`
+--     caller's own `sub`; non-admins may only insert status='pending'
+--     (moderation queue) and may never update rows (status flips are admin-only)
+--   * admins (public.is_admin()): read everything and update `status` only —
+--     the update column restriction is enforced with column-level UPDATE
+--     grants further below, so even admins cannot rewrite content or
+--     impersonate users
 --   * contact form: public insert (no user identity involved)
--- Remaining gap (T1.2): admin moderation needs a JWT-claim override so
--- moderators can read pending rows and update other users' `status`.
+--
+-- Admins are recognised by the Clerk session-token claim
+-- `public_metadata.role = 'admin'` (Clerk Dashboard → Configure → Sessions →
+-- Customize session token; see docs/supabase-clerk-auth.md). The claim is
+-- server-verified: a forged role anywhere else grants nothing.
+
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+as $$
+  select (select auth.jwt()->'public_metadata'->>'role') = 'admin'
+$$;
+grant execute on function public.is_admin() to anon, authenticated, service_role;
 
 alter table public.fallas               enable row level security;
 alter table public.hubs                 enable row level security;
@@ -175,24 +193,30 @@ drop policy if exists "hubs read"   on public.hubs;
 create policy "hubs read" on public.hubs
   for select to anon, authenticated using (true);
 
--- Comments: approved-public readable by anyone; own rows always; writes owner-
--- keyed (admin path for moderation updates lands in T1.2).
+-- Comments: approved-public readable by anyone; own rows always; admins read
+-- the full queue. Inserts are owner-keyed and non-admins may only submit
+-- status='pending' (content goes through moderation); status flips are
+-- admin-only (see the column-level UPDATE grant below).
 drop policy if exists "comments read"   on public.comments;
 create policy "comments read" on public.comments
   for select to anon, authenticated
   using (
     (status = 'approved' and not is_private)
     or (select auth.jwt()->>'sub') = user_id
+    or public.is_admin()
   );
 drop policy if exists "comments insert"   on public.comments;
 create policy "comments insert" on public.comments
   for insert to authenticated
-  with check ((select auth.jwt()->>'sub') = user_id);
+  with check (
+    (select auth.jwt()->>'sub') = user_id
+    and (status = 'pending' or public.is_admin())
+  );
 drop policy if exists "comments update"   on public.comments;
 create policy "comments update" on public.comments
   for update to authenticated
-  using ((select auth.jwt()->>'sub') = user_id)
-  with check ((select auth.jwt()->>'sub') = user_id);
+  using (public.is_admin())
+  with check (public.is_admin());
 drop policy if exists "comments delete"   on public.comments;
 create policy "comments delete" on public.comments
   for delete to authenticated
@@ -205,16 +229,20 @@ create policy "images read" on public.images
   using (
     (status = 'approved' and not is_private)
     or (select auth.jwt()->>'sub') = user_id
+    or public.is_admin()
   );
 drop policy if exists "images insert"   on public.images;
 create policy "images insert" on public.images
   for insert to authenticated
-  with check ((select auth.jwt()->>'sub') = user_id);
+  with check (
+    (select auth.jwt()->>'sub') = user_id
+    and (status = 'pending' or public.is_admin())
+  );
 drop policy if exists "images update"   on public.images;
 create policy "images update" on public.images
   for update to authenticated
-  using ((select auth.jwt()->>'sub') = user_id)
-  with check ((select auth.jwt()->>'sub') = user_id);
+  using (public.is_admin())
+  with check (public.is_admin());
 drop policy if exists "images delete"   on public.images;
 create policy "images delete" on public.images
   for delete to authenticated
@@ -257,6 +285,15 @@ create policy "contact insert" on public.contact_submissions
 grant usage on schema public to anon, authenticated, service_role;
 grant select, insert, update, delete on all tables in schema public
   to anon, authenticated, service_role;
+
+-- Moderation is status-only: strip table-level UPDATE on comments/images and
+-- grant it on the `status` column alone, so even admins (and service_role)
+-- cannot rewrite text/url/user_id through the API. RLS above additionally
+-- limits status updates to admins.
+revoke update on public.comments, public.images
+  from anon, authenticated, service_role;
+grant update (status) on public.comments, public.images
+  to authenticated, service_role;
 
 -- ============================================================
 -- Storage: community-content bucket (photo uploads)

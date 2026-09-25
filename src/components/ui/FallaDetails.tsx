@@ -167,7 +167,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     const { error } = await addComment(newComment, user?.id, false);
     if (!error) {
       setNewComment("");
-      toast.success("Note shared!", { 
+      toast.success("Note shared — awaiting review", { 
         action: { 
           label: "Passport", 
           onClick: () => { 
@@ -195,8 +195,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       const { error: uploadError } = await supabase.storage.from("community-content").upload(filePath, file);
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from("community-content").getPublicUrl(filePath);
-      await addImage(publicUrl, user?.id, false);
-      toast.success("Done!", { id: toastId });
+      const { error } = await addImage(publicUrl, user?.id, false);
+      if (error) throw error;
+      toast.success("Photo shared — awaiting review", { id: toastId });
     } catch (error: any) {
       toast.error("Failed", { id: toastId });
     } finally {

@@ -9,11 +9,11 @@ select * from fallas order by number;
 -- useFallaDetails: .select("id").eq("number", n).single()
 select id from fallas where number = '1';
 
--- useFallaDetails addComment/addImage (falla-targeted)
+-- useFallaDetails addComment/addImage (falla-targeted; hooks insert 'pending')
 insert into comments (user_id, text, status, is_private, falla_id)
-  values ('user_test', 'hello', 'approved', false, (select id from fallas where number = '1'));
+  values ('user_test', 'hello', 'pending', false, (select id from fallas where number = '1'));
 insert into images (user_id, url, status, is_private, falla_id)
-  values ('user_test', 'https://example.com/1.png', 'approved', false,
+  values ('user_test', 'https://example.com/1.png', 'pending', false,
           (select id from fallas where number = '1'));
 
 -- useEventDetails (event-targeted rows; ids like schedule events)
@@ -30,7 +30,7 @@ select i.url, (select count(*) from image_likes il where il.image_id = i.id) as 
 
 -- FallaDetails hub-targeted write + like/visited interactions
 insert into comments (user_id, text, status, hub_id)
-  values ('user_test', 'hub comment', 'approved', 'hub-ajuntament');
+  values ('user_test', 'hub comment', 'pending', 'hub-ajuntament');
 insert into user_interactions (user_id, type, falla_id)
   values ('user_test', 'visited', (select id from fallas where number = '1'));
 insert into user_interactions (user_id, type, hub_id)
@@ -94,6 +94,11 @@ insert into comments (user_id, text, status, is_private, falla_id)
   values ('user_other', 'secret', 'approved', true, (select id from fallas where number = '1'));
 insert into comments (user_id, text, status, is_private, falla_id)
   values ('user_other', 'unreviewed', 'pending', false, (select id from fallas where number = '1'));
+insert into comments (user_id, text, status, is_private, falla_id)
+  values ('user_seed', 'public ok', 'approved', false, (select id from fallas where number = '1'));
+insert into images (user_id, url, status, is_private, falla_id)
+  values ('user_seed', 'https://example.com/seed.png', 'approved', false,
+          (select id from fallas where number = '1'));
 insert into user_interactions (user_id, type, falla_id)
   values ('user_other', 'like', (select id from fallas where number = '1'));
 
@@ -109,24 +114,42 @@ insert into user_interactions (user_id, type, hub_id) values ('user_rls', 'visit
 do $$
 declare n int;
 begin
-  -- Own rows are visible/updatable/deletable even when private or pending
+  -- Own rows are visible/deletable even when private or pending
   select count(*) into n from comments where user_id = 'user_rls';
   if n <> 1 then raise exception 'FAIL: owner sees % own rows (expected 1)', n; end if;
-  update comments set text = 'via rls (edited)' where user_id = 'user_rls';
-  get diagnostics n = row_count;
-  if n <> 1 then raise exception 'FAIL: owner update affected % rows', n; end if;
   delete from user_interactions where user_id = 'user_rls' and hub_id = 'hub-ajuntament';
   get diagnostics n = row_count;
   if n <> 1 then raise exception 'FAIL: owner delete affected % rows', n; end if;
+
+  -- Moderation is enforced server-side: owners cannot self-approve …
+  update comments set status = 'approved' where user_id = 'user_rls';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: owner self-approved % rows', n; end if;
+  -- … cannot rewrite content (column-level UPDATE grant is status-only) …
+  begin
+    update comments set text = 'via rls (edited)' where user_id = 'user_rls';
+    raise exception 'FAIL: owner rewrote comment text';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+  -- … and new content must enter the queue (no directly-approved inserts)
+  begin
+    insert into comments (user_id, text, status, falla_id)
+      values ('user_rls', 'sneaky', 'approved',
+              (select id from fallas where number = '1'));
+    raise exception 'FAIL: inserted a directly-approved comment';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
 
   -- Another user's private/pending rows are invisible to this user
   select count(*) into n from comments where user_id = 'user_other';
   if n <> 0 then raise exception 'FAIL: saw % rows of another user', n; end if;
 
-  -- Cross-user writes must all be rejected (RLS with-check / using)
+  -- Cross-user writes must all be rejected (RLS with-check / column grants)
   begin
     insert into comments (user_id, text, status, falla_id)
-      values ('user_other', 'impersonation', 'approved',
+      values ('user_other', 'impersonation', 'pending',
               (select id from fallas where number = '1'));
     raise exception 'FAIL: inserted a comment as another user';
   exception when others then
@@ -145,6 +168,10 @@ begin
   exception when others then
     if sqlstate = 'P0001' then raise; end if;
   end;
+  -- Moderation is admin-only: a plain user cannot flip other users' status
+  update comments set status = 'rejected' where user_id = 'user_other';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: non-admin moderated % rows', n; end if;
   delete from comments where user_id = 'user_other';
   get diagnostics n = row_count;
   if n <> 0 then raise exception 'FAIL: deleted % rows of another user', n; end if;
@@ -159,6 +186,58 @@ declare n int;
 begin
   select count(*) into n from comments where user_id = 'user_other';
   if n <> 2 then raise exception 'FAIL: owner sees % own rows (expected 2)', n; end if;
+end $$;
+reset role;
+
+-- Moderation (T1.2): admins are recognised by the Clerk session-token claim
+-- public_metadata.role = 'admin' (public.is_admin() in scripts/schema.sql)
+set role authenticated;
+set request.jwt.claims = '{"sub": "user_admin", "public_metadata": {"role": "admin"}}';
+do $$
+declare n int;
+begin
+  -- The queue: admin sees everyone's pending rows and the private row
+  select count(*) into n from comments where status = 'pending' and user_id <> 'user_admin';
+  if n <> 5 then raise exception 'FAIL: admin sees % pending comments (expected 5)', n; end if;
+  select count(*) into n from comments where is_private;
+  if n <> 1 then raise exception 'FAIL: admin sees % private rows (expected 1)', n; end if;
+
+  -- Approve/reject other users' rows (comment + image queues)
+  update comments set status = 'approved' where user_id = 'user_other' and text = 'unreviewed';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: admin comment status update affected % rows', n; end if;
+  update images set status = 'approved' where url = 'https://example.com/e.png';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: admin image status update affected % rows', n; end if;
+
+  -- …but only the status column, never content …
+  begin
+    update comments set text = 'vandalized' where user_id = 'user_other';
+    raise exception 'FAIL: admin rewrote comment text';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+  -- … and never as another user
+  begin
+    insert into comments (user_id, text, status, falla_id)
+      values ('user_other', 'admin impersonation', 'pending',
+              (select id from fallas where number = '1'));
+    raise exception 'FAIL: admin inserted as another user';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+end $$;
+
+-- A role claim outside public_metadata grants nothing (claim path is enforced)
+set request.jwt.claims = '{"sub": "user_fake", "role": "admin"}';
+do $$
+declare n int;
+begin
+  update comments set status = 'rejected' where user_id = 'user_seed';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: forged role claim moderated % rows', n; end if;
+  select count(*) into n from comments where is_private;
+  if n <> 0 then raise exception 'FAIL: forged role claim saw % private rows', n; end if;
 end $$;
 reset role;
 

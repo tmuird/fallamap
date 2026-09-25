@@ -7,12 +7,13 @@ import { Image } from "@heroui/react";
 import { Check, X, ShieldCheck } from "@phosphor-icons/react";
 
 export function ImageReview() {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [pendingImages, setPendingImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Hardcoded admin check for demo purposes. 
-  // In production, use Clerk Roles or a Supabase Admin table.
+  // Client-side gate (UX only) — server-side enforcement lives in RLS:
+  // scripts/schema.sql grants status updates to admins via the Clerk
+  // session-token claim `public_metadata.role = 'admin'` (public.is_admin()).
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   const fetchPendingImages = async () => {
@@ -33,19 +34,25 @@ export function ImageReview() {
   };
 
   useEffect(() => {
-    fetchPendingImages();
-  }, []);
+    // Only fetch once Clerk has loaded AND the user is an admin — fetching
+    // earlier fires queries (and console errors) for signed-out visitors.
+    if (isLoaded && isAdmin) fetchPendingImages();
+  }, [isLoaded, isAdmin]);
 
   const handleUpdateStatus = async (id: string, newStatus: "approved" | "rejected") => {
     try {
-      const { error } = await supabase
+      // .select() returns the updated row: an RLS denial updates 0 rows
+      // without an error, so an empty result means the flip did not happen.
+      const { data, error } = await supabase
         .from("images")
         .update({ status: newStatus })
-        .eq("id", id);
+        .eq("id", id)
+        .select("id");
 
       if (error) throw error;
-      
-      // Remove from list optimistically
+      if (!data || data.length === 0) throw new Error("Update blocked (RLS)");
+
+      // Remove from list only after the update is confirmed
       setPendingImages(prev => prev.filter(img => img.id !== id));
     } catch (err) {
       console.error("Error updating image:", err);

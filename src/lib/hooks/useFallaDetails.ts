@@ -67,7 +67,9 @@ export function useFallaDetails(fallaNumber?: string, hubId?: string) {
 
   const addComment = async (text: string, userId?: string, isPrivate: boolean = false) => {
     if (!internalId && !hubId) return { error: "No ID" };
-    const payload: any = { user_id: userId, text, status: "approved", is_private: isPrivate };
+    // New content enters the moderation queue ('pending'); admins approve via
+    // /dashboard. RLS only permits non-admins to insert status='pending'.
+    const payload: any = { user_id: userId, text, status: "pending", is_private: isPrivate };
     if (hubId) payload.hub_id = hubId;
     else payload.falla_id = internalId;
 
@@ -78,7 +80,7 @@ export function useFallaDetails(fallaNumber?: string, hubId?: string) {
 
   const addImage = async (url: string, userId?: string, isPrivate: boolean = false) => {
     if (!internalId && !hubId) return { error: "No ID" };
-    const payload: any = { user_id: userId, url, status: "approved", is_private: isPrivate };
+    const payload: any = { user_id: userId, url, status: "pending", is_private: isPrivate };
     if (hubId) payload.hub_id = hubId;
     else payload.falla_id = internalId;
 
