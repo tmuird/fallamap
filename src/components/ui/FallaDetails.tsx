@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@heroui/react";
 import { useUser } from "@clerk/react";
 import { useCommunityContent } from "@/lib/hooks/useCommunityContent";
+import { validatePhotoFile, uploadCommunityPhoto, PHOTO_ACCEPT } from "@/lib/photoUpload";
 import { useBackendStatus } from "@/lib/backendStatus";
 import { eventsForHub } from "@/lib/eventData";
 import { supabase } from "@/lib/supabase";
@@ -186,28 +187,34 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) {
-      toast.error("Please sign in to upload photos", { action: { label: "Join", onClick: () => navigate("/sign-up") } });
+    const input = e.target;
+    const file = input.files?.[0];
+    if (!file) return;
+    const invalid = validatePhotoFile(file);
+    if (invalid) {
+      toast.error(invalid);
+      input.value = "";
       return;
     }
-    const file = e.target.files?.[0];
-    if (!file) return;
+    if (!user) {
+      toast.error("Please sign in to upload photos", { action: { label: "Join", onClick: () => navigate("/sign-up") } });
+      input.value = "";
+      return;
+    }
     setUploading(true);
     const toastId = toast.loading("Uploading...");
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${identifier}-${Math.random()}.${fileExt}`;
-      const filePath = `falla-images/${fileName}`;
-      const { error: uploadError } = await supabase.storage.from("community-content").upload(filePath, file);
-      if (uploadError) throw uploadError;
-      const { data: { publicUrl } } = supabase.storage.from("community-content").getPublicUrl(filePath);
-      const { error } = await addImage(publicUrl, user?.id, false);
-      if (error) throw error;
+    const result = await uploadCommunityPhoto(file, {
+      folder: "falla-images",
+      namePrefix: String(identifier),
+      storage: supabase.storage,
+      saveRow: (url) => addImage(url, user.id, false),
+    });
+    setUploading(false);
+    input.value = "";
+    if (result.ok) {
       toast.success("Photo shared — awaiting review", { id: toastId });
-    } catch {
-      toast.error("Failed", { id: toastId });
-    } finally {
-      setUploading(false);
+    } else {
+      toast.error(result.message, { id: toastId });
     }
   };
 
@@ -301,7 +308,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
             </div>
 
             <div className="flex-1 min-w-[120px] flex items-center gap-2">
-              <input type="file" id={`img-${identifier}`} className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+              <input type="file" id={`img-${identifier}`} className="hidden" accept={PHOTO_ACCEPT} onChange={handleImageUpload} disabled={uploading} />
               <Button className="w-full h-10 md:h-12 rounded-full border-2 text-[10px] font-black uppercase tracking-widest text-falla-ink shadow-solid-sm hover:shadow-none transition-all" isLoading={uploading} startContent={<Camera size={18} weight="bold" />} onClick={() => document.getElementById(`img-${identifier}`)?.click()}>Upload</Button>
             </div>
           </div>

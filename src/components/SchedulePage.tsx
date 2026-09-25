@@ -26,6 +26,7 @@ import {
 import { Drawer } from "vaul";
 import { useUser } from "@clerk/react";
 import { useCommunityContent } from "@/lib/hooks/useCommunityContent";
+import { validatePhotoFile, uploadCommunityPhoto, PHOTO_ACCEPT } from "@/lib/photoUpload";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
@@ -122,35 +123,37 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
+    if (!file) return;
+    const invalid = validatePhotoFile(file);
+    if (invalid) {
+      toast.error(invalid);
+      input.value = "";
+      return;
+    }
     if (!user) {
       toast.error("Please sign in to upload photos", {
         action: { label: "Join", onClick: () => navigate("/sign-up") },
       });
+      input.value = "";
       return;
     }
-    const file = e.target.files?.[0];
-    if (!file) return;
 
     setUploading(true);
     const toastId = toast.loading("Uploading photo...");
-    try {
-      const ext = file.name.split(".").pop();
-      const path = `event-images/${event.id}-${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("community-content")
-        .upload(path, file);
-      if (uploadError) throw uploadError;
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("community-content").getPublicUrl(path);
-      const { error } = await addImage(publicUrl, user.id, false);
-      if (error) throw error;
+    const result = await uploadCommunityPhoto(file, {
+      folder: "event-images",
+      namePrefix: event.id,
+      storage: supabase.storage,
+      saveRow: (url) => addImage(url, user.id, false),
+    });
+    setUploading(false);
+    input.value = "";
+    if (result.ok) {
       toast.success("Photo shared — awaiting review", { id: toastId });
-    } catch {
-      toast.error("Upload failed", { id: toastId });
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+    } else {
+      toast.error(result.message, { id: toastId });
     }
   };
 
@@ -199,7 +202,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept={PHOTO_ACCEPT}
                 className="hidden"
                 onChange={handleImageUpload}
                 disabled={uploading}
