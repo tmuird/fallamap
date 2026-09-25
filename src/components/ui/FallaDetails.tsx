@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@heroui/react";
 import { useUser } from "@clerk/react";
-import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
+import { useCommunityContent } from "@/lib/hooks/useCommunityContent";
 import { useBackendStatus } from "@/lib/backendStatus";
 import { eventsForHub } from "@/lib/eventData";
 import { supabase } from "@/lib/supabase";
@@ -63,7 +63,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { comments, images, addComment, addImage, toggleImageLike, dbId } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
+  const { comments, images, addComment, addImage, toggleImageLike, dbId } = useCommunityContent(falla.is_hub ? "hub" : "monument", falla.is_hub ? falla.id : falla.number);
   const backendOffline = useBackendStatus() === "offline";
   const hubEvents = falla.is_hub ? eventsForHub(falla.id ?? "") : [];
   const [newComment, setNewComment] = useState("");
@@ -103,8 +103,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
       // DB rows key on the resolved row id (uuid for monuments, hub id for hubs),
       // while localStorage keys on `number`/`id`. Monuments resolve number → DB id
-      // via useFallaDetails; without a resolved id the DB sync is skipped and the
-      // localStorage state stands (AUDIT §2).
+      // via useCommunityContent; without a resolved id the DB sync is skipped and
+      // the localStorage state stands (AUDIT §2).
       const targetId = falla.is_hub ? falla.id : dbId;
       if (user && targetId) {
         const query = supabase.from("user_interactions").select("type").eq("user_id", user.id);
@@ -395,10 +395,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                 </div>
 
                 <div className={cn("space-y-8 pb-40 pt-1", !isSignedIn && "blur-md select-none pointer-events-none")}>
-                  <AnimatePresence mode="popLayout">
                     {comments.length > 0 ? (
                       comments.map((comment, i) => (
-                        <motion.div key={comment.id || i} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="group border-b-2 border-falla-ink/5 pb-8 last:border-0 relative">
+                        <motion.div key={comment.id || i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="group border-b-2 border-falla-ink/5 pb-8 last:border-0 relative">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <span className="text-[9px] font-black uppercase tracking-widest text-falla-fire">Verified contributor</span>
@@ -409,12 +408,11 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                         </motion.div>
                       ))
                     ) : (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-12 text-center opacity-10">
+                      <motion.div key="empty-state" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-12 text-center opacity-10">
                         <ChatCircleDots size={48} weight="thin" className="mb-6" />
                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink">{backendOffline ? "Community features are offline right now" : "Be the first to speak"}</p>
                       </motion.div>
                     )}
-                  </AnimatePresence>
                 </div>
                 {!isSignedIn && comments.length > 0 && <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-t from-falla-paper via-transparent to-transparent pt-20"><p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire bg-falla-paper border-2 border-falla-fire px-6 py-3 rounded-xl shadow-solid">Sign up to read more</p></div>}
               </div>

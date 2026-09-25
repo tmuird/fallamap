@@ -574,8 +574,9 @@ const MapComponent = () => {
             >
               {selectedPOI && (
                 <div className="flex-1 overflow-hidden">
-                  <FallaDetails 
-                    falla={selectedPOI as any} 
+                  <FallaDetails
+                    key={(selectedPOI.number || selectedPOI.id || selectedPOI.name) as string}
+                    falla={selectedPOI as any}
                     onNext={() => {
                       const idx = allPOIs.findIndex(p => (p.number || p.id) === (selectedPOI.number || selectedPOI.id));
                       const next = allPOIs[(idx + 1) % allPOIs.length];

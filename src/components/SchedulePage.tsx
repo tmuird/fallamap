@@ -25,7 +25,7 @@ import {
 } from "@phosphor-icons/react";
 import { Drawer } from "vaul";
 import { useUser } from "@clerk/react";
-import { useEventDetails } from "@/lib/hooks/useEventDetails";
+import { useCommunityContent } from "@/lib/hooks/useCommunityContent";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
@@ -89,7 +89,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const { comments, images, loading, addComment, addImage, toggleImageLike } =
-    useEventDetails(event.id);
+    useCommunityContent("event", event.id);
 
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -681,6 +681,7 @@ export default function SchedulePage() {
 
                     {/* Community hub — fully wired */}
                     <EventCommunityHub
+                      key={selectedEvent.id}
                       event={selectedEvent}
                       dayDate={selectedEvent.dayDate}
                     />
