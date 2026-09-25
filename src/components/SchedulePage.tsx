@@ -648,6 +648,10 @@ export default function SchedulePage() {
           <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100]" />
             <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center">
+              <Drawer.Title className="sr-only">{selectedEvent?.title ?? "Event details"}</Drawer.Title>
+              <Drawer.Description className="sr-only">
+                {selectedEvent?.description ?? "Details for this schedule event."}
+              </Drawer.Description>
               <div className="w-full max-w-5xl bg-falla-paper rounded-t-[3rem] border-x-2 border-t-2 border-falla-ink shadow-solid flex flex-col max-h-[92vh] overflow-hidden">
                 <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4" />
 

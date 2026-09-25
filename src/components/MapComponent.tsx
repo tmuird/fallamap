@@ -567,6 +567,7 @@ const MapComponent = () => {
           <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[4px] drawer-overlay" />
           <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh] drawer-content">
             <Drawer.Title className="sr-only">POI Details</Drawer.Title>
+            <Drawer.Description className="sr-only">Details, photos and community notes for the selected place.</Drawer.Description>
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:hidden pointer-events-auto" />
             
             <motion.div 
