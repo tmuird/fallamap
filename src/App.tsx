@@ -7,7 +7,7 @@ import AppNavbar from "@/components/Navbar.tsx";
 import ContactPage from "@/components/ContactPage.tsx";
 import SignInPage from "@/components/SignInPage.tsx";
 import { neobrutalism } from "@clerk/themes";
-import { ClerkProvider } from "@clerk/react";
+import { ClerkProvider, useUser } from "@clerk/react";
 import SignUpPage from "@/components/SignUpPage.tsx";
 import { motion, AnimatePresence } from "framer-motion";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -44,24 +44,67 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => (
   </motion.div>
 );
 
+// T2.3: reports Clerk client readiness up to the boot loading gate (App's
+// splash lives above ClerkProvider, so it can't read Clerk hooks directly).
+function ClerkReadyGate({ onReady }: { onReady: (v: boolean) => void }) {
+  const { isLoaded } = useUser();
+  useEffect(() => {
+    if (isLoaded) onReady(true);
+  }, [isLoaded, onReady]);
+  return null;
+}
+
 export default function App() {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
+  // T2.3: the splash used to be a fixed 1.2s timer. It now gates on real
+  // readiness — initial assets (fonts + window load) here, Clerk via
+  // ClerkReadyGate — with a 300ms minimum so it can't flash open and a 3s
+  // failsafe that force-reveals so a stalled asset can never trap anyone.
+  const [assetsReady, setAssetsReady] = useState(false);
+  const [clerkReady, setClerkReady] = useState(false);
+  const loading = !(assetsReady && clerkReady);
+
+  useEffect(() => {
+    let cancelled = false;
+    let minTimer: ReturnType<typeof setTimeout> | undefined;
+    const startedAt = Date.now();
+    const reveal = () => {
+      if (!cancelled) {
+        setAssetsReady(true);
+        setClerkReady(true);
+      }
+    };
+    const failsafe = setTimeout(reveal, 3000);
+
+    const fontsReady: Promise<unknown> =
+      "fonts" in document ? document.fonts.ready : Promise.resolve();
+    const windowLoaded =
+      document.readyState === "complete"
+        ? Promise.resolve()
+        : new Promise<void>((resolve) =>
+            window.addEventListener("load", () => resolve(), { once: true })
+          );
+
+    Promise.all([fontsReady, windowLoaded]).then(() => {
+      const minRemaining = Math.max(0, 300 - (Date.now() - startedAt));
+      minTimer = setTimeout(() => {
+        if (!cancelled) setAssetsReady(true);
+      }, minRemaining);
+    });
+
+    return () => {
+      cancelled = true;
+      clearTimeout(failsafe);
+      if (minTimer) clearTimeout(minTimer);
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.className = isDarkMode ? "dark" : "light";
     document.body.className = isDarkMode ? "dark" : "light";
   }, [isDarkMode]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1200);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // T1.1: watch Supabase reachability for the community-offline banner
   useEffect(() => startBackendMonitor(), []);
@@ -127,6 +170,7 @@ export default function App() {
         }}
       >
         <SupabaseAuthBridge />
+        <ClerkReadyGate onReady={setClerkReady} />
         <AppNavbar />
         <CommunityOfflineBanner />
         

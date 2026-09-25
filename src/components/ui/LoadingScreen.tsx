@@ -34,13 +34,14 @@ export const LoadingScreen = () => {
           </svg>
         </motion.div>
 
-        {/* Faster Loading Bar */}
+        {/* Boot progress bar — completes in 0.6s so it never looks stalled when
+            the splash hides on real readiness (T2.3). */}
         <div className="w-40 h-2 bg-falla-ink/5 rounded-full overflow-hidden ink-border relative border-[1.5px]">
           <motion.div
             initial={{ width: "0%" }}
             animate={{ width: "100%" }}
             transition={{
-              duration: 1.2,
+              duration: 0.6,
               ease: "circOut",
             }}
             className="h-full bg-falla-fire"
