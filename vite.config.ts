@@ -10,4 +10,20 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // T2.7: carve the heavy libraries out of the route chunks so they cache
+        // independently and only load when a route actually pulls them in
+        // (mapbox only comes in with /map, for example).
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('mapbox-gl') || id.includes('@mapbox')) return 'mapbox';
+          if (id.includes('@clerk')) return 'clerk';
+          if (id.includes('@supabase')) return 'supabase';
+          return 'vendor';
+        },
+      },
+    },
+  },
 });

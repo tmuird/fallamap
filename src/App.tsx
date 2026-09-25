@@ -1,28 +1,48 @@
 import "@/styles/globals.css";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import HomePage from "./components/HomePage";
-import MapPage from "./components/MapPage";
-import SchedulePage from "./components/SchedulePage.tsx";
 import AppNavbar from "@/components/Navbar.tsx";
-import ContactPage from "@/components/ContactPage.tsx";
-import SignInPage from "@/components/SignInPage.tsx";
 import { neobrutalism } from "@clerk/themes";
 import { ClerkProvider, useUser } from "@clerk/react";
-import SignUpPage from "@/components/SignUpPage.tsx";
 import { motion, AnimatePresence } from "framer-motion";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useTheme } from "@/context/ThemeContext.tsx";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Toaster } from "sonner";
-import ModerationDashboard from "./components/admin/ModerationDashboard";
-import UserProfile from "./components/profile/UserProfile";
-import ArchivePage from "./components/ArchivePage";
 import { MascletaCountdown } from "./components/ui/MascletaCountdown";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { SupabaseAuthBridge } from "./lib/SupabaseAuthBridge";
 import { CommunityOfflineBanner } from "./components/ui/CommunityOfflineBanner";
 import { startBackendMonitor } from "./lib/backendStatus";
+
+// T2.7: route-level code splitting. The landing page stays eager (no first-paint
+// flash); every other route loads its chunk on demand.
+const MapPage = lazy(() => import("./components/MapPage"));
+const SchedulePage = lazy(() => import("./components/SchedulePage.tsx"));
+const ArchivePage = lazy(() => import("./components/ArchivePage"));
+const ContactPage = lazy(() => import("@/components/ContactPage.tsx"));
+const UserProfile = lazy(() => import("./components/profile/UserProfile"));
+const ModerationDashboard = lazy(
+  () => import("./components/admin/ModerationDashboard")
+);
+const SignInPage = lazy(() => import("@/components/SignInPage.tsx"));
+const SignUpPage = lazy(() => import("@/components/SignUpPage.tsx"));
+
+// Shown while a route chunk is still loading (cold cache / slow network).
+const PageFallback = () => (
+  <div
+    className="w-full flex-grow flex flex-col items-center justify-center gap-4 p-12"
+    role="status"
+    aria-label="Loading page"
+  >
+    <div className="h-2 w-40 rounded-full bg-falla-ink/10 animate-pulse" />
+    <div className="h-2 w-24 rounded-full bg-falla-ink/10 animate-pulse" />
+  </div>
+);
+
+const RouteSuspense = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageFallback />}>{children}</Suspense>
+);
 
 // T2.4: fail fast when the Clerk key is missing. The old `||` fallback
 // silently booted a hardcoded dev instance, so a misconfigured deploy looked
@@ -186,14 +206,14 @@ export default function App() {
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
-              <Route path="/map" element={<PageWrapper><MapPage /></PageWrapper>} />
-              <Route path="/schedule" element={<PageWrapper><SchedulePage /></PageWrapper>} />
-              <Route path="/archive" element={<PageWrapper><ArchivePage /></PageWrapper>} />
-              <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
-              <Route path="/profile" element={<PageWrapper><UserProfile /></PageWrapper>} />
-              <Route path="/sign-in" element={<PageWrapper><SignInPage /></PageWrapper>} />
-              <Route path="/sign-up" element={<PageWrapper><SignUpPage /></PageWrapper>} />
-              <Route path="/dashboard" element={<PageWrapper><ModerationDashboard /></PageWrapper>} />
+              <Route path="/map" element={<PageWrapper><RouteSuspense><MapPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/schedule" element={<PageWrapper><RouteSuspense><SchedulePage /></RouteSuspense></PageWrapper>} />
+              <Route path="/archive" element={<PageWrapper><RouteSuspense><ArchivePage /></RouteSuspense></PageWrapper>} />
+              <Route path="/contact" element={<PageWrapper><RouteSuspense><ContactPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/profile" element={<PageWrapper><RouteSuspense><UserProfile /></RouteSuspense></PageWrapper>} />
+              <Route path="/sign-in" element={<PageWrapper><RouteSuspense><SignInPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/sign-up" element={<PageWrapper><RouteSuspense><SignUpPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/dashboard" element={<PageWrapper><RouteSuspense><ModerationDashboard /></RouteSuspense></PageWrapper>} />
             </Routes>
           </AnimatePresence>
           </ErrorBoundary>

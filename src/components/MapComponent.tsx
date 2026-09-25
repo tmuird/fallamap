@@ -1,6 +1,7 @@
 import { useEffect, useRef, useContext, useState, useMemo, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { ThemeContext } from "../context/ThemeContext";
 import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
