@@ -52,25 +52,47 @@ function EventIcon({ name, size = 24 }: { name: string; size?: number }) {
 
 // ─── ICS helper ──────────────────────────────────────────────────────────────
 
+/** RFC 5545 TEXT escaping for SUMMARY/LOCATION/DESCRIPTION values. */
+function escapeICSText(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
+}
+
 function buildICS(event: ScheduleEvent, dayDate: string) {
   const [h, m] = event.time.split(":").map(Number);
   const pad = (n: number) => String(n).padStart(2, "0");
+  const [year, month, day] = dayDate.split("-").map(Number);
 
-  const dateStr = dayDate.replace(/-/g, "");
-  const startDT = `${dateStr}T${pad(h)}${pad(m)}00`;
-  const endH = h + 1 >= 24 ? 0 : h + 1;
-  const endDT = `${dateStr}T${pad(endH)}${pad(m)}00`;
+  const fmtDate = (d: Date) =>
+    `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`;
+
+  // One-hour event. DTEND rolls into the NEXT day for late events (23:00 →
+  // next day 00:00, 23:59 → next day 00:59) — the old same-day `00:xx` end was
+  // before DTSTART. Date.UTC handles month/year overflow.
+  const startDate = new Date(Date.UTC(year, month - 1, day));
+  const endDate = new Date(Date.UTC(year, month - 1, day + (h + 1 >= 24 ? 1 : 0)));
+  const startDT = `${fmtDate(startDate)}T${pad(h)}${pad(m)}00`;
+  const endDT = `${fmtDate(endDate)}T${pad((h + 1) % 24)}${pad(m)}00`;
+
+  // Stable per event+date so re-importing updates in place instead of duplicating.
+  const uid = `${event.id}-${startDT}@${SITE.event.fileSlug}`;
+  const dtStamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     `PRODID:${SITE.brand.icsProdId}`,
     "BEGIN:VEVENT",
-    `SUMMARY:${event.title} – ${SITE.event.name}`,
-    `DTSTART;TZID=Europe/Madrid:${startDT}`,
-    `DTEND;TZID=Europe/Madrid:${endDT}`,
-    `LOCATION:${event.location}`,
-    `DESCRIPTION:${event.description}`,
+    `UID:${uid}`,
+    `DTSTAMP:${dtStamp}`,
+    `SUMMARY:${escapeICSText(`${event.title} – ${SITE.event.name}`)}`,
+    `DTSTART;TZID=${SITE.countdown.timeZone}:${startDT}`,
+    `DTEND;TZID=${SITE.countdown.timeZone}:${endDT}`,
+    `LOCATION:${escapeICSText(event.location)}`,
+    `DESCRIPTION:${escapeICSText(event.description)}`,
     `URL:${window.location.href}`,
     "END:VEVENT",
     "END:VCALENDAR",
