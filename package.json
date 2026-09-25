@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "seed": "node scripts/seed_supabase.js",
+    "verify:schema": "bash scripts/verify_schema_local.sh",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -52,6 +54,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.18.0",
+    "pg": "^8.23.0",
     "postcss": "^8.5.1",
     "typescript": "^5.7.3",
     "vite": "^6.0.7"
