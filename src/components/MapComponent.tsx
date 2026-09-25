@@ -57,6 +57,7 @@ const MapComponent = () => {
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [mapUnavailable, setMapUnavailable] = useState(false);
 
   // 1. Initial Load
   useEffect(() => {
@@ -120,15 +121,30 @@ const MapComponent = () => {
 
   // 3. Initialize Map
   useEffect(() => {
+    if (mapUnavailable) return;
     if (!mapContainerRef.current) return;
 
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11",
-      center: [-0.37739, 39.46975],
-      zoom: 13,
-      pitch: 45,
-    });
+    // WebGL gate: without it (headless browsers, VMs, locked-down devices)
+    // map construction throws and used to white-screen the whole app (AUDIT §1).
+    if (!mapboxgl.supported()) {
+      setMapUnavailable(true);
+      return;
+    }
+
+    let map: mapboxgl.Map;
+    try {
+      map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: isDarkMode ? "mapbox://styles/mapbox/dark-v11" : "mapbox://styles/mapbox/light-v11",
+        center: [-0.37739, 39.46975],
+        zoom: 13,
+        pitch: 45,
+      });
+    } catch (err) {
+      console.warn("Map initialisation failed:", err);
+      setMapUnavailable(true);
+      return;
+    }
 
     mapRef.current = map;
 
@@ -259,7 +275,7 @@ const MapComponent = () => {
       markerElsRef.current = {};
       map.remove();
     };
-  }, [isDarkMode]);
+  }, [isDarkMode, mapUnavailable]);
 
   // 4. Reactive Markers
   useEffect(() => {
@@ -383,7 +399,22 @@ const MapComponent = () => {
       className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500"
       data-drawer-open={isDrawerOpen}
     >
-      <div ref={mapContainerRef} className="w-full h-full z-0" />
+      {mapUnavailable ? (
+        <div className="w-full h-full z-0 flex items-center justify-center bg-falla-paper dark:bg-zinc-950 p-6">
+          <div className="max-w-md w-full bg-falla-paper dark:bg-zinc-900 border-2 border-falla-ink dark:border-white/80 rounded-[2rem] shadow-solid p-8 flex flex-col items-center gap-4 text-center">
+            <div className="w-12 h-12 bg-falla-fire rounded-full ink-border" />
+            <h2 className="font-display text-xl uppercase tracking-widest text-falla-ink dark:text-white">
+              Map unavailable
+            </h2>
+            <p className="text-sm font-bold text-falla-ink/60 dark:text-white/60 leading-relaxed">
+              The interactive map needs WebGL, which this browser or device has
+              disabled. You can still search monuments and events above.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div ref={mapContainerRef} className="w-full h-full z-0" />
+      )}
       
       <div 
         className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg z-[100] pointer-events-none flex flex-col"

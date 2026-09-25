@@ -19,6 +19,7 @@ import ModerationDashboard from "./components/admin/ModerationDashboard";
 import UserProfile from "./components/profile/UserProfile";
 import ArchivePage from "./components/ArchivePage";
 import { MascletaCountdown } from "./components/ui/MascletaCountdown";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -122,6 +123,7 @@ export default function App() {
         <AppNavbar />
         
         <main className="flex-grow flex flex-col relative">
+          <ErrorBoundary>
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
@@ -135,6 +137,7 @@ export default function App() {
               <Route path="/dashboard" element={<PageWrapper><ModerationDashboard /></PageWrapper>} />
             </Routes>
           </AnimatePresence>
+          </ErrorBoundary>
         </main>
 
         <MascletaCountdown />
