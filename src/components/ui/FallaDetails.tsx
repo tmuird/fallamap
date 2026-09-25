@@ -62,7 +62,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
+  const { comments, images, addComment, addImage, toggleImageLike, dbId } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
   const backendOffline = useBackendStatus() === "offline";
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -99,10 +99,15 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       setVisited(localV.includes(identifier));
       setLiked(localL.includes(identifier));
 
-      if (user && (falla.id || identifier)) {
+      // DB rows key on the resolved row id (uuid for monuments, hub id for hubs),
+      // while localStorage keys on `number`/`id`. Monuments resolve number → DB id
+      // via useFallaDetails; without a resolved id the DB sync is skipped and the
+      // localStorage state stands (AUDIT §2).
+      const targetId = falla.is_hub ? falla.id : dbId;
+      if (user && targetId) {
         const query = supabase.from("user_interactions").select("type").eq("user_id", user.id);
         if (falla.is_hub) query.eq("hub_id", falla.id);
-        else query.eq("falla_id", falla.id);
+        else query.eq("falla_id", dbId);
         
         const { data } = await query;
         if (data) {
@@ -112,7 +117,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       }
     };
     checkInteractions();
-  }, [user, falla.id, identifier, falla.is_hub]);
+  }, [user, falla.id, dbId, identifier, falla.is_hub]);
 
   const toggleInteraction = async (type: 'like' | 'visited') => {
     const currentState = type === 'like' ? liked : visited;
@@ -125,17 +130,17 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
     localStorage.setItem(localKey, JSON.stringify(newLocal));
     onInteraction?.();
 
-    if (user && (falla.id || identifier)) {
+    if (user && (falla.is_hub ? falla.id : dbId)) {
       try {
         if (currentState) {
           const query = supabase.from("user_interactions").delete().eq("user_id", user.id).eq("type", type);
           if (falla.is_hub) query.eq("hub_id", falla.id);
-          else query.eq("falla_id", falla.id);
+          else query.eq("falla_id", dbId);
           await query;
         } else {
           const payload: any = { user_id: user.id, type };
           if (falla.is_hub) payload.hub_id = falla.id;
-          else payload.falla_id = falla.id;
+          else payload.falla_id = dbId;
           await supabase.from("user_interactions").insert([payload]);
         }
       } catch (err) {
@@ -356,7 +361,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
               </div>
 
               <div className="w-full lg:w-1/2 p-6 md:p-10 lg:p-12 flex flex-col bg-falla-paper min-h-[400px] relative border-l-0 lg:border-l-2 border-falla-ink">
-                {falla.is_hub && falla.description && (
+                {falla.description && (
                   <div className="mb-12 p-6 rounded-[2rem] bg-falla-fire/5 border-2 border-falla-fire/10">
                     <p className="text-xs font-black uppercase tracking-widest text-falla-fire mb-2 flex items-center gap-2"><MapPin weight="bold" /> About this location</p>
                     <p className="text-lg font-medium text-falla-ink leading-tight italic">"{falla.description}"</p>

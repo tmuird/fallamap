@@ -1,8 +1,12 @@
 [
   {
     "number": "1",
+    "id": "falla-1",
     "name": "PLAZA DOCTOR COLLADO",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.377771,
       "lat": 39.474337
@@ -10,8 +14,12 @@
   },
   {
     "number": "3",
+    "id": "falla-3",
     "name": "PORTAL DE VALLDIGNA - SALINAS",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.37902271681433,
       "lat": 39.4771259563227
@@ -19,8 +27,12 @@
   },
   {
     "number": "4",
+    "id": "falla-4",
     "name": "LINTERNA - NA ROVELLA - AV. BARÓN DE CÁRCER",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.367091,
       "lat": 39.452959
@@ -28,8 +40,12 @@
   },
   {
     "number": "6",
+    "id": "falla-6",
     "name": "BORRULL - TURIA",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.414219,
       "lat": 39.51144
@@ -37,8 +53,12 @@
   },
   {
     "number": "7",
+    "id": "falla-7",
     "name": "MURILLO - PALOMAR",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.362283,
       "lat": 39.461079
@@ -46,17 +66,25 @@
   },
   {
     "number": "8",
+    "id": "falla-8",
     "name": "PLAZA NA JORDANA (PORTAL NUEVO)",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "9",
+    "id": "falla-9",
     "name": "AVENIDA DEL OESTE",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.379820053426075,
       "lat": 39.4707932754981
@@ -64,8 +92,12 @@
   },
   {
     "number": "10",
+    "id": "falla-10",
     "name": "PLAZA DE LA MERCED",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.377793,
       "lat": 39.472603
@@ -73,8 +105,12 @@
   },
   {
     "number": "11",
+    "id": "falla-11",
     "name": "CONVENTO JERUSALÉN - MATEMÁTICO MARZAL",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.379541,
       "lat": 39.466676
@@ -82,8 +118,12 @@
   },
   {
     "number": "12",
+    "id": "falla-12",
     "name": "ALMIRANTE CADARSO - CONDE ALTEA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.36779700813449,
       "lat": 39.4651617933929
@@ -91,8 +131,12 @@
   },
   {
     "number": "14",
+    "id": "falla-14",
     "name": "BOLSERÍA - TROS ALT",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.375419,
       "lat": 39.468434
@@ -100,8 +144,12 @@
   },
   {
     "number": "15",
+    "id": "falla-15",
     "name": "QUART - PALOMAR (PZA. SANTA ÚRSULA)",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.383761893019357,
       "lat": 39.4752234718028
@@ -109,8 +157,12 @@
   },
   {
     "number": "17",
+    "id": "falla-17",
     "name": "PLAZA SANT BULT",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.370446106706085,
       "lat": 39.4750186420453
@@ -118,8 +170,12 @@
   },
   {
     "number": "19",
+    "id": "falla-19",
     "name": "BORRULL - SOCORS",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.386817,
       "lat": 39.47433
@@ -127,8 +183,12 @@
   },
   {
     "number": "21",
+    "id": "falla-21",
     "name": "EXPOSICIÓN - MICER MASCÓ- A. BACA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.360972,
       "lat": 39.477429
@@ -136,8 +196,12 @@
   },
   {
     "number": "22",
+    "id": "falla-22",
     "name": "CUBA - LITERATO AZORÍN",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.374979302818991,
       "lat": 39.4598975141965
@@ -145,8 +209,12 @@
   },
   {
     "number": "28",
+    "id": "falla-28",
     "name": "DOCTOR SERRANO - CARLOS CERVERA",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.372721545095952,
       "lat": 39.4622646860751
@@ -154,8 +222,12 @@
   },
   {
     "number": "32",
+    "id": "falla-32",
     "name": "PLAZA DEL PILAR",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.382792,
       "lat": 39.471309000000005
@@ -163,8 +235,12 @@
   },
   {
     "number": "34",
+    "id": "falla-34",
     "name": "J. DE AGUILÓ - GASPAR AGUILAR",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3697,
       "lat": 39.466539
@@ -172,8 +248,12 @@
   },
   {
     "number": "35",
+    "id": "falla-35",
     "name": "ALTA - SANTO TOMÁS",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.379570342501419,
       "lat": 39.4782675590427
@@ -181,8 +261,12 @@
   },
   {
     "number": "37",
+    "id": "falla-37",
     "name": "MAESTRO GOZALBO - CONDE ALTEA",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.369072910786373,
       "lat": 39.4650852820936
@@ -190,8 +274,12 @@
   },
   {
     "number": "44",
+    "id": "falla-44",
     "name": "GRAN VÍA FDO. EL CATOLICO - A.GUIMERÁ",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.370675,
       "lat": 39.464685
@@ -199,8 +287,12 @@
   },
   {
     "number": "79",
+    "id": "falla-79",
     "name": "SAN VICENTE - PERIODISTA AZZATI",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.378253011842222,
       "lat": 39.4696010084574
@@ -208,8 +300,12 @@
   },
   {
     "number": "89",
+    "id": "falla-89",
     "name": "ARZOBISPO OLAECHEA - S.MARCELINO",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.390633021085852,
       "lat": 39.4436885031083
@@ -217,8 +313,12 @@
   },
   {
     "number": "100",
+    "id": "falla-100",
     "name": "PLAZA ROJAS CLEMENTE",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.385406241269241,
       "lat": 39.47322002406
@@ -226,8 +326,12 @@
   },
   {
     "number": "104",
+    "id": "falla-104",
     "name": "AV. MALVARROSA - A. PONZ-CAVITE",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.327947917151144,
       "lat": 39.4797484598224
@@ -235,8 +339,12 @@
   },
   {
     "number": "112",
+    "id": "falla-112",
     "name": "ACACIAS - PICAYO",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.388346179886914,
       "lat": 39.4911594223214
@@ -244,8 +352,12 @@
   },
   {
     "number": "118",
+    "id": "falla-118",
     "name": "CERVANTES - PADRE JOFRE",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.38165701363835,
       "lat": 39.4677598170149
@@ -253,17 +365,25 @@
   },
   {
     "number": "122",
+    "id": "falla-122",
     "name": "L´ALGUER - INGENIERO R. JANNINI",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "123",
+    "id": "falla-123",
     "name": "BARÓN S. PETRILLO - L. JOVANI",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3603042,
       "lat": 39.4865474
@@ -271,8 +391,12 @@
   },
   {
     "number": "125",
+    "id": "falla-125",
     "name": "RAMIRO DE MAEZTU - LEONES",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3476384,
       "lat": 39.4672342
@@ -280,17 +404,25 @@
   },
   {
     "number": "129",
+    "id": "falla-129",
     "name": "GLORIA - FELICIDAD - TREMOLAR",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "132",
+    "id": "falla-132",
     "name": "REINA - VICENTE GUILLOT",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3282665,
       "lat": 39.4731933
@@ -298,8 +430,12 @@
   },
   {
     "number": "140",
+    "id": "falla-140",
     "name": "PROGRESO - TEATRO LA MARINA",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.327886,
       "lat": 39.472209500000005
@@ -307,17 +443,25 @@
   },
   {
     "number": "144",
+    "id": "falla-144",
     "name": "DUQUE DE GAETA - PUEBLA DE FARNALS",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "145",
+    "id": "falla-145",
     "name": "PLAZA VIRGEN DEL LEPANTO (CASTELLAR)",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3749680360696,
       "lat": 39.4762489576006
@@ -325,8 +469,12 @@
   },
   {
     "number": "147",
+    "id": "falla-147",
     "name": "CONDE SALVATIERRA - C.AMORÓS",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.368042274321906,
       "lat": 39.4696222846215
@@ -334,8 +482,12 @@
   },
   {
     "number": "149",
+    "id": "falla-149",
     "name": "DOCTOR MANUEL CANDELA - AV. PUERTO",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.349494120614475,
       "lat": 39.4690603660742
@@ -343,8 +495,12 @@
   },
   {
     "number": "150",
+    "id": "falla-150",
     "name": "JUSTO VILAR - PLAZA MERCADO CABANYAL",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.331275221017698,
       "lat": 39.4671716107491
@@ -352,8 +508,12 @@
   },
   {
     "number": "151",
+    "id": "falla-151",
     "name": "BARRACA - TRAV.IGLESIA ROSARIO",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.329005522339249,
       "lat": 39.4690612646769
@@ -361,8 +521,12 @@
   },
   {
     "number": "155",
+    "id": "falla-155",
     "name": "GENERAL PANDO - SERRANO FLORES",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.359822579482475,
       "lat": 39.4718055010489
@@ -370,8 +534,12 @@
   },
   {
     "number": "156",
+    "id": "falla-156",
     "name": "SAN IGNACIO DE LOYOLA - JESÚS Y MARIA",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.386817,
       "lat": 39.454878
@@ -379,8 +547,12 @@
   },
   {
     "number": "160",
+    "id": "falla-160",
     "name": "EN PLOM - GUILLÉM DE CASTRO",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.4095778,
       "lat": 39.5044035
@@ -388,8 +560,12 @@
   },
   {
     "number": "167",
+    "id": "falla-167",
     "name": "JOSE BENLLIURE - TEATRO DE LA MARINA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.329790602326681,
       "lat": 39.4662130048018
@@ -397,8 +573,12 @@
   },
   {
     "number": "168",
+    "id": "falla-168",
     "name": "AV. REGNE VALENCIA - S. VALERO",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.42232864999999997,
       "lat": 39.519100449999996
@@ -406,8 +586,12 @@
   },
   {
     "number": "170",
+    "id": "falla-170",
     "name": "RAMON DE ROCAFULL - CONDE ALACUÁS",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3322128,
       "lat": 39.4742953
@@ -415,17 +599,25 @@
   },
   {
     "number": "171",
+    "id": "falla-171",
     "name": "PINTOR S. ABRIL - AV. PERIS Y VALERO",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "174",
+    "id": "falla-174",
     "name": "SUECA - LITERATO AZORÍN",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.376019,
       "lat": 39.460409
@@ -433,17 +625,25 @@
   },
   {
     "number": "177",
+    "id": "falla-177",
     "name": "ISLAS CANARIAS - TRAFALGAR - SAMUEL ROS",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "178",
+    "id": "falla-178",
     "name": "HIERROS - JUAN BTA. PERALES",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.339503865977588,
       "lat": 39.4641777993649
@@ -451,8 +651,12 @@
   },
   {
     "number": "179",
+    "id": "falla-179",
     "name": "BARRIO DEL BETERO",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.334923,
       "lat": 39.472579
@@ -460,17 +664,25 @@
   },
   {
     "number": "181",
+    "id": "falla-181",
     "name": "ISLAS CANARIAS - DAMA DE ELCHE",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "183",
+    "id": "falla-183",
     "name": "AVENIDA REGNE VALENCIA - DUQUE CALABRIA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.366155,
       "lat": 39.4624856
@@ -478,8 +690,12 @@
   },
   {
     "number": "187",
+    "id": "falla-187",
     "name": "AVENIDA PRIMADO REIG - VINAROZ",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.364644987787511,
       "lat": 39.4849437431414
@@ -487,8 +703,12 @@
   },
   {
     "number": "188",
+    "id": "falla-188",
     "name": "GUILLÉM SOROLLA - RECADERO",
+    "description": "",
     "time": "01:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.382539311883991,
       "lat": 39.4726364055155
@@ -496,8 +716,12 @@
   },
   {
     "number": "196",
+    "id": "falla-196",
     "name": "MONESTIR DE POBLET - A.ALBIÑANA",
+    "description": "",
     "time": "22:30",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3932716,
       "lat": 39.4856853
@@ -505,8 +729,12 @@
   },
   {
     "number": "197",
+    "id": "falla-197",
     "name": "ESPARTERO - G.V. RAMÓN Y CAJAL",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.381865782834099,
       "lat": 39.4663893918203
@@ -514,8 +742,12 @@
   },
   {
     "number": "204",
+    "id": "falla-204",
     "name": "ARTES Y OFICIOS - ACTOR LLORENS",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.353905543854483,
       "lat": 39.4681833045079
@@ -523,8 +755,12 @@
   },
   {
     "number": "212",
+    "id": "falla-212",
     "name": "PLAZA DEL AYUNTAMIENTO",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.375757,
       "lat": 39.4702
@@ -532,8 +768,12 @@
   },
   {
     "number": "219",
+    "id": "falla-219",
     "name": "BENICADELL - SAN ROQUE",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.365931665951376,
       "lat": 39.5078730481091
@@ -541,8 +781,12 @@
   },
   {
     "number": "223",
+    "id": "falla-223",
     "name": "PLAÇA LA SEQUIOTA - EL PALMAR",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3502027,
       "lat": 39.493463
@@ -550,8 +794,12 @@
   },
   {
     "number": "224",
+    "id": "falla-224",
     "name": "G.LLUCH - DR. M.MERENCIANO",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.345679,
       "lat": 39.461506
@@ -559,8 +807,12 @@
   },
   {
     "number": "227",
+    "id": "falla-227",
     "name": "ARQUITECTO ALFARO - FRANCISCO CUBELLS",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3350811,
       "lat": 39.4642624
@@ -568,8 +820,12 @@
   },
   {
     "number": "228",
+    "id": "falla-228",
     "name": "MAESTRO BELLVER - MARIANO RIBERA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3924704,
       "lat": 39.4648629
@@ -577,8 +833,12 @@
   },
   {
     "number": "240",
+    "id": "falla-240",
     "name": "RIBERA - CVTO.SANTA CLARA",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.370049015936527,
       "lat": 39.5086639582324
@@ -586,8 +846,12 @@
   },
   {
     "number": "242",
+    "id": "falla-242",
     "name": "CÁDIZ - DENIA",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.375502584964659,
       "lat": 39.4627890738486
@@ -595,8 +859,12 @@
   },
   {
     "number": "250",
+    "id": "falla-250",
     "name": "CAMPAMENTO - LA YESA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.426228314123549,
       "lat": 39.499174820123
@@ -604,8 +872,12 @@
   },
   {
     "number": "262",
+    "id": "falla-262",
     "name": "PLAZA MOSÉN MILA",
+    "description": "",
     "time": "01:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.373449,
       "lat": 39.4756233
@@ -613,8 +885,12 @@
   },
   {
     "number": "271",
+    "id": "falla-271",
     "name": "CARRERA MALILLA - ISLA CABRERA",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.376696713233778,
       "lat": 39.4488452760908
@@ -622,8 +898,12 @@
   },
   {
     "number": "276",
+    "id": "falla-276",
     "name": "JOAQUÍN COSTA - CONDE ALTEA",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.367707,
       "lat": 39.465991
@@ -631,8 +911,12 @@
   },
   {
     "number": "278",
+    "id": "falla-278",
     "name": "PERIODISTA GIL SUMBIELA-AZUCENA-ALAMO",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.386560246453531,
       "lat": 39.4919661653273
@@ -640,26 +924,38 @@
   },
   {
     "number": "309",
+    "id": "falla-309",
     "name": "DOCTOR GIL Y MORTE - DR. VILA BARBERÁ",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "310",
+    "id": "falla-310",
     "name": "ESC.GARCÍA MÁS - PTO.STA.MARIA",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "321",
+    "id": "falla-321",
     "name": "MAESTRO RODRIGO - AV.GENERAL AVILÉS",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.402624421540168,
       "lat": 39.4841117852701
@@ -667,17 +963,25 @@
   },
   {
     "number": "325",
+    "id": "falla-325",
     "name": "GRUP PEIXCADORS - EL PERELLONET",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "329",
+    "id": "falla-329",
     "name": "EMBARCADERO - HISTORIADOR BETI (SALER)",
+    "description": "",
     "time": "20:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.395478551813369,
       "lat": 39.4952440993398
@@ -685,8 +989,12 @@
   },
   {
     "number": "338",
+    "id": "falla-338",
     "name": "A. PILES IVARS - SALVADOR TUSET",
+    "description": "",
     "time": "23:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3948182,
       "lat": 39.4954893
@@ -694,8 +1002,12 @@
   },
   {
     "number": "358",
+    "id": "falla-358",
     "name": "PASEO ALAMEDA - AV. FRANCIA",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.3456036,
       "lat": 39.4591896
@@ -703,17 +1015,25 @@
   },
   {
     "number": "375",
+    "id": "falla-375",
     "name": "PINTOR MAELLA-AVENIDA DE FRANCIA - MENORCA",
+    "description": "",
     "time": "00:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
-      "lat": 0.0,
-      "lng": 0.0
+      "lat": 0,
+      "lng": 0
     }
   },
   {
     "number": "380",
+    "id": "falla-380",
     "name": "SANTA GENOVEVA TORRES - ARQUITECTO TOLSA - ALFAHUIR",
+    "description": "",
     "time": "22:00",
+    "is_special": false,
+    "is_burnt": false,
     "coordinates": {
       "lng": -0.362314733382849,
       "lat": 39.494047314108

@@ -33,12 +33,16 @@ async function seed() {
     )
     console.log(`Seeding ${fallasData.length} fallas...`)
     const fallasRes = await client.query(
-      `insert into fallas (number, name, time, coordinates)
-       select m.number, m.name, m.time, m.coordinates
+      `insert into fallas (number, name, time, description, is_special, is_burnt, coordinates)
+       select m.number, m.name, m.time, m.description, m.is_special, m.is_burnt, m.coordinates
        from jsonb_to_recordset($1::jsonb)
-         as m(number text, name text, time text, coordinates jsonb)
+         as m(number text, name text, time text, description text,
+              is_special boolean, is_burnt boolean, coordinates jsonb)
        on conflict (number) do update
-         set name = excluded.name, time = excluded.time, coordinates = excluded.coordinates`,
+         set name = excluded.name, time = excluded.time,
+             description = excluded.description,
+             is_special = excluded.is_special, is_burnt = excluded.is_burnt,
+             coordinates = excluded.coordinates`,
       [JSON.stringify(fallasData)]
     )
     console.log(`Fallas upserted (${fallasRes.rowCount} rows touched).`)

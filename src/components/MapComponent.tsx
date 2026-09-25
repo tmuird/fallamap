@@ -64,7 +64,13 @@ const MapComponent = () => {
     const fetchData = async () => {
       try {
         const { data: fallas } = await supabase.from("fallas").select("*").order("number");
-        const merged = (fallas && fallas.length > 0) ? fallas : localFallas;
+        // Prefer live DB rows, overlaid per `number` onto the local dataset so
+        // fields a DB row lacks (or predates) fall back to local values instead of
+        // being silently dropped (AUDIT §3).
+        const localByNumber = new Map(localFallas.map(f => [f.number, f]));
+        const merged = (fallas && fallas.length > 0)
+          ? fallas.map(row => ({ ...(localByNumber.get(row.number) || {}), ...row }))
+          : localFallas;
         setFallasData(merged as POI[]);
       } catch {
         setFallasData(localFallas as POI[]);
@@ -474,7 +480,12 @@ const MapComponent = () => {
                   { id: 'special', label: 'Special', icon: <Star size={12} weight="fill" /> },
                   { id: 'liked', label: 'Liked', icon: <Heart size={12} weight="fill" /> },
                   { id: 'visited', label: 'Visited', icon: <CheckCircle size={12} weight="fill" /> }
-                ].map((mode) => (
+                ]
+                  // Data-driven: the "Special" filter only exists when the dataset
+                  // (local JSON or DB) actually flags monuments — with none it would
+                  // just show "0 of 85" forever (AUDIT §3).
+                  .filter((mode) => mode.id !== 'special' || allPOIs.some(p => p.is_special))
+                  .map((mode) => (
                   <Button 
                     key={mode.id}
                     size="sm" 

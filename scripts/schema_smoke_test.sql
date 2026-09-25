@@ -6,6 +6,15 @@
 -- MapComponent: supabase.from("fallas").select("*").order("number")
 select * from fallas order by number;
 
+-- T1.4: fallas.json enrichment (id/description/is_special/is_burnt) seeds through
+do $$
+declare n int;
+begin
+  select count(*) into n from fallas
+    where description is null or is_special is null or is_burnt is null;
+  if n <> 0 then raise exception 'FAIL: % fallas missing enriched columns', n; end if;
+end $$;
+
 -- useFallaDetails: .select("id").eq("number", n).single()
 select id from fallas where number = '1';
 
@@ -35,6 +44,20 @@ insert into user_interactions (user_id, type, falla_id)
   values ('user_test', 'visited', (select id from fallas where number = '1'));
 insert into user_interactions (user_id, type, hub_id)
   values ('user_test', 'like', 'hub-ajuntament');
+
+-- FallaDetails interaction sync (T1.4): rows are resolved by `number` before
+-- read/write (useFallaDetails dbId); localStorage keys stay on `number`
+select ui.type from user_interactions ui
+  where ui.user_id = 'user_test'
+    and ui.falla_id = (select id from fallas where number = '3');
+insert into user_interactions (user_id, type, falla_id)
+  values ('user_test', 'like', (select id from fallas where number = '3'));
+select ui.type from user_interactions ui
+  where ui.user_id = 'user_test'
+    and ui.falla_id = (select id from fallas where number = '3');
+delete from user_interactions
+  where user_id = 'user_test' and type = 'like'
+    and falla_id = (select id from fallas where number = '3');
 
 -- MapComponent refreshInteractions: select("type, fallas(number)")
 select ui.type, f.number

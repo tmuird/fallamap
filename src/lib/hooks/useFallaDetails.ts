@@ -12,6 +12,10 @@ export function useFallaDetails(fallaNumber?: string, hubId?: string) {
   useEffect(() => {
     const fetchDetails = async () => {
       setLoading(true);
+      // Resolve the DB row id from the stable public key (`number` for monuments,
+      // `id` for hubs). Reset on every run so a monument missing from the DB never
+      // inherits the previous monument's id (AUDIT §2).
+      setInternalId(null);
       try {
         let dbId = hubId || null;
 
@@ -99,5 +103,5 @@ export function useFallaDetails(fallaNumber?: string, hubId?: string) {
     if (refreshed) setImages(prev => prev.map(img => img.id === imageId ? { ...img, likeCount: refreshed.likes?.[0]?.count || 0 } : img));
   };
 
-  return { comments, images, loading, addComment, addImage, toggleImageLike };
+  return { comments, images, loading, addComment, addImage, toggleImageLike, dbId: internalId };
 }
