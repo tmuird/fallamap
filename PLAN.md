@@ -26,7 +26,7 @@ deploys with documented env vars. Product direction: white-label event social ne
 ## Task list
 
 ### P0 — broken / blocking
-- [ ] T0.1 Replace broken Mapbox token handling: validate token format at startup, graceful fallback (clear message or OSM/MapLibre tiles) when missing/invalid
+- [ ] T0.1 Map resilience: validate token format at startup; graceful fallback (clear message or OSM/MapLibre tiles) when token missing/invalid (robustness — the live token itself is verified valid)
 - [ ] *(audit findings to be inserted here)*
 
 ### P1 — major
@@ -47,10 +47,13 @@ deploys with documented env vars. Product direction: white-label event social ne
 
 ## Blockers / notes
 
-- **Mapbox token**: production Vercel env contains a placeholder (`pk.eyJ1Ij...Oskg`) — user
-  will paste a real token. Until then T0.1's fallback keeps the map usable.
+- **Mapbox token — RESOLVED (02:00)**: real token in `.env`; production's deployed bundle was
+  verified to contain the IDENTICAL token (in-script sha256/length match). The earlier
+  "placeholder token in production" observation was Hermes secret redaction in tool output,
+  not a real broken deploy. T0.1 stays as robustness work, not a broken-token fix.
 
 ## Worklog
 
 <!-- newest entries at top; format: HH:MM — what changed | what was verified | what remains -->
+- 02:00 — Mapbox token added to .env | production bundle token verified identical via in-script hash compare | AGENTS.md token note correction pending user approval; audit in flight
 - 01:30 — PLAN.md, AGENTS.md, .env/.env.example created; branch `overnight-polish` cut | build passes on unmodified main snapshot | audit in flight
