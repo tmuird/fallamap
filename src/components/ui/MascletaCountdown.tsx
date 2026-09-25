@@ -44,6 +44,8 @@ export function MascletaCountdown() {
 
   if (!timeLeft && !isLive) return null;
   if (isHome) return null;
+  // Auth pages are a centered card — the floating countdown covers the submit button
+  if (location.pathname === "/sign-in" || location.pathname === "/sign-up") return null;
 
   return (
     <motion.div 

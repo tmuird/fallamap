@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen bg-falla-paper flex items-center justify-center p-4">
+    <div className="min-h-screen bg-falla-paper flex items-center justify-center p-4 pt-[96px] md:pt-[140px]">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

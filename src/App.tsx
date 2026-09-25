@@ -168,6 +168,9 @@ export default function App() {
             formButtonPrimary: `border-2 ${isDarkMode ? 'border-[#FAF7F2]' : 'border-[#1A1A1A]'} shadow-solid-sm hover:shadow-none bg-[#FF7043] text-white`,
             footerActionLink: "text-[#FF7043] font-bold hover:underline",
             formFieldInput: `border-2 ${isDarkMode ? 'border-[#FAF7F2]' : 'border-[#1A1A1A]'} rounded-xl px-4 h-12 bg-falla-paper focus:ring-2 focus:ring-[#FF7043]/20`,
+            // Clerk's neobrutalism theme sets the password row to position:absolute,
+            // which collapses its width and stacks it on top of the email field.
+            formFieldRow: "!static !w-full",
             dividerLine: `${isDarkMode ? 'bg-[#FAF7F2]' : 'bg-[#1A1A1A]'} h-[2px]`,
             dividerText: `font-bold ${isDarkMode ? 'text-[#FAF7F2]/40' : 'text-[#1A1A1A]/40'}`,
           }

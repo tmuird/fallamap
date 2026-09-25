@@ -13,7 +13,7 @@ export function CommunityOfflineBanner() {
   return (
     <div
       role="status"
-      className="w-full bg-falla-fire/10 border-b-2 border-falla-fire/30 text-falla-ink"
+      className="w-full bg-falla-fire/10 border-b-2 border-falla-fire/30 text-falla-ink mt-[76px] md:mt-[124px]"
     >
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-3 text-center">
         <CloudSlash size={18} weight="bold" className="text-falla-fire shrink-0" />
