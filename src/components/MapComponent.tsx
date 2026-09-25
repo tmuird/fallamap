@@ -66,7 +66,7 @@ const MapComponent = () => {
         const { data: fallas } = await supabase.from("fallas").select("*").order("number");
         const merged = (fallas && fallas.length > 0) ? fallas : localFallas;
         setFallasData(merged as POI[]);
-      } catch (err) {
+      } catch {
         setFallasData(localFallas as POI[]);
       }
     };
@@ -109,7 +109,7 @@ const MapComponent = () => {
           localStorage.setItem("visited_fallas", JSON.stringify(visited));
           localStorage.setItem("liked_fallas", JSON.stringify(liked));
         }
-      } catch (e) {
+      } catch {
         console.warn("DB interaction sync failed");
       }
     }
@@ -191,7 +191,7 @@ const MapComponent = () => {
             labelLayerId
           );
         }
-      } catch (_e) {
+      } catch {
         // 3D buildings unavailable on this map style
       }
     });
@@ -318,6 +318,7 @@ const MapComponent = () => {
         el.classList.toggle('burnt', !!poi.is_burnt);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setSearchParams is only captured by marker click-listener closures; adding it would re-create every marker whenever the search params identity changes (drawer open/close), which is the known map/drawer war zone.
   }, [allPOIs, isDarkMode, visitedNumbers, likedNumbers]);
 
   const selectedPOI = useMemo(() => {

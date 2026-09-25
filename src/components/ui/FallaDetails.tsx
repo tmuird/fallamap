@@ -33,7 +33,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
-// @ts-ignore
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 
@@ -122,7 +121,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
 
     setState(!currentState);
     const local = JSON.parse(localStorage.getItem(localKey) || "[]");
-    let newLocal = currentState ? local.filter((n: string) => n !== identifier) : [...local, identifier];
+    const newLocal = currentState ? local.filter((n: string) => n !== identifier) : [...local, identifier];
     localStorage.setItem(localKey, JSON.stringify(newLocal));
     onInteraction?.();
 
@@ -198,7 +197,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
       const { error } = await addImage(publicUrl, user?.id, false);
       if (error) throw error;
       toast.success("Photo shared — awaiting review", { id: toastId });
-    } catch (error: any) {
+    } catch {
       toast.error("Failed", { id: toastId });
     } finally {
       setUploading(false);

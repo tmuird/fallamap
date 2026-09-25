@@ -33,4 +33,5 @@ function Badge({ className, variant, ...props }: BadgeProps) {
  )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn pattern: badgeVariants is exported alongside Badge because callers style triggers with it
 export { Badge, badgeVariants }

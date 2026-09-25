@@ -25,6 +25,7 @@ export const InfiniteMovingCards = ({
 
   useEffect(() => {
     addAnimation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- addAnimation is mount-only DOM setup (duplicates the scroller items); this file is dead code slated for deletion in T3.4.
   }, []);
   const [start, setStart] = useState(false);
   function addAnimation() {

@@ -14,6 +14,7 @@ type ThemeContextType = {
 };
 
 // Create the context with an undefined default value
+// eslint-disable-next-line react-refresh/only-export-components -- context is colocated with its provider by design (single import site: ThemeContext)
 export const ThemeContext = createContext<ThemeContextType | undefined>(
  undefined,
 );
@@ -51,6 +52,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 };
 
 // Custom hook to use the theme context
+// eslint-disable-next-line react-refresh/only-export-components -- hook is colocated with its context by design (single import site: ThemeContext)
 export const useTheme = (): ThemeContextType => {
  const context = useContext(ThemeContext);
  if (context === undefined) {

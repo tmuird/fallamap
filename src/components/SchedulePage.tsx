@@ -28,7 +28,6 @@ import { useUser } from "@clerk/react";
 import { useEventDetails } from "@/lib/hooks/useEventDetails";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-// @ts-ignore
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 
