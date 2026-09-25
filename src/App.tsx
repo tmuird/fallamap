@@ -21,6 +21,8 @@ import ArchivePage from "./components/ArchivePage";
 import { MascletaCountdown } from "./components/ui/MascletaCountdown";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { SupabaseAuthBridge } from "./lib/SupabaseAuthBridge";
+import { CommunityOfflineBanner } from "./components/ui/CommunityOfflineBanner";
+import { startBackendMonitor } from "./lib/backendStatus";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -57,9 +59,12 @@ export default function App() {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1200);
-    
+
     return () => clearTimeout(timer);
   }, []);
+
+  // T1.1: watch Supabase reachability for the community-offline banner
+  useEffect(() => startBackendMonitor(), []);
 
   return (
     <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans transition-colors duration-300 selection:bg-falla-fire selection:text-white overflow-x-hidden">
@@ -123,6 +128,7 @@ export default function App() {
       >
         <SupabaseAuthBridge />
         <AppNavbar />
+        <CommunityOfflineBanner />
         
         <main className="flex-grow flex flex-col relative">
           <ErrorBoundary>

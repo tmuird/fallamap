@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@heroui/react";
 import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
+import { useBackendStatus } from "@/lib/backendStatus";
 import { supabase } from "@/lib/supabase";
 import { 
   Camera, 
@@ -63,6 +64,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { comments, images, addComment, addImage, toggleImageLike } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
+  const backendOffline = useBackendStatus() === "offline";
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -346,8 +348,8 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                       <div className="w-20 h-20 rounded-full bg-falla-fire/5 border-2 border-falla-fire/10 flex items-center justify-center mb-6 shadow-soft-sm">
                         <Camera size={40} weight="thin" className="text-falla-fire/30" />
                       </div>
-                      <h3 className="text-2xl font-display text-falla-ink/40 mb-2 lowercase">Empty Gallery</h3>
-                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink/20 max-w-[240px]">Be the first to capture festival memories</p>
+                      <h3 className="text-2xl font-display text-falla-ink/40 mb-2 lowercase">{backendOffline ? "Gallery offline" : "Empty Gallery"}</h3>
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink/20 max-w-[240px]">{backendOffline ? "Community features are offline right now" : "Be the first to capture festival memories"}</p>
                     </div>
                   </div>
                 )}
@@ -383,7 +385,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                     ) : (
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-12 text-center opacity-10">
                         <ChatCircleDots size={48} weight="thin" className="mb-6" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink">Be the first to speak</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-ink">{backendOffline ? "Community features are offline right now" : "Be the first to speak"}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
