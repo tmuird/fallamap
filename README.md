@@ -142,10 +142,19 @@ docs/supabase-clerk-auth.md    Clerk ↔ Supabase third-party auth setup
 Event-specific **data** is config-driven — swap these to deploy for another
 event and the map, schedule, drawers, and profile views follow:
 
+- **`src/lib/siteConfig.ts`** — per-tenant branding & copy (T2.8): brand name,
+  page title (injected into the HTML `<title>` by the `siteTitle` plugin in
+  `vite.config.ts` on serve and on build), event name/filename slug (ICS and
+  share exports), monument nouns ("Falla #3", "80 Monuments"), city/district/
+  copyright, header labels, hero copy, contact copy, profile greeting/tagline/
+  rank titles, mascot-countdown labels + daily start time/timezone, and admin
+  copy. Components read all such strings from `SITE` — nothing in
+  `src/components` hardcodes festival wording.
 - **`src/components/fallas.json`** — the POIs/monuments. Each entry:
   `number` (stable key used for DB sync and localStorage), `id`
   (`falla-<number>`), `name`, `description`, `time`, `is_special`, `is_burnt`,
-  `coordinates: { lng, lat }`.
+  `coordinates: { lng, lat }`. The header monument count is derived from this
+  file's length, not hardcoded.
 - **`src/components/official_events.json`** — `{ hubs, schedule }`.
   - `hubs[]`: `id`, `name`, `description`, `type`, `coordinates` — map
     locations shown with their own drawer ("About this location" + derived
@@ -155,16 +164,16 @@ event and the map, schedule, drawers, and profile views follow:
     `title`, `location`, `description`, `type`, `icon` (a key into the icon map
     in `SchedulePage.tsx`), `color`, `isLive`, and `hubId` linking the event to
     its venue hub (optional).
-- **`index.html`** — page title, webfonts, CSP allow-list (add any new
-  third-party origins to `connect-src`).
+- **`index.html`** — webfonts, CSP allow-list (add any new third-party
+  origins to `connect-src`). The `<title>` is a placeholder — the real title
+  comes from `SITE.brand.pageTitle` via the `siteTitle` plugin.
 - **`src/styles/globals.css` + `tailwind.config.js`** — the `--falla-*` design
   tokens (paper/ink/fire/sage/sand), fonts, `ink-border` / `soft-shadow` styles.
 
-Known remaining hardcoded copy (tracked as T2.8 in `PLAN.md`, not yet
-extracted): header tagline & hero copy (`FallamapHeader.tsx`, `HomePage.tsx`),
-contact-page city block, profile tagline, mascot countdown copy
-(`MascletaCountdown.tsx`), and the "Las Fallas 2026" strings in the ICS/share
-exports. Everything else event-specific lives in the data files above.
+Remaining hardcoded strings are generic UI copy only (buttons, form labels)
+plus the brand-voice sign-in/sign-up headings ("Join the Tribe", "…through
+the flames") in `SignInPage.tsx`/`SignUpPage.tsx` — no event, city, or
+festival-specific strings remain outside the config and data files above.
 
 ## Deployment
 
