@@ -4,6 +4,7 @@ import { Timer, Fire, SpeakerHigh } from "@phosphor-icons/react";
 import { useLocation } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { SITE } from "@/lib/siteConfig";
+import { isLiveWindow, nextEventStart } from "@/lib/eventTime";
 
 export function MascletaCountdown() {
   const [timeLeft, setTimeData] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
@@ -13,33 +14,28 @@ export function MascletaCountdown() {
   const isHome = location.pathname === "/";
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    // T2.9: the daily time is defined in SITE.countdown.timeZone (Europe/
+    // Madrid) — everything below is computed in that zone, never the browser's.
+    const tick = () => {
       const now = new Date();
-      // Target time comes from the tenant config (T2.9 makes the computation
-      // timezone-correct — today it uses the browser clock).
-      const target = new Date();
-      target.setHours(SITE.countdown.hour, SITE.countdown.minute, 0, 0);
+      const { timeZone, hour, minute, liveWindowMinutes } = SITE.countdown;
 
-      // If it's already past the target, aim at tomorrow
-      if (now > target) {
-        // Inside the live window right after the start time, consider it "Live"
-        if (now.getHours() === SITE.countdown.hour && now.getMinutes() < SITE.countdown.liveWindowMinutes) {
-          setIsLive(true);
-          setTimeData(null);
-          return;
-        }
-        target.setDate(target.getDate() + 1);
-      } else {
-        setIsLive(false);
+      if (isLiveWindow(now, timeZone, hour, minute, liveWindowMinutes)) {
+        setIsLive(true);
+        setTimeData(null);
+        return;
       }
+      setIsLive(false);
 
-      const diff = target.getTime() - now.getTime();
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const diff = nextEventStart(now, timeZone, hour, minute).getTime() - now.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff / 1000 / 60) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
       setTimeData({ hours, minutes, seconds });
-    }, 1000);
+    };
+    tick();
+    const timer = setInterval(tick, 1000);
 
     return () => clearInterval(timer);
   }, []);
