@@ -14,6 +14,7 @@ import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 import { SupabaseAuthBridge } from "./lib/SupabaseAuthBridge";
 import { CommunityOfflineBanner } from "./components/ui/CommunityOfflineBanner";
 import { startBackendMonitor } from "./lib/backendStatus";
+import { SITE } from "./lib/siteConfig";
 
 // T2.7: route-level code splitting. The landing page stays eager (no first-paint
 // flash); every other route loads its chunk on demand.
@@ -226,11 +227,11 @@ export default function App() {
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 bg-falla-fire rounded-full ink-border" />
               <span className="font-display text-3xl tracking-widest text-falla-fire">
-                fallamap
+                {SITE.brand.name}
               </span>
             </div>
             <p className="text-[10px] font-bold tracking-[0.3em] text-falla-ink/30 uppercase">
-              © 2026 valència
+              {SITE.location.copyright}
             </p>
           </footer>
         )}

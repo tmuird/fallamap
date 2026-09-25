@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { SITE } from "@/lib/siteConfig";
+import fallas from "./fallas.json";
 
 interface FallamapHeaderProps {
  isVisible: boolean;
@@ -19,7 +21,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
     className="text-center px-4 mb-4 md:mb-6"
    >
     <h1 className="text-fluid-display font-display text-falla-fire leading-[0.8] lowercase select-none">
-     fallamap
+     {SITE.brand.name}
     </h1>
    </motion.div>
 
@@ -31,7 +33,8 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
       transition={{ delay: 0.3 }}
       className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
      >
-      <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">80 Monuments</p>
+      {/* T2.8: count derived from the dataset, not hardcoded */}
+      <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">{fallas.length} {SITE.nouns.monumentPlural}</p>
      </motion.div>
 
      <motion.div
@@ -40,7 +43,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
       transition={{ delay: 0.4 }}
       className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
      >
-      <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">Official Program</p>
+      <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">{SITE.header.programLabel}</p>
      </motion.div>
     </div>
 
@@ -52,7 +55,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
     >
      <span className="w-1.5 h-1.5 rounded-full bg-falla-sage animate-pulse" />
      <p className="text-[8px] md:text-xs text-falla-ink font-bold uppercase tracking-[0.2em] opacity-40 whitespace-nowrap">
-      Live from <span className="opacity-100">València</span>
+      {SITE.header.livePrefix} <span className="opacity-100">{SITE.location.city}</span>
      </p>
     </motion.div>
    </div>

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Timer, Fire, SpeakerHigh } from "@phosphor-icons/react";
 import { useLocation } from "react-router-dom";
 import { cn } from "@/utils/cn";
+import { SITE } from "@/lib/siteConfig";
 
 export function MascletaCountdown() {
   const [timeLeft, setTimeData] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
@@ -14,14 +15,15 @@ export function MascletaCountdown() {
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-      // Target is 2:00 PM (14:00) today
+      // Target time comes from the tenant config (T2.9 makes the computation
+      // timezone-correct — today it uses the browser clock).
       const target = new Date();
-      target.setHours(14, 0, 0, 0);
+      target.setHours(SITE.countdown.hour, SITE.countdown.minute, 0, 0);
 
-      // If it's already past 2 PM, target 2 PM tomorrow
+      // If it's already past the target, aim at tomorrow
       if (now > target) {
-        // If it's between 2:00 and 2:10, consider it "Live"
-        if (now.getHours() === 14 && now.getMinutes() < 10) {
+        // Inside the live window right after the start time, consider it "Live"
+        if (now.getHours() === SITE.countdown.hour && now.getMinutes() < SITE.countdown.liveWindowMinutes) {
           setIsLive(true);
           setTimeData(null);
           return;
@@ -65,10 +67,10 @@ export function MascletaCountdown() {
           </div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 leading-none mb-1">
-              {isLive ? 'Happening Now' : 'Mascletà Daily'}
+              {isLive ? SITE.countdown.liveLabel : SITE.countdown.idleLabel}
             </p>
             <h4 className="text-base font-display lowercase leading-none text-falla-ink">
-              {isLive ? 'nit del foc' : 'Next Explosion'}
+              {isLive ? SITE.countdown.liveTitle : SITE.countdown.idleTitle}
             </h4>
           </div>
         </div>
@@ -76,7 +78,7 @@ export function MascletaCountdown() {
         {isLive ? (
           <div className="flex items-center gap-2 px-3 py-2 bg-falla-fire/5 rounded-xl border border-falla-fire/10">
             <Fire size={14} weight="fill" className="text-falla-fire" />
-            <span className="text-xs font-black uppercase text-falla-fire tracking-widest">Valencia is Shaking</span>
+            <span className="text-xs font-black uppercase text-falla-fire tracking-widest">{SITE.countdown.liveBanner}</span>
           </div>
         ) : (
           <div className="flex items-center gap-2 justify-between">

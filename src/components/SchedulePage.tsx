@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { schedule, type ScheduleEvent } from "@/lib/eventData";
+import { SITE } from "@/lib/siteConfig";
 
 // ─── Event icons — names live in official_events.json, components stay here ──
 const EVENT_ICONS: Record<string, typeof Flame> = {
@@ -63,9 +64,9 @@ function buildICS(event: ScheduleEvent, dayDate: string) {
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Fallamap//EN",
+    `PRODID:${SITE.brand.icsProdId}`,
     "BEGIN:VEVENT",
-    `SUMMARY:${event.title} – Las Fallas 2026`,
+    `SUMMARY:${event.title} – ${SITE.event.name}`,
     `DTSTART;TZID=Europe/Madrid:${startDT}`,
     `DTEND;TZID=Europe/Madrid:${endDT}`,
     `LOCATION:${event.location}`,
@@ -79,7 +80,7 @@ function buildICS(event: ScheduleEvent, dayDate: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${event.title.replace(/\s+/g, "-")}-Fallas2026.ics`;
+  a.download = `${event.title.replace(/\s+/g, "-")}-${SITE.event.fileSlug}.ics`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -164,7 +165,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${event.title} – Las Fallas 2026`, text: event.description, url });
+        await navigator.share({ title: `${event.title} – ${SITE.event.name}`, text: event.description, url });
       } catch {
         // user dismissed
       }

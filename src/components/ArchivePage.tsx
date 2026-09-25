@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Clock, BookOpen, Camera, Database } from "@phosphor-icons/react";
+import { SITE } from "@/lib/siteConfig";
 
 export default function ArchivePage() {
   return (
@@ -26,7 +27,7 @@ export default function ArchivePage() {
             </div>
             
             <p className="text-falla-ink font-medium text-xl md:text-3xl max-w-2xl mx-auto leading-tight opacity-60">
-              We're currently documenting the <span className="text-falla-fire font-black opacity-100">2026 festival</span>. Previous years will be restored to the digital heritage map after the final Cremà.
+              {SITE.archive.noticeBefore} <span className="text-falla-fire font-black opacity-100">{SITE.archive.noticeHighlight}</span>{SITE.archive.noticeAfter}
             </p>
           </div>
         </motion.div>
@@ -59,7 +60,7 @@ export default function ArchivePage() {
         {/* Footer Note */}
         <div className="mt-24 text-center">
           <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.1em] text-falla-ink/10 italic">
-            "Deixe'm que et conte..."
+            {SITE.tagline}
           </p>
         </div>
       </div>

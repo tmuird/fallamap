@@ -4,6 +4,7 @@ import { useUser } from "@clerk/react";
 import { Card, CardBody } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X, ChatCircleDots } from "@phosphor-icons/react";
+import { SITE } from "@/lib/siteConfig";
 
 export function CommentReview() {
   const { user, isLoaded } = useUser();
@@ -90,7 +91,7 @@ export function CommentReview() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-white bg-falla-ink px-2 py-0.5 rounded-md">
-                      Falla #{comment.fallas?.number}
+                      {SITE.nouns.monument} #{comment.fallas?.number}
                     </span>
                     <span className="text-xs font-bold text-falla-ink/40 uppercase tracking-widest">
                       {new Date(comment.created_at).toLocaleString()}

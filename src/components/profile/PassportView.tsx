@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import localFallas from "../fallas.json";
+import { SITE } from "@/lib/siteConfig";
 import { hubs } from "@/lib/eventData";
 import { MapTrifold, Trophy, Image as ImageIcon } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
@@ -108,7 +109,7 @@ export function PassportView() {
           </div>
           <p className="text-falla-ink/40 font-bold uppercase text-[10px] tracking-widest mb-2">Explorer Rank</p>
           <h3 className="text-2xl md:text-4xl font-display italic lowercase leading-tight">
-            {visitedData.length > 50 ? "Legend of the Cremà" : visitedData.length > 10 ? "Dedicated Faller" : "Amateur Scout"}
+            {visitedData.length > 50 ? SITE.profile.rankTop : visitedData.length > 10 ? SITE.profile.rankMid : SITE.profile.rankLow}
           </h3>
           <p className="text-sm font-medium opacity-60 mt-2">You've explored {((monumentStamps / localFallas.length) * 100).toFixed(1)}% of the city.</p>
         </div>

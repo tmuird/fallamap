@@ -5,6 +5,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Image } from "@heroui/react";
 import { Check, X, ShieldCheck } from "@phosphor-icons/react";
+import { SITE } from "@/lib/siteConfig";
 
 export function ImageReview() {
   const { user, isLoaded } = useUser();
@@ -65,7 +66,7 @@ export function ImageReview() {
       <div className="p-8 text-center bg-falla-paper ink-border rounded-3xl border-2 border-falla-ink">
         <ShieldCheck size={48} weight="thin" className="mx-auto mb-4 text-falla-fire" />
         <h2 className="font-display text-2xl text-falla-ink mb-2">Access Denied</h2>
-        <p className="text-sm font-medium opacity-60 text-falla-ink">You must be a Fallamap administrator to review content.</p>
+        <p className="text-sm font-medium opacity-60 text-falla-ink">{SITE.admin.accessDenied}</p>
       </div>
     );
   }
@@ -95,7 +96,7 @@ export function ImageReview() {
               <CardBody className="p-6">
                 <div className="mb-4">
                   <p className="text-xs font-black uppercase tracking-widest text-falla-fire mb-1">
-                    Falla #{img.fallas?.number}
+                    {SITE.nouns.monument} #{img.fallas?.number}
                   </p>
                   <p className="font-bold leading-tight truncate">
                     {img.fallas?.name}

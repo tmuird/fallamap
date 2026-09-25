@@ -5,6 +5,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { CheckCircle, EyeSlash, MapTrifold, Camera, ChatCircleDots } from "@phosphor-icons/react";
 import { Image } from "@heroui/react";
 import { Link } from "react-router-dom";
+import { SITE } from "@/lib/siteConfig";
 
 export function ActivityView() {
   const { user } = useUser();
@@ -104,7 +105,7 @@ export function ActivityView() {
                     <div className="flex items-center justify-between mb-3 text-falla-ink">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">
-                          Falla #{comment.fallas?.number}
+                          {SITE.nouns.monument} #{comment.fallas?.number}
                         </span>
                         {comment.is_private && <EyeSlash size={14} weight="bold" className="opacity-20" />}
                       </div>

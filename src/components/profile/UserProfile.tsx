@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Fingerprint } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { SITE } from "@/lib/siteConfig";
 
 export default function UserProfile() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -39,7 +40,7 @@ export default function UserProfile() {
           )}
           <h1 className="text-4xl md:text-6xl font-display mb-2 text-falla-ink">
             {signedIn ? (
-              <>Bon dia, <span className="text-falla-fire">{user?.firstName || "Faller"}</span></>
+              <>{SITE.profile.greeting}, <span className="text-falla-fire">{user?.firstName || SITE.profile.defaultName}</span></>
             ) : isLoaded ? (
               <>Your <span className="text-falla-fire">journey</span></>
             ) : (
@@ -47,7 +48,7 @@ export default function UserProfile() {
             )}
           </h1>
           <p className="text-falla-ink font-bold uppercase tracking-[0.2em] text-xs opacity-40">
-            València's Street Art Scout
+            {SITE.profile.tagline}
           </p>
 
           {!isLoaded ? null : !signedIn ? (

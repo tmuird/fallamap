@@ -19,6 +19,7 @@ import {
 import { cn } from "@/utils/cn";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { motion, AnimatePresence } from "framer-motion";
+import { SITE } from "@/lib/siteConfig";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -141,7 +142,7 @@ export default function AppNavbar() {
                   </svg>
                 </motion.div>
                 <p className="font-display text-base md:text-3xl text-falla-fire leading-none lowercase flex-shrink-0">
-                  fallamap
+                  {SITE.brand.name}
                 </p>
               </Link>
             </NavbarBrand>
@@ -150,7 +151,7 @@ export default function AppNavbar() {
           {/* Mobile Center Brand - No Flame */}
           <NavbarContent className="sm:hidden" justify="center">
             <p className="font-display text-2xl text-falla-fire leading-none lowercase select-none">
-              fallamap
+              {SITE.brand.name}
             </p>
           </NavbarContent>
 

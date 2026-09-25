@@ -4,6 +4,7 @@ import { ArrowRight, MapTrifold, CalendarBlank, Archive, Sparkle } from "@phosph
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { SparklesCore } from "@/components/ui/sparkles";
+import { SITE } from "@/lib/siteConfig";
 
 export default function HomePage() {
   return (
@@ -40,8 +41,8 @@ export default function HomePage() {
               className="flex flex-col items-center gap-2"
             >
               <h2 className="text-fluid-lg md:text-fluid-xl font-display text-falla-ink lowercase max-w-2xl leading-[0.9]">
-                Feel the <span className="text-falla-fire relative inline-block">
-                  heat
+                {SITE.hero.headlineBefore} <span className="text-falla-fire relative inline-block">
+                  {SITE.hero.headlineHighlight}
                   <motion.span 
                     animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.05, 1] }} 
                     transition={{ duration: 2, repeat: Infinity }}
@@ -49,7 +50,7 @@ export default function HomePage() {
                   >
                     *
                   </motion.span>
-                </span> of the streets.
+                </span> {SITE.hero.headlineAfter}
               </h2>
               
               {/* Cozy Festival Pulse */}
@@ -61,7 +62,7 @@ export default function HomePage() {
               >
                 <Sparkle size={14} weight="fill" className="text-falla-fire animate-spin-slow" />
                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-falla-ink/60">
-                  <span className="text-falla-fire">La Plantà</span> in progress
+                  <span className="text-falla-fire">{SITE.hero.pulseHighlight}</span> {SITE.hero.pulseSuffix}
                 </span>
               </motion.div>
             </motion.div>
@@ -108,10 +109,10 @@ export default function HomePage() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
             <div className="absolute bottom-[2vh] left-[2vw] md:bottom-8 md:left-8 text-left">
-              <p className="font-display text-fluid-lg md:text-fluid-xl lowercase text-white mb-1">Plaça de l'Ajuntament</p>
+              <p className="font-display text-fluid-lg md:text-fluid-xl lowercase text-white mb-1">{SITE.hero.imageCaption}</p>
               <div className="flex items-center gap-2 text-white/80">
                 <MapTrifold size={16} weight="bold" />
-                <p className="font-sans font-black uppercase tracking-[0.25em] text-[8px] md:text-xs">Falla Municipal 2026</p>
+                <p className="font-sans font-black uppercase tracking-[0.25em] text-[8px] md:text-xs">{SITE.hero.imageSub}</p>
               </div>
             </div>
           </motion.div>
@@ -134,7 +135,7 @@ export default function HomePage() {
         {/* Minimal Footer */}
         <div className="pb-6 text-center flex flex-col items-center gap-2 shrink-0">
           <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.1em] text-falla-ink/20 italic">
-            "Deixe'm que et conte..."
+            {SITE.tagline}
           </p>
         </div>
       </div>

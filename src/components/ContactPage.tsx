@@ -6,6 +6,7 @@ import { Input, Textarea } from "@heroui/react";
 import { Envelope, MapPin, PaperPlaneTilt, ChatCircleDots, CheckCircle } from "@phosphor-icons/react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { SITE } from "@/lib/siteConfig";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -57,10 +58,10 @@ export default function ContactPage() {
             </span>
           </div>
           <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight lowercase">
-            Connect with the <span className="text-falla-fire">Flame</span>
+            {SITE.contact.headlineBefore} <span className="text-falla-fire">{SITE.contact.headlineHighlight}</span>
           </h1>
           <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">
-            Have questions about the festival? Found a missing Ninot? We'd love to hear from you.
+            {SITE.contact.intro}
           </p>
         </motion.div>
 
@@ -69,7 +70,7 @@ export default function ContactPage() {
           <div className="md:col-span-5 space-y-8">
             <Card className="bg-falla-fire text-falla-paper border-falla-ink border-2 shadow-solid">
               <CardBody className="p-8">
-                <h3 className="text-4xl font-display mb-8 leading-none lowercase">València</h3>
+                <h3 className="text-4xl font-display mb-8 leading-none lowercase">{SITE.location.city}</h3>
                 <div className="space-y-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
@@ -79,7 +80,7 @@ export default function ContactPage() {
                       <p className="text-[10px] uppercase font-black tracking-widest text-white/50 mb-0.5">
                         Email Us
                       </p>
-                      <p className="font-bold text-lg">hola@fallamap.es</p>
+                      <p className="font-bold text-lg">{SITE.brand.contactEmail}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -90,7 +91,7 @@ export default function ContactPage() {
                       <p className="text-[10px] uppercase font-black tracking-widest text-white/50 mb-0.5">
                         Location
                       </p>
-                      <p className="font-bold text-lg">Ciutat Vella, València</p>
+                      <p className="font-bold text-lg">{SITE.location.district}</p>
                     </div>
                   </div>
                 </div>
@@ -105,8 +106,7 @@ export default function ContactPage() {
                 </span>
               </div>
               <p className="text-sm font-medium leading-relaxed text-falla-ink/60">
-                Our team of dedicated Falleros is ready to help you navigate the city during the
-                2026 season. Expect a reply within 24 hours.
+                {SITE.contact.supportText}
               </p>
             </div>
           </div>
