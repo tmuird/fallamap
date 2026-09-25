@@ -41,7 +41,8 @@ create table if not exists public.fallas (
 );
 
 -- Official event hubs. `id` matches the ids in src/components/official_events.json
--- (e.g. 'hub-ajuntament'); `events` preserves that file's event refs for T1.5.
+-- (e.g. 'hub-ajuntament'); `events` holds schedule event ids derived from that
+-- file's schedule[].events[].hubId (see src/lib/eventData.ts).
 create table if not exists public.hubs (
   id          text primary key,
   name        text not null,

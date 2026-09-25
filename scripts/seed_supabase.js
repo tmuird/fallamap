@@ -48,9 +48,19 @@ async function seed() {
     console.log(`Fallas upserted (${fallasRes.rowCount} rows touched).`)
 
     // 3. Seed official event hubs from src/components/official_events.json.
-    const hubsData = JSON.parse(
+    // The file is one event dataset ({hubs, schedule}); hub `events` ids are
+    // derived from schedule[].events[].hubId (T1.5) — the old static refs
+    // matched no schedule id and were never read by any code.
+    const official = JSON.parse(
       fs.readFileSync(path.join(__dirname, '../src/components/official_events.json'), 'utf8')
     )
+    const hubsData = (official.hubs || []).map((h) => ({
+      ...h,
+      events: (official.schedule || [])
+        .flatMap((d) => d.events)
+        .filter((e) => e.hubId === h.id)
+        .map((e) => e.id),
+    }))
     console.log(`Seeding ${hubsData.length} hubs...`)
     const hubsRes = await client.query(
       `insert into hubs (id, name, description, type, coordinates, events)

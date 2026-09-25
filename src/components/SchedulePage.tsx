@@ -30,274 +30,27 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
+import { schedule, type ScheduleEvent } from "@/lib/eventData";
 
-const scheduleData = [
-  {
-    id: "mar-14",
-    day: "Sat 14",
-    subtitle: "The Weekend Begins",
-    date: "2026-03-14",
-    events: [
-      {
-        id: "mascleta-14",
-        time: "14:00",
-        title: "Mascletà",
-        location: "Plaça de l'Ajuntament",
-        description:
-          "The daily explosion of gunpowder. Today featuring Pirotècnia Aitana with 'La belleza del sonido'.",
-        type: "Pyrotechnics",
-        icon: <Flame size={24} weight="bold" />,
-        color: "danger",
-      },
-      {
-        id: "ninot-indultat-infantil",
-        time: "17:30",
-        title: "Infant Ninot Indultat",
-        location: "Exposición del Ninot",
-        description:
-          "Official proclamation of the one children's figure saved from the flames by popular vote.",
-        type: "Major",
-        icon: <Trophy size={24} weight="bold" />,
-        color: "primary",
-      },
-      {
-        id: "pyro-spectacle-14",
-        time: "23:59",
-        title: "Night Pyro Show",
-        location: "Plaza del Ayuntamiento",
-        description:
-          "'Falles, llum i soroll' by Pirotècnia Tamarit. A combination of light and noise.",
-        type: "Fireworks",
-        icon: <Sparkle size={24} weight="bold" />,
-        color: "warning",
-      },
-    ],
-  },
-  {
-    id: "mar-15",
-    day: "Sun 15",
-    subtitle: "La Plantà Infantil",
-    date: "2026-03-15",
-    events: [
-      {
-        id: "planta-infantil",
-        time: "09:00",
-        title: "Children's Plantà",
-        location: "Everywhere",
-        description:
-          "Commissions across the city assemble their children's monuments. The festival officially begins in the streets.",
-        type: "Major",
-        icon: <Camera size={24} weight="bold" />,
-        color: "primary",
-      },
-      {
-        id: "mascleta-15",
-        time: "14:00",
-        title: "Mascletà",
-        location: "Plaça de l'Ajuntament",
-        description: "By Pirotècnia Valenciana. Expect massive crowds for this Sunday display.",
-        type: "Pyrotechnics",
-        icon: <Flame size={24} weight="bold" />,
-        color: "danger",
-      },
-      {
-        id: "ninot-indultat",
-        time: "17:30",
-        title: "Ninot Indultat 2026",
-        location: "Museum of Sciences",
-        description:
-          "The final verdict. One main ninot will be saved from the fire and move to the Fallero Museum.",
-        type: "Major",
-        icon: <Trophy size={24} weight="bold" />,
-        color: "primary",
-      },
-      {
-        id: "alba-falles",
-        time: "23:59",
-        title: "L'Alba de les Falles",
-        location: "City-wide",
-        description:
-          "A synchronized firework display across all commissions. Today by Pirotècnia Vulcano at the Town Hall.",
-        type: "Fireworks",
-        icon: <Sparkle size={24} weight="bold" />,
-        color: "warning",
-      },
-    ],
-  },
-  {
-    id: "mar-16",
-    day: "Mon 16",
-    subtitle: "The Main Plantà",
-    date: "2026-03-16",
-    events: [
-      {
-        id: "planta-main",
-        time: "08:00",
-        title: "The Main Plantà",
-        location: "Valencia Streets",
-        description:
-          "The deadline for all major monuments to be fully erected. The city is now an open-air museum.",
-        type: "Major",
-        icon: <NavigationArrow size={24} weight="bold" />,
-        color: "primary",
-      },
-      {
-        id: "awards-infantil",
-        time: "16:30",
-        title: "Children's Awards",
-        location: "Plaza del Ayuntamiento",
-        description: "Ceremony for the best children's monuments in all sections.",
-        type: "Ceremony",
-        icon: <Trophy size={24} weight="bold" />,
-        color: "secondary",
-      },
-      {
-        id: "castillo-16",
-        time: "23:59",
-        title: "Fireworks Display",
-        location: "Monteolivete Bridge",
-        description: "Grand midnight fireworks display lighting up the City of Arts and Sciences.",
-        type: "Fireworks",
-        icon: <Sparkle size={24} weight="bold" />,
-        color: "warning",
-      },
-    ],
-  },
-  {
-    id: "mar-17",
-    day: "Tue 17",
-    subtitle: "L'Ofrena Day 1",
-    date: "2026-03-17",
-    events: [
-      {
-        id: "awards-main",
-        time: "09:00",
-        title: "Awards Ceremony",
-        location: "Town Hall",
-        description:
-          "The highly anticipated awards for the main falla monuments and illuminated streets.",
-        type: "Ceremony",
-        icon: <Trophy size={24} weight="bold" />,
-        color: "secondary",
-      },
-      {
-        id: "ofrena-day-1",
-        time: "15:30",
-        title: "Ofrena de Flors",
-        location: "Plaza de la Virgen",
-        description:
-          "Day one of the offering. Thousands of falleros bring carnations to build the Virgin's flower mantle.",
-        type: "Procession",
-        icon: <MusicNotes size={24} weight="bold" />,
-        color: "secondary",
-      },
-      {
-        id: "castillo-17",
-        time: "23:59",
-        title: "Fireworks Display",
-        location: "Monteolivete Bridge",
-        description: "A spectacular night of light and sound.",
-        type: "Fireworks",
-        icon: <Sparkle size={24} weight="bold" />,
-        color: "warning",
-      },
-    ],
-  },
-  {
-    id: "mar-18",
-    day: "Wed 18",
-    subtitle: "The Night of Fire",
-    date: "2026-03-18",
-    events: [
-      {
-        id: "ofrena-day-2",
-        time: "15:30",
-        title: "Ofrena de Flors",
-        location: "Plaza de la Virgen",
-        description:
-          "Conclusion of the offering with the arrival of the Fallera Mayor de Valencia.",
-        type: "Procession",
-        icon: <MusicNotes size={24} weight="bold" />,
-        color: "secondary",
-      },
-      {
-        id: "nit-del-foc",
-        time: "23:59",
-        title: "Nit del Foc",
-        location: "Monteolivete",
-        description: "The biggest and most spectacular fireworks display of the year. A must-see.",
-        type: "Fireworks",
-        icon: <Sparkle size={24} weight="bold" />,
-        color: "warning",
-      },
-    ],
-  },
-  {
-    id: "mar-19",
-    day: "Thu 19",
-    subtitle: "La Cremà",
-    date: "2026-03-19",
-    events: [
-      {
-        id: "mascleta-final",
-        time: "14:00",
-        title: "Grand Mascletà",
-        location: "Plaça de l'Ajuntament",
-        description: "The final explosion of the festival. Today by Pirotècnia Hnos Caballer.",
-        type: "Pyrotechnics",
-        icon: <Flame size={24} weight="bold" />,
-        color: "danger",
-        isLive: true,
-      },
-      {
-        id: "fire-parade",
-        time: "19:00",
-        title: "Cavalcada del Foc",
-        location: "Calle de la Paz",
-        description:
-          "A parade of fire celebrating the element that will soon consume the monuments.",
-        type: "Parade",
-        icon: <Fire size={24} weight="bold" />,
-        color: "warning",
-      },
-      {
-        id: "crema-infantil-muni",
-        time: "21:00",
-        title: "Children's Cremà",
-        location: "Plaza del Ayuntamiento",
-        description: "The burning of the Municipal children's monument.",
-        type: "The Burning",
-        icon: <Flame size={24} weight="bold" />,
-        color: "danger",
-      },
-      {
-        id: "crema-general",
-        time: "22:00",
-        title: "Main Cremà",
-        location: "Every corner",
-        description: "The simultaneous burning of all main falla monuments in the city.",
-        type: "The Burning",
-        icon: <Flame size={24} weight="bold" />,
-        color: "danger",
-      },
-      {
-        id: "crema-muni",
-        time: "23:00",
-        title: "Municipal Cremà",
-        location: "Plaza del Ayuntamiento",
-        description:
-          "The final act. The burning of the giant municipal falla marks the end of the festival.",
-        type: "The Burning",
-        icon: <Flame size={24} weight="bold" />,
-        color: "danger",
-      },
-    ],
-  },
-];
+// ─── Event icons — names live in official_events.json, components stay here ──
+const EVENT_ICONS: Record<string, typeof Flame> = {
+  flame: Flame,
+  trophy: Trophy,
+  sparkle: Sparkle,
+  camera: Camera,
+  "navigation-arrow": NavigationArrow,
+  "music-notes": MusicNotes,
+  fire: Fire,
+};
+
+function EventIcon({ name, size = 24 }: { name: string; size?: number }) {
+  const IconComp = EVENT_ICONS[name] ?? Sparkle;
+  return <IconComp size={size} weight="bold" />;
+}
 
 // ─── ICS helper ──────────────────────────────────────────────────────────────
 
-function buildICS(event: any, dayDate: string) {
+function buildICS(event: ScheduleEvent, dayDate: string) {
   const [h, m] = event.time.split(":").map(Number);
   const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -332,7 +85,7 @@ function buildICS(event: any, dayDate: string) {
 
 // ─── Event drawer community hub ───────────────────────────────────────────────
 
-function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) {
+function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: string }) {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const { comments, images, loading, addComment, addImage, toggleImageLike } =
@@ -402,7 +155,7 @@ function EventCommunityHub({ event, dayDate }: { event: any; dayDate: string }) 
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/schedule?day=${scheduleData.find((d) =>
+    const url = `${window.location.origin}/schedule?day=${schedule.find((d) =>
       d.events.some((e) => e.id === event.id)
     )?.id}&event=${event.id}`;
 
@@ -690,14 +443,14 @@ export default function SchedulePage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const currentDay = useMemo(
-    () => scheduleData.find((d) => d.id === selectedDayId),
+    () => schedule.find((d) => d.id === selectedDayId),
     [selectedDayId]
   );
 
   const selectedEvent = useMemo(() => {
     const eventId = searchParams.get("event");
     if (!eventId) return null;
-    for (const day of scheduleData) {
+    for (const day of schedule) {
       const found = day.events.find((e) => e.id === eventId);
       if (found) return { ...found, dayDate: day.date };
     }
@@ -708,7 +461,7 @@ export default function SchedulePage() {
     setIsDrawerOpen(!!selectedEvent);
   }, [selectedEvent]);
 
-  const handleEventClick = (event: any) => {
+  const handleEventClick = (event: ScheduleEvent) => {
     setSearchParams({ day: selectedDayId, event: event.id });
   };
 
@@ -744,7 +497,7 @@ export default function SchedulePage() {
         {/* Sticky day selector */}
         <div className="sticky top-24 md:top-36 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
           <div className="flex bg-falla-sand/20 p-1.5 rounded-[2rem] border-2 border-falla-ink shadow-solid-sm overflow-x-auto scrollbar-hide max-w-full">
-            {scheduleData.map((day) => (
+            {schedule.map((day) => (
               <button
                 key={day.id}
                 onClick={() => handleDayChange(day.id)}
@@ -806,7 +559,7 @@ export default function SchedulePage() {
                     <div
                       className={cn(
                         "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                        (event as any).isLive
+                        event.isLive
                           ? "bg-falla-fire animate-pulse scale-150"
                           : "bg-falla-ink group-hover:bg-falla-fire"
                       )}
@@ -825,7 +578,7 @@ export default function SchedulePage() {
                         <h3 className="text-xl md:text-3xl font-display text-falla-ink leading-tight lowercase group-hover:text-falla-fire transition-colors truncate">
                           {event.title}
                         </h3>
-                        {(event as any).isLive && (
+                        {event.isLive && (
                           <span className="flex items-center gap-1.5 px-2 py-0.5 bg-falla-fire/10 text-falla-fire text-[8px] font-black uppercase tracking-widest rounded-md border border-falla-fire/20">
                             <span className="w-1.5 h-1.5 rounded-full bg-falla-fire animate-pulse" />
                             Live
@@ -879,7 +632,7 @@ export default function SchedulePage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="w-14 h-14 rounded-2xl bg-falla-ink text-falla-paper flex items-center justify-center shadow-solid-sm">
-                            {selectedEvent.icon}
+                            <EventIcon name={selectedEvent.icon} />
                           </div>
                           <div className="flex flex-col">
                             <span className="text-3xl font-black text-falla-ink">
@@ -929,7 +682,7 @@ export default function SchedulePage() {
                     {/* Community hub — fully wired */}
                     <EventCommunityHub
                       event={selectedEvent}
-                      dayDate={(selectedEvent as any).dayDate}
+                      dayDate={selectedEvent.dayDate}
                     />
                   </div>
                 )}

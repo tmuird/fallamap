@@ -13,6 +13,7 @@ import { Textarea } from "@heroui/react";
 import { useUser } from "@clerk/react";
 import { useFallaDetails } from "@/lib/hooks/useFallaDetails";
 import { useBackendStatus } from "@/lib/backendStatus";
+import { eventsForHub } from "@/lib/eventData";
 import { supabase } from "@/lib/supabase";
 import { 
   Camera, 
@@ -64,6 +65,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { comments, images, addComment, addImage, toggleImageLike, dbId } = useFallaDetails(falla.number, falla.is_hub ? falla.id : undefined);
   const backendOffline = useBackendStatus() === "offline";
+  const hubEvents = falla.is_hub ? eventsForHub(falla.id ?? "") : [];
   const [newComment, setNewComment] = useState("");
   const [uploading, setUploading] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -365,6 +367,25 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                   <div className="mb-12 p-6 rounded-[2rem] bg-falla-fire/5 border-2 border-falla-fire/10">
                     <p className="text-xs font-black uppercase tracking-widest text-falla-fire mb-2 flex items-center gap-2"><MapPin weight="bold" /> About this location</p>
                     <p className="text-lg font-medium text-falla-ink leading-tight italic">"{falla.description}"</p>
+                  </div>
+                )}
+
+                {hubEvents.length > 0 && (
+                  <div className="mb-12">
+                    <p className="text-xs font-black uppercase tracking-widest text-falla-ink/60 mb-3 flex items-center gap-2"><CalendarBlank weight="bold" /> Events at this location</p>
+                    <div className="space-y-2">
+                      {hubEvents.map(({ day, event }) => (
+                        <button
+                          key={event.id}
+                          onClick={() => navigate(`/schedule?day=${day.id}&event=${event.id}`)}
+                          className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-falla-ink/10 hover:border-falla-fire/40 hover:bg-falla-fire/5 text-left transition-colors"
+                        >
+                          <span className="text-xs font-black text-falla-fire whitespace-nowrap">{day.day}</span>
+                          <span className="text-sm font-bold text-falla-ink flex-1 truncate">{event.title}</span>
+                          <span className="text-xs font-medium text-falla-ink/60">{event.time}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 

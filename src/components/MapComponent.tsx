@@ -5,7 +5,7 @@ import { ThemeContext } from "../context/ThemeContext";
 import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
-import officialHubs from "./official_events.json";
+import { hubs as officialHubs } from "@/lib/eventData";
 import { Drawer } from "vaul";
 import { MagnifyingGlass, Target, CheckCircle, X, Star, Heart, CalendarBlank } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
