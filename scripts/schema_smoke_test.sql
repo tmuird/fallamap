@@ -83,19 +83,109 @@ begin
   end;
 end $$;
 
--- App runtime role path: writes as `authenticated` must pass the RLS baseline
+-- ==================================================================
+-- RLS — Clerk `sub`-keyed policies (Supabase third-party auth)
+-- The harness impersonates Clerk users by setting `request.jwt.claims`
+-- to a session-token shape; schema_local_stubs.sql's auth.jwt() reads it.
+-- ==================================================================
+
+-- Fixtures (as owner, bypassing RLS) for the visibility checks below
+insert into comments (user_id, text, status, is_private, falla_id)
+  values ('user_other', 'secret', 'approved', true, (select id from fallas where number = '1'));
+insert into comments (user_id, text, status, is_private, falla_id)
+  values ('user_other', 'unreviewed', 'pending', false, (select id from fallas where number = '1'));
+insert into user_interactions (user_id, type, falla_id)
+  values ('user_other', 'like', (select id from fallas where number = '1'));
+
+-- Owner path: a signed-in user (Clerk sub = user_rls) writes their own rows
 set role authenticated;
+set request.jwt.claims = '{"sub": "user_rls"}';
 insert into comments (user_id, text, status, falla_id)
   values ('user_rls', 'via rls', 'pending', (select id from fallas where number = '1'));
+insert into images (user_id, url, status, falla_id)
+  values ('user_rls', 'https://example.com/rls.png', 'pending', (select id from fallas where number = '1'));
 insert into user_interactions (user_id, type, hub_id) values ('user_rls', 'visited', 'hub-ajuntament');
-delete from user_interactions where user_id = 'user_rls' and hub_id = 'hub-ajuntament';
+
+do $$
+declare n int;
+begin
+  -- Own rows are visible/updatable/deletable even when private or pending
+  select count(*) into n from comments where user_id = 'user_rls';
+  if n <> 1 then raise exception 'FAIL: owner sees % own rows (expected 1)', n; end if;
+  update comments set text = 'via rls (edited)' where user_id = 'user_rls';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: owner update affected % rows', n; end if;
+  delete from user_interactions where user_id = 'user_rls' and hub_id = 'hub-ajuntament';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: owner delete affected % rows', n; end if;
+
+  -- Another user's private/pending rows are invisible to this user
+  select count(*) into n from comments where user_id = 'user_other';
+  if n <> 0 then raise exception 'FAIL: saw % rows of another user', n; end if;
+
+  -- Cross-user writes must all be rejected (RLS with-check / using)
+  begin
+    insert into comments (user_id, text, status, falla_id)
+      values ('user_other', 'impersonation', 'approved',
+              (select id from fallas where number = '1'));
+    raise exception 'FAIL: inserted a comment as another user';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+  begin
+    insert into image_likes (user_id, image_id)
+      values ('user_other', (select id from images where url = 'https://example.com/1.png'));
+    raise exception 'FAIL: liked as another user';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+  begin
+    update comments set user_id = 'user_other' where user_id = 'user_rls';
+    raise exception 'FAIL: reassigned own row to another user';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+  delete from comments where user_id = 'user_other';
+  get diagnostics n = row_count;
+  if n <> 0 then raise exception 'FAIL: deleted % rows of another user', n; end if;
+end $$;
 reset role;
 
--- Anonymous read must work through the read policies
+-- Switching identity: user_other sees exactly their own 2 fixture rows
+set role authenticated;
+set request.jwt.claims = '{"sub": "user_other"}';
+do $$
+declare n int;
+begin
+  select count(*) into n from comments where user_id = 'user_other';
+  if n <> 2 then raise exception 'FAIL: owner sees % own rows (expected 2)', n; end if;
+end $$;
+reset role;
+
+-- Anonymous: approved-public content only, no writes, no interactions
+reset request.jwt.claims;
 set role anon;
-select count(*) from fallas;
-select count(*) from comments;
-select count(*) from images;
+do $$
+declare n int;
+begin
+  select count(*) into n from fallas;
+  if n < 1 then raise exception 'FAIL: anon sees no fallas'; end if;
+  select count(*) into n from comments where is_private or status <> 'approved';
+  if n <> 0 then raise exception 'FAIL: anon saw % private/unapproved rows', n; end if;
+  select count(*) into n from comments where not is_private and status = 'approved';
+  if n < 1 then raise exception 'FAIL: anon sees no approved comments'; end if;
+  select count(*) into n from images where not is_private and status = 'approved';
+  if n < 1 then raise exception 'FAIL: anon sees no approved images'; end if;
+  begin
+    insert into comments (user_id, text, status, falla_id)
+      values ('anon', 'anon write', 'approved', (select id from fallas where number = '1'));
+    raise exception 'FAIL: anon insert accepted';
+  exception when others then
+    if sqlstate = 'P0001' then raise; end if;
+  end;
+  select count(*) into n from user_interactions;
+  if n <> 0 then raise exception 'FAIL: anon saw % interaction rows', n; end if;
+end $$;
 reset role;
 
 -- Storage bucket and its policies exist

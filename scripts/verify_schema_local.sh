@@ -4,7 +4,7 @@
 # Supabase environment stubbed (scripts/schema_local_stubs.sql). Verifies:
 #   1. schema.sql applies cleanly and is idempotent (run twice)
 #   2. seed_supabase.js runs schema first, seeds 80 fallas + 5 hubs, re-run safe
-#   3. every app query shape resolves (embedded-select FKs, RLS baseline,
+#   3. every app query shape resolves (embedded-select FKs, Clerk-sub RLS,
 #      constraints) — see scripts/schema_smoke_test.sql
 # Requires: docker. Everything runs locally; no network, no real Supabase.
 set -euo pipefail

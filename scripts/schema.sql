@@ -13,12 +13,13 @@
 -- `service_role` roles and the `storage` schema to exist. For a local smoke
 -- test against vanilla Postgres see scripts/verify_schema_local.sh.
 --
--- AUTH MODEL: the app authenticates with Clerk and writes Clerk user IDs
--- (e.g. "user_2abc…") into `user_id` columns — hence TEXT, not UUID. Once
--- Clerk↔Supabase third-party auth is wired (T0.3), RLS compares `user_id`
--- against the Clerk JWT `sub` via auth.jwt(). The RLS policies below are an
--- INTERIM baseline (public read + open writes so the app functions today);
--- T1.2 tightens writes to owners and enforces admin via JWT claims.
+-- AUTH MODEL: the app authenticates with Clerk (Supabase third-party auth;
+-- see docs/supabase-clerk-auth.md) and writes Clerk user IDs (e.g.
+-- "user_2abc…") into `user_id` columns — hence TEXT, not UUID. RLS compares
+-- `user_id` against the Clerk JWT `sub` via auth.jwt()->>'sub': users write
+-- only their own rows and read private content only when they own it.
+-- Open item (T1.2): admin moderation needs a JWT-claim policy override so the
+-- pending-review queue can read and update other users' rows.
 
 -- ============================================================
 -- Tables
@@ -144,8 +145,19 @@ create unique index if not exists interactions_user_type_event_idx
   on public.user_interactions (user_id, type, event_id) where event_id is not null;
 
 -- ============================================================
--- RLS — INTERIM baseline (tightened in T0.3 / T1.2, see header note)
+-- RLS — keyed on the Clerk JWT `sub` (third-party auth)
 -- ============================================================
+--
+-- With Clerk third-party auth enabled, Supabase accepts Clerk session tokens
+-- and auth.jwt() exposes their claims; auth.jwt()->>'sub' is the Clerk user id
+-- — the same value the app writes into `user_id`. Model:
+--   * reads: map data (fallas/hubs) and approved-public community content are
+--     readable by anyone; own rows (incl. private/pending) only by their owner
+--   * writes: `authenticated` only, and only for rows whose user_id is the
+--     caller's own `sub`
+--   * contact form: public insert (no user identity involved)
+-- Remaining gap (T1.2): admin moderation needs a JWT-claim override so
+-- moderators can read pending rows and update other users' `status`.
 
 alter table public.fallas               enable row level security;
 alter table public.hubs                 enable row level security;
@@ -163,55 +175,80 @@ drop policy if exists "hubs read"   on public.hubs;
 create policy "hubs read" on public.hubs
   for select to anon, authenticated using (true);
 
--- Comments: public read (app filters status/is_private), open write interim.
+-- Comments: approved-public readable by anyone; own rows always; writes owner-
+-- keyed (admin path for moderation updates lands in T1.2).
 drop policy if exists "comments read"   on public.comments;
 create policy "comments read" on public.comments
-  for select to anon, authenticated using (true);
+  for select to anon, authenticated
+  using (
+    (status = 'approved' and not is_private)
+    or (select auth.jwt()->>'sub') = user_id
+  );
 drop policy if exists "comments insert"   on public.comments;
 create policy "comments insert" on public.comments
-  for insert to anon, authenticated with check (true);
+  for insert to authenticated
+  with check ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "comments update"   on public.comments;
 create policy "comments update" on public.comments
-  for update to anon, authenticated using (true) with check (true);
+  for update to authenticated
+  using ((select auth.jwt()->>'sub') = user_id)
+  with check ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "comments delete"   on public.comments;
 create policy "comments delete" on public.comments
-  for delete to anon, authenticated using (true);
+  for delete to authenticated
+  using ((select auth.jwt()->>'sub') = user_id);
 
--- Images: same interim shape (status updates drive the moderation queue).
+-- Images: same shape as comments.
 drop policy if exists "images read"   on public.images;
 create policy "images read" on public.images
-  for select to anon, authenticated using (true);
+  for select to anon, authenticated
+  using (
+    (status = 'approved' and not is_private)
+    or (select auth.jwt()->>'sub') = user_id
+  );
 drop policy if exists "images insert"   on public.images;
 create policy "images insert" on public.images
-  for insert to anon, authenticated with check (true);
+  for insert to authenticated
+  with check ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "images update"   on public.images;
 create policy "images update" on public.images
-  for update to anon, authenticated using (true) with check (true);
+  for update to authenticated
+  using ((select auth.jwt()->>'sub') = user_id)
+  with check ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "images delete"   on public.images;
 create policy "images delete" on public.images
-  for delete to anon, authenticated using (true);
+  for delete to authenticated
+  using ((select auth.jwt()->>'sub') = user_id);
 
+-- Image likes: counts are public (embedded "likes:image_likes(count)"),
+-- writes owner-keyed.
 drop policy if exists "image_likes read"   on public.image_likes;
 create policy "image_likes read" on public.image_likes
   for select to anon, authenticated using (true);
 drop policy if exists "image_likes insert"   on public.image_likes;
 create policy "image_likes insert" on public.image_likes
-  for insert to anon, authenticated with check (true);
+  for insert to authenticated
+  with check ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "image_likes delete"   on public.image_likes;
 create policy "image_likes delete" on public.image_likes
-  for delete to anon, authenticated using (true);
+  for delete to authenticated
+  using ((select auth.jwt()->>'sub') = user_id);
 
+-- Interactions (like/visited bookmarks): private to their owner.
 drop policy if exists "interactions read"   on public.user_interactions;
 create policy "interactions read" on public.user_interactions
-  for select to anon, authenticated using (true);
+  for select to authenticated
+  using ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "interactions insert"   on public.user_interactions;
 create policy "interactions insert" on public.user_interactions
-  for insert to anon, authenticated with check (true);
+  for insert to authenticated
+  with check ((select auth.jwt()->>'sub') = user_id);
 drop policy if exists "interactions delete"   on public.user_interactions;
 create policy "interactions delete" on public.user_interactions
-  for delete to anon, authenticated using (true);
+  for delete to authenticated
+  using ((select auth.jwt()->>'sub') = user_id);
 
--- Contact form: insert-only from the app (no public read policy).
+-- Contact form: insert-only from the app, any role (no user identity; no read).
 drop policy if exists "contact insert"   on public.contact_submissions;
 create policy "contact insert" on public.contact_submissions
   for insert to anon, authenticated with check (true);
@@ -234,6 +271,8 @@ drop policy if exists "community-content read" on storage.objects;
 create policy "community-content read" on storage.objects
   for select to anon, authenticated using (bucket_id = 'community-content');
 
+-- Uploads require a signed-in user; the bucket is public-read (the app uses
+-- getPublicUrl). Per-user path keying lands with T2.6 upload hardening.
 drop policy if exists "community-content write" on storage.objects;
 create policy "community-content write" on storage.objects
-  for insert to anon, authenticated with check (bucket_id = 'community-content');
+  for insert to authenticated with check (bucket_id = 'community-content');
