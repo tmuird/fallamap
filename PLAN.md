@@ -47,13 +47,17 @@ deploys with documented env vars. Product direction: white-label event social ne
 
 ## Blockers / notes
 
-- **Mapbox token — RESOLVED (02:00)**: real token in `.env`; production's deployed bundle was
-  verified to contain the IDENTICAL token (in-script sha256/length match). The earlier
-  "placeholder token in production" observation was Hermes secret redaction in tool output,
-  not a real broken deploy. T0.1 stays as robustness work, not a broken-token fix.
+- **Mapbox token — RESOLVED**: real token in `.env`; production bundle verified to contain the
+  identical token (in-script sha256 match). The earlier "placeholder" observation was secret
+  redaction in tool output, not a real broken deploy. T0.1 is robustness work only.
+- **Live preview**: https://fallamap.muiry.co.uk serves `dist/` from this Mac (LaunchAgent
+  `com.tommuir.fallamap` → serve_dist.py on 127.0.0.1:4173, routed by the `muiry-mac`
+  Cloudflare tunnel). OPS RULE for every shift: after a verified change run `npm run build`
+  so the live site reflects the branch (dist/ is rebuilt, server picks it up instantly).
 
 ## Worklog
 
 <!-- newest entries at top; format: HH:MM — what changed | what was verified | what remains -->
-- 02:00 — Mapbox token added to .env | production bundle token verified identical via in-script hash compare | AGENTS.md token note correction pending user approval; audit in flight
-- 01:30 — PLAN.md, AGENTS.md, .env/.env.example created; branch `overnight-polish` cut | build passes on unmodified main snapshot | audit in flight
+- 01:40 — Hosted at https://fallamap.muiry.co.uk: serve_dist.py (SPA-fallback static server) + LaunchAgent + cloudflared ingress for `muiry-mac` tunnel | 200s on /, /map, /schedule through public HTTPS (verified via Cloudflare edge); tickets.muiry.co.uk unaffected | local DNS cache on this Mac may lag a few minutes
+- 01:33 — Mapbox token added to .env; production bundle token verified identical via in-script hash compare | both hashes compared in-script | AGENTS.md token note correction pending user approval; audit in flight
+- 01:15 — PLAN.md, AGENTS.md, .env/.env.example created; branch `overnight-polish` cut | build passes on unmodified main snapshot | audit in flight
