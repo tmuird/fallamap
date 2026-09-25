@@ -24,12 +24,16 @@ import { SupabaseAuthBridge } from "./lib/SupabaseAuthBridge";
 import { CommunityOfflineBanner } from "./components/ui/CommunityOfflineBanner";
 import { startBackendMonitor } from "./lib/backendStatus";
 
-const PUBLISHABLE_KEY =
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
-  "pk_test_YXB0LXNlYWd1bGwtODAuY2xlcmsuYWNjb3VudHMuZGV2JA";
+// T2.4: fail fast when the Clerk key is missing. The old `||` fallback
+// silently booted a hardcoded dev instance, so a misconfigured deploy looked
+// "working" against the wrong auth backend.
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key");
+  throw new Error(
+    "Missing VITE_CLERK_PUBLISHABLE_KEY — set it in .env (see .env.example). " +
+      "Refusing to fall back to a hardcoded Clerk instance."
+  );
 }
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
