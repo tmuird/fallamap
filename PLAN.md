@@ -9,7 +9,7 @@ deploys with documented env vars. Product direction: white-label event social ne
 
 ## Acceptance criteria (definition of "flawless")
 
-- [ ] `npm run build` passes (tsc clean, no vite errors)
+- [x] `npm run build` passes (tsc clean, no vite errors)
 - [ ] `npm run lint` passes with zero warnings
 - [ ] Every route (/, /map, /schedule, /archive, /contact, /profile, /sign-in, /sign-up, /dashboard) renders with zero console errors
 - [ ] Map: renders tiles, shows monument markers from fallas.json, marker → drawer open/close works repeatedly without pointer-event or stacking interference, no blank canvas on bad/missing token (graceful fallback)
@@ -31,8 +31,8 @@ deploys with documented env vars. Product direction: white-label event social ne
 ## Task list
 
 ### P0 — broken / blocking
-- [ ] T0.1 App resilience: error boundary around routes; wrap `mapboxgl.Map` init in try/catch + `mapboxgl.supported()` gate with static "map needs WebGL" fallback (AUDIT §1 — whole app white-screens on map init failure)
-- [ ] T0.2 `scripts/schema.sql` + seed migration: comments/images/image_likes/user_interactions tables, community-content storage bucket + policies, event_id/hub_id columns, FKs for embedded selects; seed script runs schema first (AUDIT §4)
+- [x] T0.1 App resilience: error boundary around routes; wrap `mapboxgl.Map` init in try/catch + `mapboxgl.supported()` gate with static "map needs WebGL" fallback (AUDIT §1 — whole app white-screens on map init failure)
+- [x] T0.2 `scripts/schema.sql` + seed migration: comments/images/image_likes/user_interactions tables, community-content storage bucket + policies, event_id/hub_id columns, FKs for embedded selects; seed script runs schema first (AUDIT §4) — verified locally via `npm run verify:schema`
 - [ ] T0.3 Clerk↔Supabase auth wiring: supabase-js `accessToken` callback w/ Clerk session token (template 'supabase'), document third-party-auth/JWT-template setup, RLS keyed on Clerk `sub` (AUDIT §4)
 
 ### P1 — major
@@ -89,6 +89,8 @@ deploys with documented env vars. Product direction: white-label event social ne
 ## Worklog
 
 <!-- newest entries at top; format: HH:MM — what changed | what was verified | what remains -->
+- 02:17 — T0.2: scripts/schema.sql migration (fallas/hubs/comments/images/image_likes/user_interactions/contact_submissions, event_id/hub_id columns, FKs for every embedded select, community-content bucket + policies) + seed script now applies schema first (pg devDep, npm run seed); npm run verify:schema local harness | throwaway Postgres 16 run: schema applies clean + idempotent ×2, seed = schema → 80 fallas + 5 hubs and safe to re-run, smoke tests mirror all app query shapes (likes count embed, fallas(number), PassportView nested fallas→images, hub embed, anon read / authenticated write RLS, one-target CHECK + duplicate-interaction guard) — ALL SCHEMA CHECKS PASSED | RLS is an INTERIM baseline (open writes) — T0.3/T1.2 tighten to Clerk sub + admin; live-project run still blocked (Supabase NXDOMAIN)
+- 02:05 — T0.1: ErrorBoundary around Routes (src/components/ui/ErrorBoundary.tsx) + map init gated on mapboxgl.supported() with try/catch and static "Map unavailable / needs WebGL" fallback | browser-verified on dev server: normal /map 85 markers + ?falla=1 drawer/details + 0 console errors; boundary verified via temporary throw route (removed before commit) — fallback card, navbar intact; WebGL blocked via injected getContext shim → fallback rendered, app shell + search→drawer still work, 0 uncaught errors | —
 - 01:55 — Deep QA audit complete (AUDIT.md: 3 P0, 9 P1, 13 P2/P3 + verified-working list); findings folded into PLAN.md as T0.1–T3.6 | audit itself browser-verified all 9 routes; Supabase NXDOMAIN claim re-verified independently | first grind shift picks up P0 at 02:04
 - 01:40 — Hosted at https://fallamap.muiry.co.uk: serve_dist.py (SPA-fallback static server) + LaunchAgent + cloudflared ingress for `muiry-mac` tunnel | 200s on /, /map, /schedule through public HTTPS (verified via Cloudflare edge); tickets.muiry.co.uk unaffected | local DNS cache on this Mac may lag a few minutes
 - 01:33 — Mapbox token added to .env; production bundle token verified identical via in-script hash compare | both hashes compared in-script | AGENTS.md token note correction pending user approval; audit in flight
