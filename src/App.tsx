@@ -20,6 +20,7 @@ import UserProfile from "./components/profile/UserProfile";
 import ArchivePage from "./components/ArchivePage";
 import { MascletaCountdown } from "./components/ui/MascletaCountdown";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
+import { SupabaseAuthBridge } from "./lib/SupabaseAuthBridge";
 
 const PUBLISHABLE_KEY =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
@@ -120,6 +121,7 @@ export default function App() {
           }
         }}
       >
+        <SupabaseAuthBridge />
         <AppNavbar />
         
         <main className="flex-grow flex flex-col relative">
