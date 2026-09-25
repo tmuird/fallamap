@@ -246,18 +246,23 @@ const MapComponent = () => {
           </div>
         </div>
       `;
-      
-      userMarkerRef.current = new mapboxgl.Marker(el)
-        .setLngLat([0, 0])
-        .addTo(map);
 
       let initialZoomDone = false;
 
       const watchId = navigator.geolocation.watchPosition(
         (pos) => {
           const { longitude, latitude } = pos.coords;
-          userMarkerRef.current?.setLngLat([longitude, latitude]);
-          
+          // Only create the dot once we hold a real position — building it at
+          // [0, 0] upfront parked it at Null Island whenever geolocation was
+          // denied or slow (T3.7).
+          if (!userMarkerRef.current) {
+            userMarkerRef.current = new mapboxgl.Marker(el)
+              .setLngLat([longitude, latitude])
+              .addTo(map);
+          } else {
+            userMarkerRef.current.setLngLat([longitude, latitude]);
+          }
+
           if (!initialZoomDone) {
             map.flyTo({
               center: [longitude, latitude],
