@@ -94,7 +94,17 @@ const MapComponent = () => {
 
   const allPOIs = useMemo(() => {
     const hubs = (officialHubs as any[]).map(h => ({ ...h, is_hub: true }));
-    return [...fallasData, ...hubs];
+    // `number` is a string (e.g. "1".."375"); a plain string sort put "10"
+    // before "2". Sort monuments numerically so search results, Next/Prev
+    // cycling and the filtered list follow the real falla numbering, with
+    // hubs (no `number`) kept after.
+    const sortedFallas = [...fallasData].sort((a: any, b: any) => {
+      const an = parseInt(a.number, 10);
+      const bn = parseInt(b.number, 10);
+      if (Number.isNaN(an) || Number.isNaN(bn)) return 0;
+      return an - bn;
+    });
+    return [...sortedFallas, ...hubs];
   }, [fallasData]);
 
   // 2. Interaction Sync
@@ -236,6 +246,12 @@ const MapComponent = () => {
     map.on('zoom', updateMarkerScale);
     updateMarkerScale(); // Initial call
 
+    // Single cleanup path regardless of whether geolocation is available —
+    // previously this branched into two near-identical return functions
+    // (one with clearWatch, one without), which risked drifting out of sync
+    // whenever the shared marker-cleanup logic changed (T3.6).
+    let watchId: number | null = null;
+
     if ("geolocation" in navigator) {
       const el = document.createElement('div');
       el.className = 'user-location-marker';
@@ -252,7 +268,7 @@ const MapComponent = () => {
 
       let initialZoomDone = false;
 
-      const watchId = navigator.geolocation.watchPosition(
+      watchId = navigator.geolocation.watchPosition(
         (pos) => {
           const { longitude, latitude } = pos.coords;
           // Only create the dot once we hold a real position — building it at
@@ -279,17 +295,10 @@ const MapComponent = () => {
         (err) => console.error("Geolocation error:", err),
         { enableHighAccuracy: true }
       );
-
-      return () => {
-        navigator.geolocation.clearWatch(watchId);
-        Object.values(markersRef.current).forEach(m => m.remove());
-        markersRef.current = {};
-        markerElsRef.current = {};
-        map.remove();
-      };
     }
 
     return () => {
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
       Object.values(markersRef.current).forEach(m => m.remove());
       markersRef.current = {};
       markerElsRef.current = {};

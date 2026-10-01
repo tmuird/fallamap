@@ -60,10 +60,28 @@ interface FallaDetailsProps {
   onInteraction?: () => void;
 }
 
+// Reads the viewport width reactively (md breakpoint = 768px) instead of a
+// one-shot `window.innerWidth` read during render, which never updates on
+// resize/rotate and also risked a render before `window` exists (T3.6).
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== "undefined" && window.innerWidth > 768
+  );
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 769px)");
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+  return isDesktop;
+}
+
 export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInteraction }: FallaDetailsProps) {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isDesktop = useIsDesktop();
   const { comments, images, addComment, addImage, toggleImageLike, dbId } = useCommunityContent(falla.is_hub ? "hub" : "monument", falla.is_hub ? falla.id : falla.number);
   const backendOffline = useBackendStatus() === "offline";
   const hubEvents = falla.is_hub ? eventsForHub(falla.id ?? "") : [];
@@ -440,7 +458,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
               <div className={cn("flex-1 bg-falla-paper ink-border rounded-[2.5rem] shadow-solid focus-within:shadow-none transition-all overflow-hidden border-2", !isSignedIn && "opacity-50 grayscale")}>
                 <Textarea variant="flat" placeholder={isSignedIn ? "Tell a story..." : "Sign in to share..."} value={newComment} onChange={(e) => setNewComment(e.target.value)} minRows={1} maxRows={4} className="w-full" disabled={!isSignedIn} classNames={{ input: "text-fluid-base md:text-fluid-lg p-6 md:p-10 font-bold bg-transparent placeholder:text-falla-ink/20 text-falla-ink leading-tight", inputWrapper: "bg-transparent p-0 shadow-none data-[hover=true]:bg-transparent group-data-[focus=true]:bg-transparent" }} />
               </div>
-              <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim() || !isSignedIn} className="w-16 h-16 md:w-28 md:h-28 rounded-[2rem] md:rounded-[3rem] shrink-0 border-2 bg-falla-fire text-falla-paper shadow-solid active:shadow-none transition-all" aria-label="Send"><PaperPlaneRight size={window.innerWidth > 768 ? 36 : 28} weight="bold" /></Button>
+              <Button isIconOnly onClick={handleCommentSubmit} disabled={!newComment.trim() || !isSignedIn} className="w-16 h-16 md:w-28 md:h-28 rounded-[2rem] md:rounded-[3rem] shrink-0 border-2 bg-falla-fire text-falla-paper shadow-solid active:shadow-none transition-all" aria-label="Send"><PaperPlaneRight size={isDesktop ? 36 : 28} weight="bold" /></Button>
             </div>
           </div>
         </div>
