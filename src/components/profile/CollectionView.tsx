@@ -30,7 +30,9 @@ export function CollectionView() {
           if (data) {
             // Hub likes carry no `fallas` join — mapping only `fallas?.number` and
             // rewriting localStorage with the result erased them (T1.7).
-            const numbers = data.map((i: any) => i.fallas?.number ?? i.hubs?.id ?? null).filter(Boolean);
+            type LikeRow = { fallas: { number: string } | null; hubs: { id: string } | null };
+            const rows = data as unknown as LikeRow[];
+            const numbers = rows.map((i) => i.fallas?.number ?? i.hubs?.id ?? null).filter((v): v is string => Boolean(v));
             setLikedNumbers(numbers);
             localStorage.setItem("liked_fallas", JSON.stringify(numbers));
           }

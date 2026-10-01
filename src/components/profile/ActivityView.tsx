@@ -7,10 +7,24 @@ import { Image } from "@heroui/react";
 import { Link } from "react-router-dom";
 import { SITE } from "@/lib/siteConfig";
 
+interface ActivityImage {
+  id: string;
+  url: string;
+  is_private: boolean;
+  fallas: { name: string; number: string } | null;
+}
+
+interface ActivityComment {
+  id: string;
+  text: string;
+  is_private: boolean;
+  fallas: { name: string; number: string } | null;
+}
+
 export function ActivityView() {
   const { user } = useUser();
-  const [comments, setComments] = useState<any[]>([]);
-  const [images, setImages] = useState<any[]>([]);
+  const [comments, setComments] = useState<ActivityComment[]>([]);
+  const [images, setImages] = useState<ActivityImage[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,8 +45,8 @@ export function ActivityView() {
             .order("created_at", { ascending: false })
         ]);
 
-        setComments(commentsRes.data || []);
-        setImages(imagesRes.data || []);
+        setComments((commentsRes.data as unknown as ActivityComment[]) || []);
+        setImages((imagesRes.data as unknown as ActivityImage[]) || []);
       } catch (err) {
         console.error("Activity fetch error:", err);
       } finally {

@@ -6,9 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Check, X, ChatCircleDots } from "@phosphor-icons/react";
 import { SITE } from "@/lib/siteConfig";
 
+interface PendingComment {
+  id: string;
+  user_id: string;
+  text: string;
+  created_at: string;
+  fallas: { name: string; number: string } | null;
+}
+
 export function CommentReview() {
   const { user, isLoaded } = useUser();
-  const [pendingComments, setPendingComments] = useState<any[]>([]);
+  const [pendingComments, setPendingComments] = useState<PendingComment[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Client-side gate (UX only) — server-side enforcement lives in RLS:
@@ -25,7 +33,7 @@ export function CommentReview() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setPendingComments(data || []);
+      setPendingComments((data as unknown as PendingComment[]) || []);
     } catch (err) {
       console.error("Error fetching comments:", err);
     } finally {

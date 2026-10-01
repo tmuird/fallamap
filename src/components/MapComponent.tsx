@@ -1,8 +1,8 @@
-import { useEffect, useRef, useContext, useState, useMemo, useCallback, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
@@ -47,10 +47,8 @@ const MapComponent = () => {
   
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
-  
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { isDarkMode } = useContext(ThemeContext);
+
+  const { isDarkMode } = useTheme();
   
   const [fallasData, setFallasData] = useState<POI[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -93,14 +91,14 @@ const MapComponent = () => {
   }, []);
 
   const allPOIs = useMemo(() => {
-    const hubs = (officialHubs as any[]).map(h => ({ ...h, is_hub: true }));
+    const hubs: POI[] = officialHubs.map(h => ({ ...h, is_hub: true }));
     // `number` is a string (e.g. "1".."375"); a plain string sort put "10"
     // before "2". Sort monuments numerically so search results, Next/Prev
     // cycling and the filtered list follow the real falla numbering, with
     // hubs (no `number`) kept after.
-    const sortedFallas = [...fallasData].sort((a: any, b: any) => {
-      const an = parseInt(a.number, 10);
-      const bn = parseInt(b.number, 10);
+    const sortedFallas = [...fallasData].sort((a, b) => {
+      const an = parseInt(a.number ?? "", 10);
+      const bn = parseInt(b.number ?? "", 10);
       if (Number.isNaN(an) || Number.isNaN(bn)) return 0;
       return an - bn;
     });
@@ -126,9 +124,11 @@ const MapComponent = () => {
           // `id`); hub rows have no `fallas` join, so mapping only `fallas?.number`
           // dropped them and the localStorage rewrite below erased hub likes/visits
           // on every sync (T1.7).
-          const key = (i: any) => i.fallas?.number ?? i.hubs?.id ?? null;
-          const visited = data.filter(i => i.type === 'visited').map(key).filter(Boolean);
-          const liked = data.filter(i => i.type === 'like').map(key).filter(Boolean);
+          type InteractionRow = { type: string; fallas: { number: string } | null; hubs: { id: string } | null };
+          const key = (i: InteractionRow) => i.fallas?.number ?? i.hubs?.id ?? null;
+          const rows = data as unknown as InteractionRow[];
+          const visited = rows.filter(i => i.type === 'visited').map(key).filter((v): v is string => Boolean(v));
+          const liked = rows.filter(i => i.type === 'like').map(key).filter((v): v is string => Boolean(v));
           setVisitedNumbers(visited);
           setLikedNumbers(liked);
           localStorage.setItem("visited_fallas", JSON.stringify(visited));
@@ -530,13 +530,13 @@ const MapComponent = () => {
             <div className="flex items-center justify-between px-1 pb-1 pt-2 md:pt-3 relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-falla-ink/10 dark:bg-white/10" />
               <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center w-full">
-                {[
+                {([
                   { id: 'all', label: 'All' },
                   { id: 'events', label: 'Events', icon: <CalendarBlank size={12} weight="fill" /> },
                   { id: 'special', label: 'Special', icon: <Star size={12} weight="fill" /> },
                   { id: 'liked', label: 'Liked', icon: <Heart size={12} weight="fill" /> },
                   { id: 'visited', label: 'Visited', icon: <CheckCircle size={12} weight="fill" /> }
-                ]
+                ] as { id: typeof filterMode; label: string; icon?: ReactNode }[])
                   // Data-driven: the "Special" filter only exists when the dataset
                   // (local JSON or DB) actually flags monuments — with none it would
                   // just show "0 of 85" forever (AUDIT §3).
@@ -546,7 +546,7 @@ const MapComponent = () => {
                     key={mode.id}
                     size="sm" 
                     variant={filterMode === mode.id ? 'default' : 'ghost'} 
-                    onClick={() => setFilterMode(mode.id as any)}
+                    onClick={() => setFilterMode(mode.id)}
                     startContent={mode.icon}
                     className={cn(
                       "h-8 md:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0 active:scale-95", 
@@ -628,7 +628,7 @@ const MapComponent = () => {
                 <div className="flex-1 overflow-hidden">
                   <FallaDetails
                     key={(selectedPOI.number || selectedPOI.id || selectedPOI.name) as string}
-                    falla={selectedPOI as any}
+                    falla={selectedPOI}
                     onNext={() => {
                       const idx = allPOIs.findIndex(p => (p.number || p.id) === (selectedPOI.number || selectedPOI.id));
                       const next = allPOIs[(idx + 1) % allPOIs.length];

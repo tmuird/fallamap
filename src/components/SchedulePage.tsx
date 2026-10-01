@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Chip } from "@heroui/react";
+import { Chip, type ChipProps } from "@heroui/react";
 import {
   MapPin,
   Flame,
@@ -274,7 +274,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
                   </PhotoView>
                   {img.id && (
                     <button
-                      onClick={() => toggleImageLike(img.id)}
+                      onClick={() => toggleImageLike(img.id as string)}
                       className="absolute top-3 left-3 bg-black/40 backdrop-blur-md border border-white/20 px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 text-white transition-all hover:scale-110 active:scale-95"
                     >
                       <Heart
@@ -621,7 +621,7 @@ export default function SchedulePage() {
                           <Chip
                             size="sm"
                             variant="flat"
-                            color={event.color as any}
+                            color={event.color as ChipProps["color"]}
                             className="font-black text-[8px] uppercase tracking-widest h-5 px-2 border border-current/10"
                           >
                             {event.type}
@@ -690,7 +690,7 @@ export default function SchedulePage() {
                         <div className="flex flex-wrap gap-3 items-center">
                           <Chip
                             variant="flat"
-                            color={selectedEvent.color as any}
+                            color={selectedEvent.color as ChipProps["color"]}
                             className="font-black text-[10px] uppercase tracking-[0.2em] px-4 h-8 border-2 border-current/10"
                           >
                             {selectedEvent.type}

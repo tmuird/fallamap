@@ -19,14 +19,52 @@ import { useUser } from "@clerk/react";
  */
 export type CommunityTargetType = "monument" | "hub" | "event";
 
+/** A row from `comments` (see scripts/schema.sql) — exactly one target FK is set. */
+export interface CommunityComment {
+  id?: string;
+  user_id?: string;
+  text: string;
+  status: "pending" | "approved" | "rejected";
+  is_private: boolean;
+  falla_id?: string;
+  hub_id?: string;
+  event_id?: string;
+  created_at: string;
+}
+
+/** A row from `images`, enriched client-side with the aggregated like count. */
+export interface CommunityImage {
+  id?: string;
+  user_id?: string;
+  url: string;
+  status: "pending" | "approved" | "rejected";
+  is_private: boolean;
+  falla_id?: string;
+  hub_id?: string;
+  event_id?: string;
+  created_at: string;
+  likes?: { count: number }[];
+  likeCount: number;
+}
+
 const targetColumn = (type: CommunityTargetType) =>
   type === "monument" ? "falla_id" : type === "hub" ? "hub_id" : "event_id";
+
+/** Builds the exactly-one-target-FK payload shared by comments/images inserts. */
+const withTarget = <T extends Record<string, unknown>>(
+  base: T,
+  type: CommunityTargetType,
+  writeKey: string
+): T & { falla_id?: string; hub_id?: string; event_id?: string } => ({
+  ...base,
+  [targetColumn(type)]: writeKey,
+});
 
 export function useCommunityContent(type: CommunityTargetType, id?: string) {
   const { user } = useUser();
   const [internalId, setInternalId] = useState<string | null>(null);
-  const [comments, setComments] = useState<any[]>([]);
-  const [images, setImages] = useState<any[]>([]);
+  const [comments, setComments] = useState<CommunityComment[]>([]);
+  const [images, setImages] = useState<CommunityImage[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -121,13 +159,11 @@ export function useCommunityContent(type: CommunityTargetType, id?: string) {
     if (!writeKey) return { data: null, error: "No target ID" };
     // New content enters the moderation queue ('pending'); admins approve via
     // /dashboard. RLS only permits non-admins to insert status='pending'.
-    const payload: any = {
-      user_id: userId,
-      text,
-      status: "pending",
-      is_private: isPrivate,
-      [targetColumn(type)]: writeKey,
-    };
+    const payload = withTarget(
+      { user_id: userId, text, status: "pending" as const, is_private: isPrivate },
+      type,
+      writeKey
+    );
 
     const { data, error } = await supabase.from("comments").insert([payload]);
     if (!error) {
@@ -145,13 +181,11 @@ export function useCommunityContent(type: CommunityTargetType, id?: string) {
     isPrivate: boolean = false
   ) => {
     if (!writeKey) return { data: null, error: "No target ID" };
-    const payload: any = {
-      user_id: userId,
-      url,
-      status: "pending",
-      is_private: isPrivate,
-      [targetColumn(type)]: writeKey,
-    };
+    const payload = withTarget(
+      { user_id: userId, url, status: "pending" as const, is_private: isPrivate },
+      type,
+      writeKey
+    );
 
     const { data, error } = await supabase.from("images").insert([payload]);
     if (!error) {

@@ -159,9 +159,9 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
           else query.eq("falla_id", dbId);
           await query;
         } else {
-          const payload: any = { user_id: user.id, type };
+          const payload: { user_id: string; type: 'like' | 'visited'; hub_id?: string; falla_id?: string } = { user_id: user.id, type };
           if (falla.is_hub) payload.hub_id = falla.id;
-          else payload.falla_id = dbId;
+          else payload.falla_id = dbId ?? undefined;
           await supabase.from("user_interactions").insert([payload]);
         }
       } catch (err) {
@@ -352,12 +352,14 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                               <PhotoView src={img.url}>
                                 <img src={img.url} alt={falla.name} className="w-full h-full object-contain rounded-lg cursor-zoom-in relative z-20" loading="lazy" />
                               </PhotoView>
-                              <div className="absolute top-4 left-4 flex gap-2 z-50">
-                                <button onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id); }} className="bg-black/40 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center gap-2 text-white">
-                                  <Heart size={18} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-white"} />
-                                  <span className="text-xs font-black tracking-tighter">{img.likeCount}</span>
-                                </button>
-                              </div>
+                              {img.id && (
+                                <div className="absolute top-4 left-4 flex gap-2 z-50">
+                                  <button onClick={(e) => { e.stopPropagation(); toggleImageLike(img.id as string); }} className="bg-black/40 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center gap-2 text-white">
+                                    <Heart size={18} weight={img.likeCount > 0 ? "fill" : "bold"} className={img.likeCount > 0 ? "text-red-500" : "text-white"} />
+                                    <span className="text-xs font-black tracking-tighter">{img.likeCount}</span>
+                                  </button>
+                                </div>
+                              )}
                             </CarouselItem>
                           ))}
                         </CarouselContent>

@@ -5,8 +5,6 @@
 // Deviations, all deliberate:
 //   * `plugin:storybook/recommended` dropped — the repo contains zero
 //     *.stories.* files, so the preset only linted nothing.
-//   * `@typescript-eslint/no-explicit-any` disabled for now (the ~30 existing
-//     `any`/`@ts-ignore` sites are swept in T3.5; the rule flips back on then).
 //   * env: browser/es2020 → languageOptions.globals (flat-config equivalent).
 import js from '@eslint/js';
 import globals from 'globals';
@@ -37,8 +35,10 @@ export default tseslint.config(
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': 'warn',
-      // TODO(T3.5): sweep the `any`/`@ts-ignore` sites, then re-enable.
-      '@typescript-eslint/no-explicit-any': 'off',
+      // T3.5: the ~30 `any`/`@ts-ignore` sites found at T1.3 migration time are
+      // swept (typed Supabase row shapes, ChipProps, a withTarget<T> helper for
+      // the comments/images insert payloads) — rule re-enabled at its recommended
+      // default (error).
     },
   }
 );

@@ -65,10 +65,15 @@ export function PassportView() {
           // rows come back with `fallas: null`; the old code dereferenced it
           // unconditionally, so one hub check-in threw on the null join and the
           // catch dropped the ENTIRE passport (T1.7).
-          const processed = data.flatMap((item: any): PassportStamp[] => {
+          type VisitedRow = {
+            fallas: { id: string; number: string; name: string; images: { url: string; status: string }[] | null } | null;
+            hubs: { id: string; name: string } | null;
+          };
+          const rows = data as unknown as VisitedRow[];
+          const processed = rows.flatMap((item): PassportStamp[] => {
             if (item.fallas) {
               const f = item.fallas;
-              const topImage = f.images?.find((img: any) => img.status === 'approved')?.url;
+              const topImage = f.images?.find((img) => img.status === 'approved')?.url;
               return [{ key: f.number ?? f.id, number: f.number, name: f.name, topImage }];
             }
             if (item.hubs) return [{ key: item.hubs.id, hubId: item.hubs.id, name: item.hubs.name }];

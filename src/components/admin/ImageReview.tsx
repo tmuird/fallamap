@@ -7,9 +7,17 @@ import { Image } from "@heroui/react";
 import { Check, X, ShieldCheck } from "@phosphor-icons/react";
 import { SITE } from "@/lib/siteConfig";
 
+interface PendingImage {
+  id: string;
+  user_id: string;
+  url: string;
+  created_at: string;
+  fallas: { name: string; number: string } | null;
+}
+
 export function ImageReview() {
   const { user, isLoaded } = useUser();
-  const [pendingImages, setPendingImages] = useState<any[]>([]);
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Client-side gate (UX only) — server-side enforcement lives in RLS:
@@ -26,7 +34,7 @@ export function ImageReview() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setPendingImages(data || []);
+      setPendingImages((data as unknown as PendingImage[]) || []);
     } catch (err) {
       console.error("Error fetching images:", err);
     } finally {
