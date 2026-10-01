@@ -1,4 +1,4 @@
-import { useEffect, useRef, useContext, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useContext, useState, useMemo, useCallback, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 import { useUser } from "@clerk/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getHighlightSegments } from "@/lib/searchHighlight";
 
 const MapboxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -58,6 +59,8 @@ const MapComponent = () => {
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const autocompleteRef = useRef<HTMLDivElement | null>(null);
   const [mapUnavailable, setMapUnavailable] = useState(false);
 
   // 1. Initial Load
@@ -402,6 +405,26 @@ const MapComponent = () => {
     }
   };
 
+  const handleAutocompleteKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    const options = Array.from(
+      autocompleteRef.current?.querySelectorAll<HTMLButtonElement>("[data-autocomplete-option]") || []
+    );
+    const currentIndex = options.indexOf(event.currentTarget);
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      options[Math.min(currentIndex + 1, options.length - 1)]?.focus();
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (currentIndex <= 0) searchInputRef.current?.focus();
+      else options[currentIndex - 1]?.focus();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      searchInputRef.current?.focus();
+      setIsSearchFocused(false);
+    }
+  };
+
   const handleAutocompleteClick = (poi: POI) => {
     setSearchQuery("");
     if (poi.number) {
@@ -450,11 +473,24 @@ const MapComponent = () => {
             <div className="flex items-center gap-2 md:gap-3 h-10 md:h-12">
               <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.25rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-3 md:px-4 h-full overflow-hidden">
                 <MagnifyingGlass size={18} weight="bold" className="opacity-30 shrink-0 md:size-[22px]" />
-                <input 
-                  placeholder="Find a monument or event..." 
+                <input
+                  ref={searchInputRef}
+                  placeholder="Find a monument or event..."
                   value={searchQuery}
                   onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                  onBlur={(event) => {
+                    const nextTarget = event.relatedTarget;
+                    if (nextTarget instanceof Node && autocompleteRef.current?.contains(nextTarget)) return;
+                    setIsSearchFocused(false);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown" && autocompleteResults.length > 0) {
+                      event.preventDefault();
+                      autocompleteRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+                    } else if (event.key === "Escape") {
+                      setIsSearchFocused(false);
+                    }
+                  }}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/30 text-falla-ink h-full min-w-0"
                 />
@@ -515,23 +551,24 @@ const MapComponent = () => {
             </div>
           </div>
 
-          <AnimatePresence>
-            {isSearchFocused && autocompleteResults.length > 0 && (
+          {isSearchFocused && autocompleteResults.length > 0 && (
               <motion.div
+                ref={autocompleteRef}
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
                 className="relative z-10 bg-transparent"
               >
                 <div className="flex flex-col max-h-[40vh] overflow-y-auto scrollbar-hide py-2">
                   {autocompleteResults.map((result) => {
-                    const regex = new RegExp(`(${searchQuery})`, 'gi');
-                    const parts = result.name.split(regex);
+                    const segments = getHighlightSegments(result.name, searchQuery);
                     const key = result.number || result.id || result.name;
                     
                     return (
                       <button
                         key={key}
+                        data-autocomplete-option
+                        onPointerDown={(event) => event.preventDefault()}
+                        onKeyDown={handleAutocompleteKeyDown}
                         onClick={() => handleAutocompleteClick(result)}
                         className="w-full px-6 py-3 md:py-4 flex items-center justify-between hover:bg-falla-ink/5 dark:hover:bg-white/5 transition-all group relative bg-transparent border-none active:scale-[0.98] gap-4"
                       >
@@ -541,10 +578,10 @@ const MapComponent = () => {
                           </div>
                           <div className="text-left overflow-hidden flex-1">
                             <p className="font-bold text-sm text-falla-ink leading-none mb-1 truncate transition-colors">
-                              {parts.map((part: string, i: number) => 
-                                regex.test(part) 
-                                  ? <span key={i} className="text-falla-fire">{part}</span> 
-                                  : <span key={i} className="opacity-80 group-hover:opacity-100">{part}</span>
+                              {segments.map(({ text, highlighted }, i) =>
+                                highlighted
+                                  ? <span key={i} className="text-falla-fire">{text}</span>
+                                  : <span key={i} className="opacity-80 group-hover:opacity-100">{text}</span>
                               )}
                             </p>
                             <p className="text-[10px] font-black uppercase text-falla-ink/40 tracking-widest truncate">
@@ -562,8 +599,7 @@ const MapComponent = () => {
                   })}
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
+              )}
         </motion.div>
       </div>
 

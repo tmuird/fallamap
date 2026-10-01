@@ -98,6 +98,7 @@ Missing/invalid values degrade rather than white-screen:
 | `npm run dev` | Dev server on http://localhost:5173 |
 | `npm run build` | `tsc && vite build` → `dist/` |
 | `npm run lint` | ESLint 9 flat config, `--max-warnings 0` (must stay clean) |
+| `npm run test:search` | Unit tests for literal-safe, repeatable autocomplete highlighting |
 | `npm run seed` | Apply `scripts/schema.sql` + seed data (needs `SUPABASE_DB_URL`) |
 | `npm run verify:schema` | Local schema/seed/RLS smoke tests (needs Docker) |
 | `npm run preview` | Serve the production build locally |
