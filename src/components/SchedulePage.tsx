@@ -22,6 +22,7 @@ import {
   Heart,
   PaperPlaneRight,
   CalendarPlus,
+  BookmarkSimple,
 } from "@phosphor-icons/react";
 import { Drawer } from "vaul";
 import { useUser } from "@clerk/react";
@@ -33,6 +34,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { schedule, type ScheduleEvent } from "@/lib/eventData";
 import { SITE } from "@/lib/siteConfig";
+import { getSavedEventStorageKey, buildSavedEventGroups, readSavedEventIdsFromStorage, toggleSavedEventInStorage } from "@/lib/savedEvents";
 
 // ─── Event icons — names live in official_events.json, components stay here ──
 const EVENT_ICONS: Record<string, typeof Flame> = {
@@ -438,10 +440,10 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
       </div>
 
       {/* Footer utils */}
-      <div className="mt-16 flex flex-wrap gap-4 pt-12 border-t-2 border-falla-ink/5">
+      <div className="mt-16 flex flex-wrap gap-4 border-t-2 border-falla-ink/5 pt-12">
         <Button
           onClick={handleAddToCalendar}
-          className="flex-1 min-w-[200px] h-14 bg-falla-fire text-falla-paper border-2 border-falla-ink shadow-solid hover:shadow-none transition-all rounded-xl"
+          className="h-14 min-w-[200px] flex-1 rounded-xl border-2 border-falla-ink bg-falla-fire text-falla-paper shadow-solid transition-all hover:shadow-none"
           startContent={<CalendarPlus size={20} weight="bold" />}
         >
           Add to Calendar
@@ -449,7 +451,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
         <Button
           onClick={handleShare}
           variant="outline"
-          className="flex-1 min-w-[200px] h-14 rounded-xl border-2 shadow-solid hover:shadow-none transition-all"
+          className="h-14 min-w-[200px] flex-1 rounded-xl border-2 shadow-solid transition-all hover:shadow-none"
           startContent={<ShareNetwork size={20} weight="bold" />}
         >
           Share Event
@@ -461,12 +463,23 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+const SAVED_EVENT_STORAGE_KEY = getSavedEventStorageKey(SITE.event.fileSlug);
+const ALL_SCHEDULE_EVENT_IDS = schedule.flatMap((day) => day.events.map((event) => event.id));
+
 export default function SchedulePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedDayId, setSelectedDayId] = useState(
     searchParams.get("day") || "mar-19"
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showMyPlan, setShowMyPlan] = useState(false);
+  const [savedEventIds, setSavedEventIds] = useState<string[]>(() => {
+    try {
+      return readSavedEventIdsFromStorage(window.localStorage, SITE.event.fileSlug, ALL_SCHEDULE_EVENT_IDS);
+    } catch {
+      return [];
+    }
+  });
 
   const currentDay = useMemo(
     () => schedule.find((d) => d.id === selectedDayId),
@@ -478,17 +491,56 @@ export default function SchedulePage() {
     if (!eventId) return null;
     for (const day of schedule) {
       const found = day.events.find((e) => e.id === eventId);
-      if (found) return { ...found, dayDate: day.date };
+      if (found) return { ...found, dayDate: day.date, dayId: day.id };
     }
     return null;
   }, [searchParams]);
+
+  const savedDayGroups = useMemo(
+    () => buildSavedEventGroups<ScheduleEvent, (typeof schedule)[number]>(schedule, savedEventIds),
+    [savedEventIds]
+  );
+  const visibleDayGroups = showMyPlan
+    ? savedDayGroups
+    : currentDay ? [currentDay] : [];
+
+  useEffect(() => {
+    const syncSavedEvents = (event: StorageEvent) => {
+      const itemKeyPrefix = `${SAVED_EVENT_STORAGE_KEY}:item:`;
+      if (event.key === null || event.key?.startsWith(itemKeyPrefix)) {
+        try {
+          setSavedEventIds(readSavedEventIdsFromStorage(window.localStorage, SITE.event.fileSlug, ALL_SCHEDULE_EVENT_IDS));
+        } catch {
+          // Storage may be unavailable in restricted browser contexts.
+        }
+      }
+    };
+    window.addEventListener("storage", syncSavedEvents);
+    return () => window.removeEventListener("storage", syncSavedEvents);
+  }, []);
 
   useEffect(() => {
     setIsDrawerOpen(!!selectedEvent);
   }, [selectedEvent]);
 
-  const handleEventClick = (event: ScheduleEvent) => {
-    setSearchParams({ day: selectedDayId, event: event.id });
+  const handleToggleSaved = (eventId: string) => {
+    try {
+      const result = toggleSavedEventInStorage(
+        window.localStorage,
+        SITE.event.fileSlug,
+        ALL_SCHEDULE_EVENT_IDS,
+        eventId
+      );
+      setSavedEventIds(result.savedIds);
+      toast.success(result.saved ? "Added to My Plan" : "Removed from My Plan");
+    } catch {
+      toast.error("Couldn't save your plan on this device.");
+    }
+  };
+
+  const handleEventClick = (event: ScheduleEvent, dayId = selectedDayId) => {
+    setSelectedDayId(dayId);
+    setSearchParams({ day: dayId, event: event.id });
   };
 
   const handleDrawerClose = () => {
@@ -498,6 +550,7 @@ export default function SchedulePage() {
 
   const handleDayChange = (dayId: string) => {
     setSelectedDayId(dayId);
+    setShowMyPlan(false);
     setSearchParams({ day: dayId });
   };
 
@@ -512,19 +565,48 @@ export default function SchedulePage() {
         >
           <div className="brutal-pill inline-block mb-6">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire flex items-center gap-2">
-              <CalendarBlank size={14} weight="bold" /> The Official Program
+              <CalendarBlank size={14} weight="bold" /> {showMyPlan ? "Your saved itinerary" : "The Official Program"}
             </span>
           </div>
           <h1 className="text-4xl md:text-8xl font-display text-falla-ink mb-6 leading-[0.85] lowercase">
-            festival timeline
+            {showMyPlan ? "your event plan" : "festival timeline"}
           </h1>
         </motion.div>
 
+        <div className="mb-4 flex justify-center">
+          <div role="group" aria-label="Schedule view" className="inline-flex gap-1 rounded-full border-2 border-falla-ink bg-falla-sand/20 p-1 shadow-solid-sm">
+            <button
+              type="button"
+              aria-pressed={!showMyPlan}
+              onClick={() => setShowMyPlan(false)}
+              className={cn(
+                "rounded-full px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors",
+                !showMyPlan ? "bg-falla-ink text-falla-paper" : "text-falla-ink/55 hover:text-falla-ink"
+              )}
+            >
+              Program
+            </button>
+            <button
+              type="button"
+              aria-pressed={showMyPlan}
+              onClick={() => setShowMyPlan(true)}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors",
+                showMyPlan ? "bg-falla-fire text-falla-paper" : "text-falla-ink/55 hover:text-falla-ink"
+              )}
+            >
+              <BookmarkSimple size={14} weight={showMyPlan ? "fill" : "bold"} />
+              My Plan <span className="tabular-nums">{savedEventIds.length}</span>
+            </button>
+          </div>
+        </div>
+
         {/* Sticky day selector */}
-        <div className="sticky top-24 md:top-36 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
-          <div className="flex bg-falla-sand/20 p-1.5 rounded-[2rem] border-2 border-falla-ink shadow-solid-sm overflow-x-auto scrollbar-hide max-w-full">
-            {schedule.map((day) => (
-              <button
+        {!showMyPlan && (
+          <div className="sticky top-24 md:top-36 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
+            <div className="flex bg-falla-sand/20 p-1.5 rounded-[2rem] border-2 border-falla-ink shadow-solid-sm overflow-x-auto scrollbar-hide max-w-full">
+              {schedule.map((day) => (
+                <button
                 key={day.id}
                 onClick={() => handleDayChange(day.id)}
                 className={cn(
@@ -536,9 +618,10 @@ export default function SchedulePage() {
               >
                 {day.day}
               </button>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Timeline */}
         <div className="relative">
@@ -551,93 +634,131 @@ export default function SchedulePage() {
             />
           </div>
 
+          {showMyPlan && visibleDayGroups.length === 0 ? (
+            <div className="ml-12 md:ml-20 rounded-2xl border-2 border-dashed border-falla-ink/20 bg-falla-sand/10 p-7 md:p-10">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-fire">A plan of your own</p>
+              <h2 className="mt-3 text-2xl font-display lowercase text-falla-ink">Nothing saved yet</h2>
+              <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-falla-ink/55">
+                Open any event and choose “Add to My Plan”. Your picks stay in this browser on this device.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-5 rounded-xl border-2 shadow-solid hover:shadow-none"
+                onClick={() => setShowMyPlan(false)}
+              >
+                Browse the program
+              </Button>
+            </div>
+          ) : (
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={selectedDayId}
+              key={showMyPlan ? "my-plan" : selectedDayId}
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.3 }}
-              className="space-y-4"
+              className="space-y-10"
             >
-              <div className="ml-16 md:ml-28 mb-10 flex items-center gap-4">
-                <h2 className="text-3xl font-display text-falla-fire lowercase leading-none">
-                  {currentDay?.subtitle}
-                </h2>
-                <div className="h-[2px] flex-1 bg-falla-ink/5" />
-              </div>
-
-              {currentDay?.events.map((event, index) => (
-                <motion.div
-                  key={event.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.03 }}
-                  className="relative group cursor-pointer"
-                  onClick={() => handleEventClick(event)}
-                >
-                  <motion.div
-                    layoutId={`node-${event.id}`}
-                    className="absolute left-[13px] md:left-[37px] top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-falla-paper border-[3px] border-falla-ink flex items-center justify-center z-10 group-hover:scale-125 transition-all duration-300 shadow-solid-sm group-hover:border-falla-fire"
-                  >
-                    <div
-                      className={cn(
-                        "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                        event.isLive
-                          ? "bg-falla-fire animate-pulse scale-150"
-                          : "bg-falla-ink group-hover:bg-falla-fire"
-                      )}
-                    />
-                  </motion.div>
-
-                  <div className="ml-12 md:ml-20 pl-4 md:pl-8 py-4 flex items-center gap-6 border-b-2 border-falla-ink/5 hover:bg-falla-sand/5 transition-all rounded-2xl group/row relative overflow-hidden">
-                    <div className="shrink-0 w-16 md:w-24">
-                      <span className="text-xl md:text-2xl font-black text-falla-ink/40 font-sans group-hover:text-falla-ink transition-colors">
-                        {event.time}
-                      </span>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-xl md:text-3xl font-display text-falla-ink leading-tight lowercase group-hover:text-falla-fire transition-colors truncate">
-                          {event.title}
-                        </h3>
-                        {event.isLive && (
-                          <span className="flex items-center gap-1.5 px-2 py-0.5 bg-falla-fire/10 text-falla-fire text-[8px] font-black uppercase tracking-widest rounded-md border border-falla-fire/20">
-                            <span className="w-1.5 h-1.5 rounded-full bg-falla-fire animate-pulse" />
-                            Live
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
-                        <div className="flex items-center gap-1.5">
-                          <MapPin size={12} weight="bold" />
-                          <span className="truncate">{event.location}</span>
-                        </div>
-                        <div className="hidden sm:flex items-center gap-1.5">
-                          <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-                          <Chip
-                            size="sm"
-                            variant="flat"
-                            color={event.color as ChipProps["color"]}
-                            className="font-black text-[8px] uppercase tracking-widest h-5 px-2 border border-current/10"
-                          >
-                            {event.type}
-                          </Chip>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 pr-4">
-                      <CaretRight size={24} weight="bold" className="text-falla-fire" />
-                    </div>
+              {visibleDayGroups.map((dayGroup) => (
+                <div key={dayGroup.id} className="space-y-4">
+                  <div className="ml-16 md:ml-28 mb-10 flex items-center gap-4">
+                    <h2 className="text-3xl font-display text-falla-fire lowercase leading-none">
+                      {dayGroup.subtitle}
+                    </h2>
+                    <div className="h-[2px] flex-1 bg-falla-ink/5" />
                   </div>
-                </motion.div>
+
+                  {dayGroup.events.map((event, index) => (
+                    <motion.div
+                      key={event.id}
+                      layout
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.03 }}
+                      className="relative group"
+                    >
+                      <motion.div
+                        layoutId={`node-${event.id}`}
+                        className="absolute left-[13px] md:left-[37px] top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-falla-paper border-[3px] border-falla-ink flex items-center justify-center z-10 group-hover:scale-125 transition-all duration-300 shadow-solid-sm group-hover:border-falla-fire"
+                      >
+                        <div
+                          className={cn(
+                            "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                            event.isLive
+                              ? "bg-falla-fire animate-pulse scale-150"
+                              : "bg-falla-ink group-hover:bg-falla-fire"
+                          )}
+                        />
+                      </motion.div>
+
+                      <div className="ml-12 md:ml-20 flex items-center gap-2 rounded-2xl border-b-2 border-falla-ink/5 transition-colors hover:bg-falla-sand/5">
+                        <button
+                          type="button"
+                          onClick={() => handleEventClick(event, dayGroup.id)}
+                          aria-label={`View details for ${event.title}`}
+                          className="flex min-w-0 flex-1 items-center gap-6 rounded-2xl px-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-falla-fire md:px-8"
+                        >
+                          <div className="w-16 shrink-0 md:w-24">
+                            <span className="text-xl font-black text-falla-ink/40 transition-colors group-hover:text-falla-ink md:text-2xl">
+                              {event.time}
+                            </span>
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 flex items-center gap-3">
+                              <h3 className="truncate text-xl font-display leading-tight lowercase text-falla-ink transition-colors group-hover:text-falla-fire md:text-3xl">
+                                {event.title}
+                              </h3>
+                              {event.isLive && (
+                                <span className="flex items-center gap-1.5 rounded-md border border-falla-fire/20 bg-falla-fire/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-falla-fire">
+                                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-falla-fire" />
+                                  Live
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
+                              <div className="flex min-w-0 items-center gap-1.5">
+                                <MapPin size={12} weight="bold" />
+                                <span className="truncate">{event.location}</span>
+                              </div>
+                              <div className="hidden items-center gap-1.5 sm:flex">
+                                <div className="h-1 w-1 rounded-full bg-falla-ink/20" />
+                                <Chip
+                                  size="sm"
+                                  variant="flat"
+                                  color={event.color as ChipProps["color"]}
+                                  className="h-5 border border-current/10 px-2 text-[8px] font-black uppercase tracking-widest"
+                                >
+                                  {event.type}
+                                </Chip>
+                              </div>
+                            </div>
+                          </div>
+
+                          <CaretRight size={24} weight="bold" className="shrink-0 text-falla-fire opacity-40 transition-opacity group-hover:opacity-100" />
+                        </button>
+
+                        <Button
+                          type="button"
+                          isIconOnly
+                          variant="ghost"
+                          aria-label={savedEventIds.includes(event.id) ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
+                          aria-pressed={savedEventIds.includes(event.id)}
+                          title={savedEventIds.includes(event.id) ? "Remove from My Plan" : "Add to My Plan"}
+                          className="mr-3 h-9 w-9 shrink-0 text-falla-fire hover:bg-falla-fire/10"
+                          onClick={() => handleToggleSaved(event.id)}
+                        >
+                          <BookmarkSimple size={18} weight={savedEventIds.includes(event.id) ? "fill" : "bold"} />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               ))}
             </motion.div>
           </AnimatePresence>
+          )}
         </div>
 
         {/* Event detail drawer */}
@@ -707,6 +828,23 @@ export default function SchedulePage() {
                       <p className="text-xl md:text-2xl font-medium leading-tight text-falla-ink/60 max-w-3xl">
                         {selectedEvent.description}
                       </p>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <Button
+                          onClick={() => handleToggleSaved(selectedEvent.id)}
+                          variant="outline"
+                          className={cn(
+                            "h-12 rounded-xl border-2 shadow-solid transition-all hover:shadow-none",
+                            savedEventIds.includes(selectedEvent.id) && "bg-falla-fire text-falla-paper"
+                          )}
+                          startContent={<BookmarkSimple size={18} weight={savedEventIds.includes(selectedEvent.id) ? "fill" : "bold"} />}
+                          aria-pressed={savedEventIds.includes(selectedEvent.id)}
+                        >
+                          {savedEventIds.includes(selectedEvent.id) ? "Remove from My Plan" : "Add to My Plan"}
+                        </Button>
+                        <span className="text-xs font-semibold text-falla-ink/45">
+                          Saved privately on this device.
+                        </span>
+                      </div>
                     </header>
 
                     {/* Community hub — fully wired */}

@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
     "test:search": "node --test scripts/search-highlight.test.mjs",
+    "test": "node --test scripts/*.test.mjs",
     "seed": "node scripts/seed_supabase.js",
     "verify:schema": "bash scripts/verify_schema_local.sh",
     "preview": "vite preview"
