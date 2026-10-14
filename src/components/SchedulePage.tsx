@@ -35,6 +35,7 @@ import "react-photo-view/dist/react-photo-view.css";
 import { schedule, type ScheduleEvent } from "@/lib/eventData";
 import { SITE } from "@/lib/siteConfig";
 import { getSavedEventStorageKey, buildSavedEventGroups, readSavedEventIdsFromStorage, toggleSavedEventInStorage } from "@/lib/savedEvents";
+import { buildIcsCalendar, buildIcsPlanQuery, parseIcsPlanIds } from "@/lib/ics";
 
 // ─── Event icons — names live in official_events.json, components stay here ──
 const EVENT_ICONS: Record<string, typeof Flame> = {
@@ -54,59 +55,38 @@ function EventIcon({ name, size = 24 }: { name: string; size?: number }) {
 
 // ─── ICS helper ──────────────────────────────────────────────────────────────
 
-/** RFC 5545 TEXT escaping for SUMMARY/LOCATION/DESCRIPTION values. */
-function escapeICSText(value: string): string {
-  return value
-    .replace(/\\/g, "\\\\")
-    .replace(/;/g, "\\;")
-    .replace(/,/g, "\\,")
-    .replace(/\r?\n/g, "\\n");
-}
-
-function buildICS(event: ScheduleEvent, dayDate: string) {
-  const [h, m] = event.time.split(":").map(Number);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const [year, month, day] = dayDate.split("-").map(Number);
-
-  const fmtDate = (d: Date) =>
-    `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}`;
-
-  // One-hour event. DTEND rolls into the NEXT day for late events (23:00 →
-  // next day 00:00, 23:59 → next day 00:59) — the old same-day `00:xx` end was
-  // before DTSTART. Date.UTC handles month/year overflow.
-  const startDate = new Date(Date.UTC(year, month - 1, day));
-  const endDate = new Date(Date.UTC(year, month - 1, day + (h + 1 >= 24 ? 1 : 0)));
-  const startDT = `${fmtDate(startDate)}T${pad(h)}${pad(m)}00`;
-  const endDT = `${fmtDate(endDate)}T${pad((h + 1) % 24)}${pad(m)}00`;
-
-  // Stable per event+date so re-importing updates in place instead of duplicating.
-  const uid = `${event.id}-${startDT}@${SITE.event.fileSlug}`;
-  const dtStamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-
-  const ics = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    `PRODID:${SITE.brand.icsProdId}`,
-    "BEGIN:VEVENT",
-    `UID:${uid}`,
-    `DTSTAMP:${dtStamp}`,
-    `SUMMARY:${escapeICSText(`${event.title} – ${SITE.event.name}`)}`,
-    `DTSTART;TZID=${SITE.countdown.timeZone}:${startDT}`,
-    `DTEND;TZID=${SITE.countdown.timeZone}:${endDT}`,
-    `LOCATION:${escapeICSText(event.location)}`,
-    `DESCRIPTION:${escapeICSText(event.description)}`,
-    `URL:${window.location.href}`,
-    "END:VEVENT",
-    "END:VCALENDAR",
-  ].join("\r\n");
-
-  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+/** Turn generated calendar text into a download the browser saves. */
+function downloadIcs(filename: string, contents: string) {
+  const blob = new Blob([contents], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${event.title.replace(/\s+/g, "-")}-${SITE.event.fileSlug}.ics`;
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+const ICS_OPTIONS = {
+  prodId: SITE.brand.icsProdId,
+  timeZone: SITE.countdown.timeZone,
+  calendarName: SITE.event.name,
+  slug: SITE.event.fileSlug,
+} as const;
+
+/** Build the ICS payload for one event on the given day. */
+function buildEventIcs(event: ScheduleEvent, dayDate: string, pageUrl: string) {
+  return buildIcsCalendar(
+    [{ ...event, date: dayDate }],
+    { ...ICS_OPTIONS, url: pageUrl }
+  );
+}
+
+/** Build one calendar containing every event in the user's plan. */
+function buildPlanIcs(dayGroups: Array<{ date: string; events: ScheduleEvent[] }>) {
+  const events = dayGroups.flatMap((day) =>
+    day.events.map((event) => ({ ...event, date: day.date }))
+  );
+  return buildIcsCalendar(events, ICS_OPTIONS);
 }
 
 // ─── Event drawer community hub ───────────────────────────────────────────────
@@ -200,7 +180,10 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
   };
 
   const handleAddToCalendar = () => {
-    buildICS(event, dayDate);
+    downloadIcs(
+      `${event.title.replace(/\s+/g, "-")}-${SITE.event.fileSlug}.ics`,
+      buildEventIcs(event, dayDate, window.location.href)
+    );
     toast.success("Calendar file downloaded!", {
       description: "Open the .ics file to add to your calendar app.",
     });
@@ -523,6 +506,14 @@ export default function SchedulePage() {
     setIsDrawerOpen(!!selectedEvent);
   }, [selectedEvent]);
 
+  // Arriving from someone else's shared plan link: open the plan view so the
+  // "add these events" prompt is visible straight away.
+  useEffect(() => {
+    if (parseIcsPlanIds(window.location.search, ALL_SCHEDULE_EVENT_IDS).length > 0) {
+      setShowMyPlan(true);
+    }
+  }, []);
+
   const handleToggleSaved = (eventId: string) => {
     try {
       const result = toggleSavedEventInStorage(
@@ -535,6 +526,57 @@ export default function SchedulePage() {
       toast.success(result.saved ? "Added to My Plan" : "Removed from My Plan");
     } catch {
       toast.error("Couldn't save your plan on this device.");
+    }
+  };
+
+  // A shared ?plan= link carries event ids; we only offer ones this deployment knows.
+  const sharedPlanIds = useMemo(
+    () => parseIcsPlanIds(window.location.search, ALL_SCHEDULE_EVENT_IDS),
+    []
+  );
+  const [dismissedSharedPlan, setDismissedSharedPlan] = useState(false);
+  const unsavedSharedPlanIds = useMemo(
+    () => sharedPlanIds.filter((id) => !savedEventIds.includes(id)),
+    [sharedPlanIds, savedEventIds]
+  );
+
+  const handleAddSharedPlan = () => {
+    try {
+      for (const eventId of unsavedSharedPlanIds) {
+        toggleSavedEventInStorage(
+          window.localStorage,
+          SITE.event.fileSlug,
+          ALL_SCHEDULE_EVENT_IDS,
+          eventId
+        );
+      }
+      setSavedEventIds(
+        readSavedEventIdsFromStorage(window.localStorage, SITE.event.fileSlug, ALL_SCHEDULE_EVENT_IDS)
+      );
+      setShowMyPlan(true);
+      toast.success(`Added ${unsavedSharedPlanIds.length} events to My Plan`);
+    } catch {
+      toast.error("Couldn't save your plan on this device.");
+    }
+  };
+
+  const handleDownloadPlan = () => {
+    if (savedDayGroups.length === 0) return;
+    downloadIcs(`my-plan-${SITE.event.fileSlug}.ics`, buildPlanIcs(savedDayGroups));
+    toast.success("Plan downloaded!", {
+      description: `${savedEventIds.length} events — open the file to add them to your calendar.`,
+    });
+  };
+
+  const handleCopyPlanLink = async () => {
+    const url = `${window.location.origin}/schedule?plan=${buildIcsPlanQuery(savedEventIds)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Share link copied!", {
+        description: "Anyone opening it can add these events to their own plan.",
+      });
+    } catch {
+      toast.info("Copy this link", { description: url });
     }
   };
 
@@ -620,6 +662,68 @@ export default function SchedulePage() {
               </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* My Plan actions — export, share, and accept a shared plan */}
+        {showMyPlan && (
+          <div className="ml-12 md:ml-20 mb-10 space-y-4">
+            {sharedPlanIds.length > 0 && unsavedSharedPlanIds.length > 0 && !dismissedSharedPlan && (
+              <div
+                role="status"
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-falla-ink bg-falla-sand/20 p-5"
+              >
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-fire">
+                    Shared plan
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-falla-ink">
+                    This link carries {unsavedSharedPlanIds.length}{" "}
+                    {unsavedSharedPlanIds.length === 1 ? "event" : "events"}. Add them to your plan?
+                  </p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Button
+                    onClick={handleAddSharedPlan}
+                    className="rounded-xl border-2 border-falla-ink shadow-solid hover:shadow-none"
+                  >
+                    Add to My Plan
+                  </Button>
+                  <button
+                    onClick={() => setDismissedSharedPlan(true)}
+                    className="text-[10px] font-black uppercase tracking-widest text-falla-ink/40 underline underline-offset-4 hover:text-falla-ink"
+                  >
+                    Not now
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {savedEventIds.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-falla-ink/10 bg-falla-paper/60 p-5">
+                <p className="text-sm font-semibold text-falla-ink/55">
+                  <span className="tabular-nums">{savedEventIds.length}</span>{" "}
+                  {savedEventIds.length === 1 ? "event" : "events"} · kept in this browser on this device
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    onClick={handleDownloadPlan}
+                    startContent={<CalendarPlus size={18} weight="bold" />}
+                    className="rounded-xl border-2 border-falla-ink shadow-solid hover:shadow-none"
+                  >
+                    Download calendar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleCopyPlanLink}
+                    startContent={<ShareNetwork size={18} weight="bold" />}
+                    className="rounded-xl border-2 shadow-solid hover:shadow-none"
+                  >
+                    Copy share link
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
