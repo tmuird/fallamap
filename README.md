@@ -98,8 +98,9 @@ Missing/invalid values degrade rather than white-screen:
 | `npm run dev` | Dev server on http://localhost:5173 |
 | `npm run build` | `tsc && vite build` → `dist/` |
 | `npm run lint` | ESLint 9 flat config, `--max-warnings 0` (must stay clean) |
-| `npm test` | Unit tests for search highlighting, navbar scroll stability, saved event plans, calendar export/sharing, config health, and auth-step recovery |
+| `npm test` | Unit tests for search highlighting, navbar scroll stability, saved event plans, calendar export/sharing, config health, and auth form validation/error mapping |
 | `npm run test:search` | Unit tests for literal-safe, repeatable autocomplete highlighting |
+| `npm run audit:ui` | **Visual correctness audit.** Drives a real Chromium over every route at 1440/768/390px in light *and* dark theme and fails on: content clipped inside `overflow:hidden` (decorative `aria-hidden` layers exempt), overlapping elements confirmed with `elementFromPoint`, text below WCAG AA against its effective background, and horizontal overflow. `--base= --routes= --widths= --themes= --json` |
 | `npm run doctor` | Check a deployment before shipping it: required env vars, placeholder/secret-token mistakes, data-file integrity, and whether the Supabase host actually resolves. Exits non-zero on a hard failure |
 | `npm run seed` | Apply `scripts/schema.sql` + seed data (needs `SUPABASE_DB_URL`) |
 | `npm run verify:schema` | Local schema/seed/RLS smoke tests (needs Docker) |

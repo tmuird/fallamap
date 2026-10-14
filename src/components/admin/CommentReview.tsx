@@ -78,7 +78,7 @@ export function CommentReview() {
     <div className="space-y-6 mt-16">
       <div className="flex items-center justify-between mb-8 pt-12 border-t-2 border-falla-ink/10">
         <h2 className="font-display text-3xl text-falla-ink">Comment Queue</h2>
-        <span className="brutal-pill px-4 py-1 text-xs font-black uppercase text-falla-fire">
+        <span className="brutal-pill px-4 py-1 text-xs font-black uppercase text-falla-fire-ink">
           {pendingComments.length} Pending
         </span>
       </div>
@@ -92,7 +92,7 @@ export function CommentReview() {
           {pendingComments.map((comment) => (
             <Card key={comment.id}>
               <CardBody className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <div className="flex-shrink-0 w-12 h-12 bg-falla-fire/10 text-falla-fire rounded-2xl flex items-center justify-center border-2 border-falla-fire/20">
+                <div className="flex-shrink-0 w-12 h-12 bg-falla-fire/10 text-falla-fire-ink rounded-2xl flex items-center justify-center border-2 border-falla-fire/20">
                   <ChatCircleDots size={24} weight="bold" />
                 </div>
                 
@@ -101,12 +101,12 @@ export function CommentReview() {
                     <span className="text-[10px] font-black uppercase tracking-widest text-white bg-falla-ink px-2 py-0.5 rounded-md">
                       {SITE.nouns.monument} #{comment.fallas?.number}
                     </span>
-                    <span className="text-xs font-bold text-falla-ink/40 uppercase tracking-widest">
+                    <span className="text-xs font-bold text-falla-ink/65 uppercase tracking-widest">
                       {new Date(comment.created_at).toLocaleString()}
                     </span>
                   </div>
                   <p className="font-bold text-lg leading-snug">"{comment.text}"</p>
-                  <p className="text-xs text-falla-ink/50 font-bold uppercase mt-2">
+                  <p className="text-xs text-falla-ink/65 font-bold uppercase mt-2">
                     By: {comment.user_id ? "Verified User" : "Anonymous"}
                   </p>
                 </div>

@@ -72,7 +72,7 @@ export function ImageReview() {
   if (!isAdmin) {
     return (
       <div className="p-8 text-center bg-falla-paper ink-border rounded-3xl border-2 border-falla-ink">
-        <ShieldCheck size={48} weight="thin" className="mx-auto mb-4 text-falla-fire" />
+        <ShieldCheck size={48} weight="thin" className="mx-auto mb-4 text-falla-fire-ink" />
         <h2 className="font-display text-2xl text-falla-ink mb-2">Access Denied</h2>
         <p className="text-sm font-medium opacity-60 text-falla-ink">{SITE.admin.accessDenied}</p>
       </div>
@@ -85,7 +85,7 @@ export function ImageReview() {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-8">
         <h2 className="font-display text-3xl text-falla-ink">Photo Queue</h2>
-        <span className="brutal-pill px-4 py-1 text-xs font-black uppercase text-falla-fire">
+        <span className="brutal-pill px-4 py-1 text-xs font-black uppercase text-falla-fire-ink">
           {pendingImages.length} Pending
         </span>
       </div>
@@ -103,13 +103,13 @@ export function ImageReview() {
               </div>
               <CardBody className="p-6">
                 <div className="mb-4">
-                  <p className="text-xs font-black uppercase tracking-widest text-falla-fire mb-1">
+                  <p className="text-xs font-black uppercase tracking-widest text-falla-fire-ink mb-1">
                     {SITE.nouns.monument} #{img.fallas?.number}
                   </p>
                   <p className="font-bold leading-tight truncate">
                     {img.fallas?.name}
                   </p>
-                  <p className="text-[10px] text-falla-ink/40 font-bold uppercase mt-2">
+                  <p className="text-[10px] text-falla-ink/65 font-bold uppercase mt-2">
                     {new Date(img.created_at).toLocaleString()}
                   </p>
                 </div>

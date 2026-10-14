@@ -60,11 +60,11 @@ export function MascletaCountdown() {
     >
       <div className="bg-falla-paper/90 backdrop-blur-md ink-border shadow-solid rounded-[2.5rem] p-6 md:p-8 flex flex-col gap-4 min-w-[200px]">
         <div className="flex items-center gap-4">
-          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border-2 ${isLive ? 'bg-falla-fire text-falla-paper border-falla-ink animate-pulse' : 'bg-falla-fire/10 text-falla-fire border-falla-fire/20'}`}>
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border-2 ${isLive ? 'bg-falla-fire text-falla-on-fire border-falla-ink animate-pulse' : 'bg-falla-fire/10 text-falla-fire-ink border-falla-fire/20'}`}>
             {isLive ? <SpeakerHigh size={20} weight="fill" /> : <Timer size={20} weight="bold" />}
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 leading-none mb-1">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/65 leading-none mb-1">
               {isLive ? SITE.countdown.liveLabel : SITE.countdown.idleLabel}
             </p>
             <h4 className="text-base font-display lowercase leading-none text-falla-ink">
@@ -75,19 +75,19 @@ export function MascletaCountdown() {
 
         {isLive ? (
           <div className="flex items-center gap-2 px-3 py-2 bg-falla-fire/5 rounded-xl border border-falla-fire/10">
-            <Fire size={14} weight="fill" className="text-falla-fire" />
-            <span className="text-xs font-black uppercase text-falla-fire tracking-widest">{SITE.countdown.liveBanner}</span>
+            <Fire size={14} weight="fill" className="text-falla-fire-ink" />
+            <span className="text-xs font-black uppercase text-falla-fire-ink tracking-widest">{SITE.countdown.liveBanner}</span>
           </div>
         ) : (
           <div className="flex items-center gap-2 justify-between">
             {timeLeft && (
               <div className="flex gap-1.5 items-baseline">
                 <span className="text-2xl font-display text-falla-ink">{timeLeft.hours.toString().padStart(2, '0')}</span>
-                <span className="text-[10px] font-bold text-falla-ink/20 uppercase">h</span>
+                <span className="text-[10px] font-bold text-falla-ink/65 uppercase">h</span>
                 <span className="text-2xl font-display text-falla-ink">{timeLeft.minutes.toString().padStart(2, '0')}</span>
-                <span className="text-[10px] font-bold text-falla-ink/20 uppercase">m</span>
-                <span className="text-2xl font-display text-falla-fire">{timeLeft.seconds.toString().padStart(2, '0')}</span>
-                <span className="text-[10px] font-bold text-falla-fire/20 uppercase">s</span>
+                <span className="text-[10px] font-bold text-falla-ink/65 uppercase">m</span>
+                <span className="text-2xl font-display text-falla-fire-ink">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+                <span className="text-[10px] font-bold text-falla-fire-ink uppercase">s</span>
               </div>
             )}
           </div>

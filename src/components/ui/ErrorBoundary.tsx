@@ -41,14 +41,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <h1 className="font-display text-2xl uppercase tracking-widest text-falla-ink">
               Something broke
             </h1>
-            <p className="text-sm font-bold text-falla-ink/60 leading-relaxed">
+            <p className="text-sm font-bold text-falla-ink/65 leading-relaxed">
               This page hit an unexpected error. The rest of the site is still
               fine — try again or head back home.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={this.handleReload}
-                className="px-6 py-3 bg-falla-fire text-white border-2 border-falla-ink rounded-xl shadow-solid-sm active:scale-95 font-black text-xs uppercase tracking-widest transition-all"
+                className="px-6 py-3 bg-falla-fire text-falla-on-fire border-2 border-falla-ink rounded-xl shadow-solid-sm active:scale-95 font-black text-xs uppercase tracking-widest transition-all"
               >
                 Reload
               </button>

@@ -456,7 +456,7 @@ const MapComponent = () => {
             <h2 className="font-display text-xl uppercase tracking-widest text-falla-ink dark:text-white">
               Map unavailable
             </h2>
-            <p className="text-sm font-bold text-falla-ink/60 dark:text-white/60 leading-relaxed">
+            <p className="text-sm font-bold text-falla-ink/65 dark:text-white/60 leading-relaxed">
               The interactive map needs WebGL, which this browser or device has
               disabled. You can still search monuments and events above.
             </p>
@@ -501,7 +501,7 @@ const MapComponent = () => {
                     }
                   }}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/30 text-falla-ink h-full min-w-0"
+                  className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/65 text-falla-ink h-full min-w-0"
                 />
                 <AnimatePresence>
                   {searchQuery && (
@@ -550,7 +550,7 @@ const MapComponent = () => {
                     startContent={mode.icon}
                     className={cn(
                       "h-8 md:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0 active:scale-95", 
-                      filterMode === mode.id ? "bg-falla-fire text-falla-paper shadow-none border-falla-fire" : "text-falla-ink/40 hover:bg-falla-ink/5"
+                      filterMode === mode.id ? "bg-falla-fire text-falla-on-fire shadow-none border-falla-fire" : "text-falla-ink/65 hover:bg-falla-ink/5"
                     )}
                   >
                     {mode.label}
@@ -582,18 +582,18 @@ const MapComponent = () => {
                         className="w-full px-6 py-3 md:py-4 flex items-center justify-between hover:bg-falla-ink/5 dark:hover:bg-white/5 transition-all group relative bg-transparent border-none active:scale-[0.98] gap-4"
                       >
                         <div className="flex items-center gap-4 min-w-0 flex-1">
-                          <div className="w-10 h-10 rounded-xl bg-falla-ink/5 dark:bg-white/5 flex items-center justify-center font-display text-lg text-falla-fire group-hover:scale-110 transition-all shrink-0">
+                          <div className="w-10 h-10 rounded-xl bg-falla-ink/5 dark:bg-white/5 flex items-center justify-center font-display text-lg text-falla-fire-ink group-hover:scale-110 transition-all shrink-0">
                             {result.is_hub ? <CalendarBlank size={20} weight="bold" /> : `#${result.number}`}
                           </div>
                           <div className="text-left overflow-hidden flex-1">
                             <p className="font-bold text-sm text-falla-ink leading-none mb-1 truncate transition-colors">
                               {segments.map(({ text, highlighted }, i) =>
                                 highlighted
-                                  ? <span key={i} className="text-falla-fire">{text}</span>
+                                  ? <span key={i} className="text-falla-fire-ink">{text}</span>
                                   : <span key={i} className="opacity-80 group-hover:opacity-100">{text}</span>
                               )}
                             </p>
-                            <p className="text-[10px] font-black uppercase text-falla-ink/40 tracking-widest truncate">
+                            <p className="text-[10px] font-black uppercase text-falla-ink/65 tracking-widest truncate">
                               {result.is_hub ? 'Official Event Location' : result.is_special ? 'Special Section' : 'Monument'}
                             </p>
                           </div>

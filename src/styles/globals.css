@@ -40,9 +40,26 @@
   --falla-paper-rgb: 250 247 242;
   --falla-ink-rgb: 26 26 26;
   --falla-fire-rgb: 255 112 67;
+  /* Fire as TEXT. The brand #FF7043 is only 2.57:1 on paper — fine as a fill, not as
+     type. This is the same hue taken dark enough to pass WCAG AA (5.39:1 on paper). */
+  --falla-fire-ink-rgb: 178 64 28;
+  /* Type sitting ON a fire fill. Fire stays bright in both themes, so this stays dark in
+     both: white on #FF7043 is only 2.74:1, dark is 6.34:1. */
+  --falla-on-fire-rgb: 26 26 26;
+  /* Liked/saved accent. Tailwind's red-500 is 3.52:1 on paper; this is that red taken dark
+     enough to pass AA with margin (6.05:1). Dark theme lifts it instead (6.29:1). */
+  --falla-like-rgb: 185 28 28;
+  /* Brand orange on an INVERTED surface (the auth page's promo panel paints `bg-ink`, which
+     is dark here but light in dark theme). Fire-as-text has to invert with it, so this is
+     the opposite of --falla-fire-ink: 6.34:1 on ink here, 5.39:1 on paper in dark theme. */
+  --falla-inverse-accent-rgb: 255 112 67;
   --falla-sage-rgb: 139 148 103;
   --falla-sand-rgb: 230 213 184;
   --marker-scale: 1;
+  /* Vertical space the navbar occupies. Full-bleed pages (the map) start below it, and the
+     offline banner raises this to its own bottom edge — otherwise the fixed map layer draws
+     straight over the banner on small screens. */
+  --content-top: 3.5rem;
   --hub-scale: 1;
 }
 
@@ -56,10 +73,23 @@
   --falla-paper-rgb: 26 26 26;
   --falla-ink-rgb: 250 247 242;
   --falla-fire-rgb: 255 112 67;
+  /* On the dark surface the brand orange already reads at 6.34:1, so fire-as-text only
+     needs a small lift to clear AA with margin (7.51:1). */
+  --falla-fire-ink-rgb: 255 138 99;
+  --falla-inverse-accent-rgb: 178 64 28;
+  --falla-on-fire-rgb: 26 26 26;
+  --falla-like-rgb: 248 113 113;
   --falla-sage-rgb: 139 148 103;
   --falla-sand-rgb: 45 45 45;
   --marker-scale: 1;
   --hub-scale: 1;
+}
+
+/* The navbar is taller from the md breakpoint up, and so is the content offset below it. */
+@media (min-width: 768px) {
+  :root {
+    --content-top: 5rem;
+  }
 }
 
 body {

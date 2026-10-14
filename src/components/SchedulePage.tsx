@@ -196,11 +196,11 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
         <div className="lg:col-span-7 space-y-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Camera size={24} weight="bold" className="text-falla-fire" />
+              <Camera size={24} weight="bold" className="text-falla-fire-ink" />
               <h3 className="text-2xl font-display lowercase">
                 Photo Stream
                 {images.length > 0 && (
-                  <span className="ml-2 text-sm font-sans font-black text-falla-ink/30">
+                  <span className="ml-2 text-sm font-sans font-black text-falla-ink/65">
                     {images.length}
                   </span>
                 )}
@@ -265,7 +265,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
                       <Heart
                         size={14}
                         weight={img.likeCount > 0 ? "fill" : "bold"}
-                        className={img.likeCount > 0 ? "text-red-400" : "text-white"}
+                        className={img.likeCount > 0 ? "text-falla-like" : "text-white"}
                       />
                       <span className="text-[10px] font-black">{img.likeCount}</span>
                     </button>
@@ -295,9 +295,9 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
                   <Camera
                     size={24}
                     weight="thin"
-                    className="text-falla-ink/20 mb-2 group-hover:scale-110 transition-transform"
+                    className="text-falla-ink/65 mb-2 group-hover:scale-110 transition-transform"
                   />
-                  <p className="text-[9px] font-black uppercase text-falla-ink/20 tracking-widest">
+                  <p className="text-[9px] font-black uppercase text-falla-ink/65 tracking-widest">
                     Be first to share
                   </p>
                 </button>
@@ -306,14 +306,14 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
           )}
 
           <div className="p-8 rounded-[2.5rem] bg-falla-fire/5 border-2 border-falla-fire/10 flex items-center gap-6">
-            <div className="w-16 h-16 rounded-full bg-falla-fire flex items-center justify-center text-falla-paper shadow-solid-sm shrink-0">
+            <div className="w-16 h-16 rounded-full bg-falla-fire flex items-center justify-center text-falla-on-fire shadow-solid-sm shrink-0">
               <TrendUp size={32} weight="bold" />
             </div>
             <div>
               <h4 className="text-lg font-display lowercase leading-none mb-1">
                 Trending now
               </h4>
-              <p className="text-xs font-medium text-falla-ink/60 leading-relaxed">
+              <p className="text-xs font-medium text-falla-ink/65 leading-relaxed">
                 Share your moments — photos and notes make this community hub come alive.
               </p>
             </div>
@@ -328,7 +328,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
               <h3 className="text-2xl font-display lowercase">
                 Live Notes
                 {comments.length > 0 && (
-                  <span className="ml-2 text-sm font-sans font-black text-falla-ink/30">
+                  <span className="ml-2 text-sm font-sans font-black text-falla-ink/65">
                     {comments.length}
                   </span>
                 )}
@@ -362,11 +362,11 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire-ink">
                           {c.user_id ? "Community" : "Anonymous"}
                         </span>
                       </div>
-                      <span className="text-[9px] font-bold text-falla-ink/20">
+                      <span className="text-[9px] font-bold text-falla-ink/65">
                         {new Date(c.created_at).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -391,7 +391,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
 
           {/* Comment input */}
           <div className="pt-4 border-t-2 border-falla-ink/5 space-y-3">
-            <div className="flex items-center gap-2 px-2 text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
+            <div className="flex items-center gap-2 px-2 text-[9px] font-black uppercase tracking-widest text-falla-ink/65">
               <ChatCircleDots size={12} weight="bold" />
               <span>Public Community Note</span>
             </div>
@@ -407,13 +407,13 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
                 }}
                 placeholder={isSignedIn ? "Join the discussion..." : "Sign in to share a note..."}
                 disabled={!isSignedIn}
-                className="flex-1 bg-falla-paper border-2 border-falla-ink rounded-xl px-5 py-3 text-sm font-bold placeholder:text-falla-ink/20 focus:outline-none focus:border-falla-fire transition-all disabled:opacity-50"
+                className="flex-1 bg-falla-paper border-2 border-falla-ink rounded-xl px-5 py-3 text-sm font-bold placeholder:text-falla-ink/65 focus:outline-none focus:border-falla-fire transition-all disabled:opacity-50"
               />
               <Button
                 isIconOnly
                 onClick={handleCommentSubmit}
                 disabled={!newComment.trim() || !isSignedIn}
-                className="w-12 h-12 bg-falla-fire text-falla-paper border-2 border-falla-ink shadow-solid hover:shadow-none transition-all rounded-xl shrink-0"
+                className="w-12 h-12 bg-falla-fire text-falla-on-fire border-2 border-falla-ink shadow-solid hover:shadow-none transition-all rounded-xl shrink-0"
               >
                 <PaperPlaneRight size={20} weight="bold" />
               </Button>
@@ -426,7 +426,7 @@ function EventCommunityHub({ event, dayDate }: { event: ScheduleEvent; dayDate: 
       <div className="mt-16 flex flex-wrap gap-4 border-t-2 border-falla-ink/5 pt-12">
         <Button
           onClick={handleAddToCalendar}
-          className="h-14 min-w-[200px] flex-1 rounded-xl border-2 border-falla-ink bg-falla-fire text-falla-paper shadow-solid transition-all hover:shadow-none"
+          className="h-14 min-w-[200px] flex-1 rounded-xl border-2 border-falla-ink bg-falla-fire text-falla-on-fire shadow-solid transition-all hover:shadow-none"
           startContent={<CalendarPlus size={20} weight="bold" />}
         >
           Add to Calendar
@@ -606,7 +606,7 @@ export default function SchedulePage() {
           className="text-center mb-12"
         >
           <div className="brutal-pill inline-block mb-6">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire-ink flex items-center gap-2">
               <CalendarBlank size={14} weight="bold" /> {showMyPlan ? "Your saved itinerary" : "The Official Program"}
             </span>
           </div>
@@ -623,7 +623,7 @@ export default function SchedulePage() {
               onClick={() => setShowMyPlan(false)}
               className={cn(
                 "rounded-full px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors",
-                !showMyPlan ? "bg-falla-ink text-falla-paper" : "text-falla-ink/55 hover:text-falla-ink"
+                !showMyPlan ? "bg-falla-ink text-falla-paper" : "text-falla-ink/65 hover:text-falla-ink"
               )}
             >
               Program
@@ -634,7 +634,7 @@ export default function SchedulePage() {
               onClick={() => setShowMyPlan(true)}
               className={cn(
                 "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors",
-                showMyPlan ? "bg-falla-fire text-falla-paper" : "text-falla-ink/55 hover:text-falla-ink"
+                showMyPlan ? "bg-falla-fire text-falla-on-fire" : "text-falla-ink/65 hover:text-falla-ink"
               )}
             >
               <BookmarkSimple size={14} weight={showMyPlan ? "fill" : "bold"} />
@@ -654,8 +654,8 @@ export default function SchedulePage() {
                 className={cn(
                   "px-6 md:px-10 py-3 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap",
                   selectedDayId === day.id
-                    ? "bg-falla-fire text-falla-paper shadow-solid-sm border-2 border-falla-ink translate-y-[-2px]"
-                    : "text-falla-ink/40 hover:text-falla-ink"
+                    ? "bg-falla-fire text-falla-on-fire shadow-solid-sm border-2 border-falla-ink translate-y-[-2px]"
+                    : "text-falla-ink/65 hover:text-falla-ink"
                 )}
               >
                 {day.day}
@@ -674,7 +674,7 @@ export default function SchedulePage() {
                 className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-falla-ink bg-falla-sand/20 p-5"
               >
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-fire">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-fire-ink">
                     Shared plan
                   </p>
                   <p className="mt-1 text-sm font-semibold text-falla-ink">
@@ -691,7 +691,7 @@ export default function SchedulePage() {
                   </Button>
                   <button
                     onClick={() => setDismissedSharedPlan(true)}
-                    className="text-[10px] font-black uppercase tracking-widest text-falla-ink/40 underline underline-offset-4 hover:text-falla-ink"
+                    className="text-[10px] font-black uppercase tracking-widest text-falla-ink/65 underline underline-offset-4 hover:text-falla-ink"
                   >
                     Not now
                   </button>
@@ -701,7 +701,7 @@ export default function SchedulePage() {
 
             {savedEventIds.length > 0 && (
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-falla-ink/10 bg-falla-paper/60 p-5">
-                <p className="text-sm font-semibold text-falla-ink/55">
+                <p className="text-sm font-semibold text-falla-ink/65">
                   <span className="tabular-nums">{savedEventIds.length}</span>{" "}
                   {savedEventIds.length === 1 ? "event" : "events"} · kept in this browser on this device
                 </p>
@@ -740,9 +740,9 @@ export default function SchedulePage() {
 
           {showMyPlan && visibleDayGroups.length === 0 ? (
             <div className="ml-12 md:ml-20 rounded-2xl border-2 border-dashed border-falla-ink/20 bg-falla-sand/10 p-7 md:p-10">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-fire">A plan of your own</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-fire-ink">A plan of your own</p>
               <h2 className="mt-3 text-2xl font-display lowercase text-falla-ink">Nothing saved yet</h2>
-              <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-falla-ink/55">
+              <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-falla-ink/65">
                 Open any event and choose “Add to My Plan”. Your picks stay in this browser on this device.
               </p>
               <Button
@@ -766,7 +766,7 @@ export default function SchedulePage() {
               {visibleDayGroups.map((dayGroup) => (
                 <div key={dayGroup.id} className="space-y-4">
                   <div className="ml-16 md:ml-28 mb-10 flex items-center gap-4">
-                    <h2 className="text-3xl font-display text-falla-fire lowercase leading-none">
+                    <h2 className="text-3xl font-display text-falla-fire-ink lowercase leading-none">
                       {dayGroup.subtitle}
                     </h2>
                     <div className="h-[2px] flex-1 bg-falla-ink/5" />
@@ -804,24 +804,24 @@ export default function SchedulePage() {
                           className="flex min-w-0 flex-1 items-center gap-6 rounded-2xl px-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-falla-fire md:px-8"
                         >
                           <div className="w-16 shrink-0 md:w-24">
-                            <span className="text-xl font-black text-falla-ink/40 transition-colors group-hover:text-falla-ink md:text-2xl">
+                            <span className="text-xl font-black text-falla-ink/65 transition-colors group-hover:text-falla-ink md:text-2xl">
                               {event.time}
                             </span>
                           </div>
 
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 flex items-center gap-3">
-                              <h3 className="truncate text-xl font-display leading-tight lowercase text-falla-ink transition-colors group-hover:text-falla-fire md:text-3xl">
+                              <h3 className="truncate text-xl font-display leading-tight lowercase text-falla-ink transition-colors group-hover:text-falla-fire-ink md:text-3xl">
                                 {event.title}
                               </h3>
                               {event.isLive && (
-                                <span className="flex items-center gap-1.5 rounded-md border border-falla-fire/20 bg-falla-fire/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-falla-fire">
+                                <span className="flex items-center gap-1.5 rounded-md border border-falla-fire/20 bg-falla-fire/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-falla-fire-ink">
                                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-falla-fire" />
                                   Live
                                 </span>
                               )}
                             </div>
-                            <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-falla-ink/30">
+                            <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-falla-ink/65">
                               <div className="flex min-w-0 items-center gap-1.5">
                                 <MapPin size={12} weight="bold" />
                                 <span className="truncate">{event.location}</span>
@@ -840,7 +840,7 @@ export default function SchedulePage() {
                             </div>
                           </div>
 
-                          <CaretRight size={24} weight="bold" className="shrink-0 text-falla-fire opacity-40 transition-opacity group-hover:opacity-100" />
+                          <CaretRight size={24} weight="bold" className="shrink-0 text-falla-fire-ink opacity-40 transition-opacity group-hover:opacity-100" />
                         </button>
 
                         <Button
@@ -850,7 +850,7 @@ export default function SchedulePage() {
                           aria-label={savedEventIds.includes(event.id) ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
                           aria-pressed={savedEventIds.includes(event.id)}
                           title={savedEventIds.includes(event.id) ? "Remove from My Plan" : "Add to My Plan"}
-                          className="mr-3 h-9 w-9 shrink-0 text-falla-fire hover:bg-falla-fire/10"
+                          className="mr-3 h-9 w-9 shrink-0 text-falla-fire-ink hover:bg-falla-fire/10"
                           onClick={() => handleToggleSaved(event.id)}
                         >
                           <BookmarkSimple size={18} weight={savedEventIds.includes(event.id) ? "fill" : "bold"} />
@@ -893,7 +893,7 @@ export default function SchedulePage() {
                             <span className="text-3xl font-black text-falla-ink">
                               {selectedEvent.time}
                             </span>
-                            <span className="text-[10px] font-black uppercase text-falla-fire tracking-widest">
+                            <span className="text-[10px] font-black uppercase text-falla-fire-ink tracking-widest">
                               Central European Time
                             </span>
                           </div>
@@ -921,7 +921,7 @@ export default function SchedulePage() {
                             {selectedEvent.type}
                           </Chip>
                           <div className="flex items-center gap-2 px-5 py-2 bg-falla-sand/20 rounded-full border-2 border-falla-ink/5">
-                            <MapPin size={18} weight="bold" className="text-falla-fire" />
+                            <MapPin size={18} weight="bold" className="text-falla-fire-ink" />
                             <span className="text-xs font-bold text-falla-ink uppercase tracking-widest">
                               {selectedEvent.location}
                             </span>
@@ -929,7 +929,7 @@ export default function SchedulePage() {
                         </div>
                       </div>
 
-                      <p className="text-xl md:text-2xl font-medium leading-tight text-falla-ink/60 max-w-3xl">
+                      <p className="text-xl md:text-2xl font-medium leading-tight text-falla-ink/65 max-w-3xl">
                         {selectedEvent.description}
                       </p>
                       <div className="flex flex-wrap items-center gap-3">
@@ -938,14 +938,14 @@ export default function SchedulePage() {
                           variant="outline"
                           className={cn(
                             "h-12 rounded-xl border-2 shadow-solid transition-all hover:shadow-none",
-                            savedEventIds.includes(selectedEvent.id) && "bg-falla-fire text-falla-paper"
+                            savedEventIds.includes(selectedEvent.id) && "bg-falla-fire text-falla-on-fire"
                           )}
                           startContent={<BookmarkSimple size={18} weight={savedEventIds.includes(selectedEvent.id) ? "fill" : "bold"} />}
                           aria-pressed={savedEventIds.includes(selectedEvent.id)}
                         >
                           {savedEventIds.includes(selectedEvent.id) ? "Remove from My Plan" : "Add to My Plan"}
                         </Button>
-                        <span className="text-xs font-semibold text-falla-ink/45">
+                        <span className="text-xs font-semibold text-falla-ink/65">
                           Saved privately on this device.
                         </span>
                       </div>
@@ -966,10 +966,10 @@ export default function SchedulePage() {
 
         {/* Footer note */}
         <div className="mt-20 p-10 rounded-[2.5rem] bg-falla-sand/10 border-2 border-dashed border-falla-ink/10 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-falla-ink/30 mb-3 italic">
+          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-falla-ink/65 mb-3 italic">
             "Senyor pirotècnic, pot començar la mascletà!"
           </p>
-          <p className="text-xs font-bold text-falla-ink/40 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs font-bold text-falla-ink/65 max-w-xl mx-auto leading-relaxed">
             The official program is subject to changes based on weather and city safety
             protocols. Times are indicative of the main celebration start.
           </p>

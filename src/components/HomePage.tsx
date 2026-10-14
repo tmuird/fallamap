@@ -8,7 +8,7 @@ import { SITE } from "@/lib/siteConfig";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-falla-paper flex flex-col items-center relative overflow-x-hidden selection:bg-falla-fire selection:text-white pb-20">
+    <div className="min-h-screen bg-falla-paper flex flex-col items-center relative overflow-x-hidden selection:bg-falla-fire selection:text-falla-on-fire pb-20">
       {/* Subtle "Senyera" / Valencian Flag Gradient Hint at top edge */}
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-falla-fire via-yellow-400 to-falla-fire opacity-50" />
       
@@ -41,12 +41,12 @@ export default function HomePage() {
               className="flex flex-col items-center gap-2"
             >
               <h2 className="text-fluid-lg md:text-fluid-xl font-display text-falla-ink lowercase max-w-2xl leading-[0.9]">
-                {SITE.hero.headlineBefore} <span className="text-falla-fire relative inline-block">
+                {SITE.hero.headlineBefore} <span className="text-falla-fire-ink relative inline-block">
                   {SITE.hero.headlineHighlight}
                   <motion.span 
                     animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.05, 1] }} 
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute -top-[1vh] -right-[2vw] text-falla-fire/40 text-[2rem] md:text-[4rem]"
+                    className="absolute -top-[1vh] -right-[2vw] text-falla-fire-ink/70 text-[2rem] md:text-[4rem]"
                   >
                     *
                   </motion.span>
@@ -60,9 +60,9 @@ export default function HomePage() {
                 transition={{ delay: 0.3 }}
                 className="flex items-center gap-2 px-4 py-1.5 bg-falla-paper/90 rounded-full border-2 border-falla-ink/15 shadow-sm mt-1 text-falla-ink"
               >
-                <Sparkle size={14} weight="fill" className="text-falla-fire animate-spin-slow" />
+                <Sparkle size={14} weight="fill" className="text-falla-fire-ink animate-spin-slow" />
                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-falla-ink/70">
-                  <span className="text-falla-fire">{SITE.hero.pulseHighlight}</span> {SITE.hero.pulseSuffix}
+                  <span className="text-falla-fire-ink">{SITE.hero.pulseHighlight}</span> {SITE.hero.pulseSuffix}
                 </span>
               </motion.div>
             </motion.div>
@@ -76,7 +76,7 @@ export default function HomePage() {
               <Link to="/map" className="flex-1 sm:flex-none">
                 <Button 
                   size="lg"
-                  className="bg-falla-fire text-falla-paper h-12 md:h-14 px-8 md:px-10 rounded-full text-sm md:text-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-2 w-full hover:translate-y-[-2px] hover:shadow-solid-lg hover:rotate-1 active:translate-y-0 transition-all group font-black uppercase tracking-widest"
+                  className="bg-falla-fire text-falla-on-fire h-12 md:h-14 px-8 md:px-10 rounded-full text-sm md:text-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-2 w-full hover:translate-y-[-2px] hover:shadow-solid-lg hover:rotate-1 active:translate-y-0 transition-all group font-black uppercase tracking-widest"
                 >
                   Explore Map 
                   <motion.div
@@ -122,19 +122,19 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="hidden md:flex gap-12 items-center text-falla-ink/40 font-black uppercase text-[11px] tracking-[0.4em]"
+            className="hidden md:flex gap-12 items-center text-falla-ink/65 font-black uppercase text-[11px] tracking-[0.4em]"
           >
-            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><MapTrifold size={20} weight="bold" /> {SITE.nav.map}</Link>
+            <Link to="/map" className="hover:text-falla-fire-ink transition-all hover:scale-110 flex items-center gap-2"><MapTrifold size={20} weight="bold" /> {SITE.nav.map}</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><CalendarBlank size={20} weight="bold" /> {SITE.nav.program}</Link>
+            <Link to="/schedule" className="hover:text-falla-fire-ink transition-all hover:scale-110 flex items-center gap-2"><CalendarBlank size={20} weight="bold" /> {SITE.nav.program}</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> {SITE.nav.archive}</Link>
+            <Link to="/archive" className="hover:text-falla-fire-ink transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> {SITE.nav.archive}</Link>
           </motion.div>
         </main>
 
         {/* Minimal Footer */}
         <div className="pb-6 text-center flex flex-col items-center gap-2 shrink-0">
-          <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.1em] text-falla-ink/20 italic">
+          <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.1em] text-falla-ink/65 italic">
             {SITE.tagline}
           </p>
         </div>

@@ -53,14 +53,14 @@ export default function ContactPage() {
           className="text-center mb-20"
         >
           <div className="brutal-pill inline-block mb-6">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire-ink flex items-center gap-2">
               <ChatCircleDots size={14} weight="bold" /> Get in touch
             </span>
           </div>
           <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight lowercase">
-            {SITE.contact.headlineBefore} <span className="text-falla-fire">{SITE.contact.headlineHighlight}</span>
+            {SITE.contact.headlineBefore} <span className="text-falla-fire-ink">{SITE.contact.headlineHighlight}</span>
           </h1>
-          <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">
+          <p className="text-falla-ink/65 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">
             {SITE.contact.intro}
           </p>
         </motion.div>
@@ -68,27 +68,27 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
           {/* Info side */}
           <div className="md:col-span-5 space-y-8">
-            <Card className="bg-falla-fire text-falla-paper border-falla-ink border-2 shadow-solid">
+            <Card className="bg-falla-fire text-falla-on-fire border-falla-ink border-2 shadow-solid">
               <CardBody className="p-8">
                 <h3 className="text-4xl font-display mb-8 leading-none lowercase">{SITE.location.city}</h3>
                 <div className="space-y-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
-                      <Envelope className="w-6 h-6 text-white" weight="bold" />
+                    <div className="w-12 h-12 rounded-2xl bg-falla-on-fire/10 flex items-center justify-center border border-falla-on-fire/30">
+                      <Envelope className="w-6 h-6 text-falla-on-fire" weight="bold" />
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase font-black tracking-widest text-white/50 mb-0.5">
+                      <p className="text-[10px] uppercase font-black tracking-widest text-falla-on-fire mb-0.5">
                         Email Us
                       </p>
                       <p className="font-bold text-lg">{SITE.brand.contactEmail}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
-                      <MapPin className="w-6 h-6 text-white" weight="bold" />
+                    <div className="w-12 h-12 rounded-2xl bg-falla-on-fire/10 flex items-center justify-center border border-falla-on-fire/30">
+                      <MapPin className="w-6 h-6 text-falla-on-fire" weight="bold" />
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase font-black tracking-widest text-white/50 mb-0.5">
+                      <p className="text-[10px] uppercase font-black tracking-widest text-falla-on-fire mb-0.5">
                         Location
                       </p>
                       <p className="font-bold text-lg">{SITE.location.district}</p>
@@ -99,13 +99,13 @@ export default function ContactPage() {
             </Card>
 
             <div className="p-8 rounded-[2.5rem] ink-border bg-falla-sand/20 space-y-4 border-2 border-dashed border-falla-ink/20">
-              <div className="flex items-center gap-2 text-falla-fire">
+              <div className="flex items-center gap-2 text-falla-fire-ink">
                 <ChatCircleDots className="w-6 h-6" weight="bold" />
                 <span className="font-black uppercase tracking-widest text-[10px]">
                   Community Support
                 </span>
               </div>
-              <p className="text-sm font-medium leading-relaxed text-falla-ink/60">
+              <p className="text-sm font-medium leading-relaxed text-falla-ink/65">
                 {SITE.contact.supportText}
               </p>
             </div>
@@ -122,13 +122,13 @@ export default function ContactPage() {
                     className="flex flex-col items-center justify-center py-16 text-center gap-6"
                   >
                     <div className="w-20 h-20 rounded-full bg-falla-fire/10 border-2 border-falla-fire/20 flex items-center justify-center">
-                      <CheckCircle size={40} weight="fill" className="text-falla-fire" />
+                      <CheckCircle size={40} weight="fill" className="text-falla-fire-ink" />
                     </div>
                     <div>
                       <h3 className="text-3xl font-display lowercase text-falla-ink mb-2">
                         Message sent!
                       </h3>
-                      <p className="text-sm font-medium text-falla-ink/50">
+                      <p className="text-sm font-medium text-falla-ink/65">
                         We'll get back to you within 24 hours.
                       </p>
                     </div>
@@ -144,7 +144,7 @@ export default function ContactPage() {
                   <form className="space-y-8" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 ml-1">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/65 ml-1">
                           Your Name
                         </label>
                         <Input
@@ -161,7 +161,7 @@ export default function ContactPage() {
                         />
                       </div>
                       <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 ml-1">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/65 ml-1">
                           Email Address
                         </label>
                         <Input
@@ -180,7 +180,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/40 ml-1">
+                      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/65 ml-1">
                         Message
                       </label>
                       <Textarea
@@ -200,7 +200,7 @@ export default function ContactPage() {
                     <Button
                       type="submit"
                       isLoading={submitting}
-                      className="w-full h-16 rounded-2xl text-lg font-black uppercase tracking-widest group shadow-solid active:shadow-none bg-falla-fire text-falla-paper border-2 border-falla-ink"
+                      className="w-full h-16 rounded-2xl text-lg font-black uppercase tracking-widest group shadow-solid active:shadow-none bg-falla-fire text-falla-on-fire border-2 border-falla-ink"
                       endContent={
                         !submitting && (
                           <PaperPlaneTilt

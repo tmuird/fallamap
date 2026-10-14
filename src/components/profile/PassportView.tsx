@@ -100,7 +100,7 @@ export function PassportView() {
     <div className="space-y-10">
       {/* Achievement Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-8 bg-falla-fire text-falla-paper ink-border rounded-[2.5rem] border-2 flex flex-col items-center text-center gap-4 shadow-solid">
+        <div className="p-8 bg-falla-fire text-falla-on-fire ink-border rounded-[2.5rem] border-2 flex flex-col items-center text-center gap-4 shadow-solid">
           <Trophy size={40} weight="fill" />
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Discovery Progress</p>
@@ -112,7 +112,7 @@ export function PassportView() {
           <div className="absolute top-[-20px] right-[-20px] opacity-5">
             <Trophy size={120} weight="fill" />
           </div>
-          <p className="text-falla-ink/40 font-bold uppercase text-[10px] tracking-widest mb-2">Explorer Rank</p>
+          <p className="text-falla-ink/65 font-bold uppercase text-[10px] tracking-widest mb-2">Explorer Rank</p>
           <h3 className="text-2xl md:text-4xl font-display italic lowercase leading-tight">
             {visitedData.length > 50 ? SITE.profile.rankTop : visitedData.length > 10 ? SITE.profile.rankMid : SITE.profile.rankLow}
           </h3>
@@ -144,7 +144,7 @@ export function PassportView() {
                         removeWrapper
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-falla-ink/10">
+                      <div className="w-full h-full flex items-center justify-center text-falla-ink/65">
                         <ImageIcon size={32} weight="thin" />
                       </div>
                     )}
@@ -152,7 +152,7 @@ export function PassportView() {
                   </div>
 
                   <div className="p-4 flex flex-col gap-1 items-center text-center">
-                    <p className="text-[9px] font-black uppercase text-falla-fire">{falla.hubId ? "Hub" : `#${falla.number}`}</p>
+                    <p className="text-[9px] font-black uppercase text-falla-fire-ink">{falla.hubId ? "Hub" : `#${falla.number}`}</p>
                     <p className="text-[11px] font-bold leading-[1.1] line-clamp-2 text-falla-ink lowercase">
                       {falla.name || localFallas.find(l => l.number === falla.number)?.name}
                     </p>

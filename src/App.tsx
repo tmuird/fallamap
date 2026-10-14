@@ -28,6 +28,7 @@ const ModerationDashboard = lazy(
 );
 const SignInPage = lazy(() => import("@/components/SignInPage.tsx"));
 const SignUpPage = lazy(() => import("@/components/SignUpPage.tsx"));
+const SsoCallback = lazy(() => import("@/components/SsoCallback.tsx"));
 
 // Shown while a route chunk is still loading (cold cache / slow network).
 const PageFallback = () => (
@@ -38,7 +39,7 @@ const PageFallback = () => (
   >
     <div className="h-2 w-40 rounded-full bg-falla-ink/10 animate-pulse" />
     <div className="h-2 w-24 rounded-full bg-falla-ink/10 animate-pulse" />
-    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/35">Loading page…</p>
+    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/65">Loading page…</p>
   </div>
 );
 
@@ -51,7 +52,7 @@ const AuthRouteFallback = () => (
         <div className="h-4 w-full animate-pulse rounded bg-falla-ink/10" />
       </div>
       <div className="space-y-4">
-        <p className="text-xs font-black uppercase tracking-[0.2em] text-falla-fire">Loading secure account access…</p>
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-falla-fire-ink">Loading secure account access…</p>
         <div className="h-12 animate-pulse rounded-xl bg-falla-sand/30" />
         <div className="h-12 animate-pulse rounded-xl bg-falla-sand/30" />
         <div className="h-12 animate-pulse rounded-xl bg-falla-fire/20" />
@@ -157,7 +158,7 @@ export default function App() {
   useEffect(() => startBackendMonitor(), []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans transition-colors duration-300 selection:bg-falla-fire selection:text-white overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans transition-colors duration-300 selection:bg-falla-fire selection:text-falla-on-fire overflow-x-hidden">
       <Toaster 
         position="top-center" 
         richColors 
@@ -195,6 +196,10 @@ export default function App() {
         routerReplace={(to: string) => navigate(to, { replace: true })}
         publishableKey={PUBLISHABLE_KEY}
         appearance={{
+          // The sign-in and sign-up pages render their own fields and buttons now, so this
+          // only needs to theme the Clerk UI that is still embedded — the navbar's
+          // <UserButton> and its popover. Text on the fire fill is dark, not white: white on
+          // #FF7043 is only 2.74:1.
           baseTheme: neobrutalism,
           variables: {
             colorPrimary: "#FF7043",
@@ -203,20 +208,9 @@ export default function App() {
             borderRadius: "16px",
           },
           elements: {
-            card: `border-2 ${isDarkMode ? 'border-[#FAF7F2]' : 'border-[#1A1A1A]'} shadow-solid bg-falla-paper`,
+            card: `border-2 ${isDarkMode ? "border-[#FAF7F2]" : "border-[#1A1A1A]"} shadow-solid bg-falla-paper`,
             navbar: "hidden",
-            headerTitle: "font-display text-2xl uppercase tracking-widest",
-            headerSubtitle: "font-sans font-bold",
-            socialButtonsBlockButton: `border-2 ${isDarkMode ? 'border-[#FAF7F2]' : 'border-[#1A1A1A]'} shadow-solid-sm hover:shadow-none bg-falla-paper`,
-            formButtonPrimary: `border-2 ${isDarkMode ? 'border-[#FAF7F2]' : 'border-[#1A1A1A]'} shadow-solid-sm hover:shadow-none bg-[#FF7043] text-white`,
-            footerActionLink: "text-[#FF7043] font-bold hover:underline",
-            formFieldInput: `border-2 ${isDarkMode ? 'border-[#FAF7F2]' : 'border-[#1A1A1A]'} rounded-xl px-4 h-12 bg-falla-paper focus:ring-2 focus:ring-[#FF7043]/20`,
-            // Clerk's neobrutalism theme sets the password row to position:absolute,
-            // which collapses its width and stacks it on top of the email field.
-            formFieldRow: "!static !w-full",
-            dividerLine: `${isDarkMode ? 'bg-[#FAF7F2]' : 'bg-[#1A1A1A]'} h-[2px]`,
-            dividerText: `font-bold ${isDarkMode ? 'text-[#FAF7F2]/40' : 'text-[#1A1A1A]/40'}`,
-          }
+          },
         }}
       >
         <SupabaseAuthBridge />
@@ -236,6 +230,7 @@ export default function App() {
               <Route path="/profile" element={<PageWrapper><RouteSuspense><UserProfile /></RouteSuspense></PageWrapper>} />
               <Route path="/sign-in/*" element={<PageWrapper><RouteSuspense fallback={<AuthRouteFallback />}><SignInPage /></RouteSuspense></PageWrapper>} />
               <Route path="/sign-up/*" element={<PageWrapper><RouteSuspense fallback={<AuthRouteFallback />}><SignUpPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/sso-callback" element={<PageWrapper><RouteSuspense fallback={<AuthRouteFallback />}><SsoCallback /></RouteSuspense></PageWrapper>} />
               <Route path="/dashboard" element={<PageWrapper><RouteSuspense><ModerationDashboard /></RouteSuspense></PageWrapper>} />
             </Routes>
           </AnimatePresence>
@@ -248,11 +243,11 @@ export default function App() {
           <footer className="w-full flex flex-col items-center justify-center py-12 px-6 border-t-2 border-falla-ink/5 mt-auto bg-falla-paper transition-colors duration-300">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 bg-falla-fire rounded-full ink-border" />
-              <span className="font-display text-3xl tracking-widest text-falla-fire">
+              <span className="font-display text-3xl tracking-widest text-falla-fire-ink">
                 {SITE.brand.name}
               </span>
             </div>
-            <p className="text-[10px] font-bold tracking-[0.3em] text-falla-ink/30 uppercase">
+            <p className="text-[10px] font-bold tracking-[0.3em] text-falla-ink/65 uppercase">
               {SITE.location.copyright}
             </p>
           </footer>

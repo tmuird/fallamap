@@ -60,7 +60,7 @@ export function CollectionView() {
     <div className="space-y-8 mt-16 pt-16 border-t-2 border-falla-ink/5">
       <div className="flex items-center justify-between text-falla-ink">
         <h2 className="font-display text-3xl italic lowercase">saved collection</h2>
-        <div className="brutal-pill px-4 py-1 text-[10px] font-black uppercase text-red-500 shadow-none border-2">
+        <div className="brutal-pill px-4 py-1 text-[10px] font-black uppercase text-falla-like shadow-none border-2">
           {likedNumbers.length} Favorites
         </div>
       </div>
@@ -75,14 +75,14 @@ export function CollectionView() {
             <Link to={entry.hubId ? `/map?hub=${entry.hubId}` : `/map?falla=${entry.number}`} key={entry.key} className="group">
               <Card className="hover:translate-y-[-4px] transition-all border-2 group-hover:shadow-none group-active:translate-y-0 bg-falla-paper">
                 <CardBody className="p-5 flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-500 flex items-center justify-center border-2 border-red-100 dark:border-red-900/30">
+                  <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/20 text-falla-like flex items-center justify-center border-2 border-red-100 dark:border-red-900/30">
                     <Heart size={24} weight="fill" />
                   </div>
                   <div className="flex-1 text-falla-ink">
-                    <p className="text-[10px] font-black uppercase text-falla-fire mb-0.5">{entry.hubId ? "Hub" : `#${entry.number}`}</p>
+                    <p className="text-[10px] font-black uppercase text-falla-fire-ink mb-0.5">{entry.hubId ? "Hub" : `#${entry.number}`}</p>
                     <h3 className="text-lg font-display italic leading-tight lowercase">{entry.name}</h3>
                   </div>
-                  <MapTrifold size={20} weight="bold" className="text-falla-ink/10 group-hover:text-falla-fire transition-colors" />
+                  <MapTrifold size={20} weight="bold" className="text-falla-ink/65 group-hover:text-falla-fire-ink transition-colors" />
                 </CardBody>
               </Card>
             </Link>

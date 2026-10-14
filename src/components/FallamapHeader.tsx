@@ -20,7 +20,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
     transition={{ type: "spring", damping: 20, stiffness: 100 }}
     className="text-center px-4 mb-4 md:mb-6"
    >
-    <h1 className="text-fluid-display font-display text-falla-fire leading-[0.8] lowercase select-none">
+    <h1 className="text-fluid-display font-display text-falla-fire-ink leading-[0.8] lowercase select-none">
      {SITE.brand.name}
     </h1>
    </motion.div>

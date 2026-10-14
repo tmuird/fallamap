@@ -84,7 +84,7 @@ export function ActivityView() {
                 <div className="absolute inset-0 bg-falla-ink/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3 pointer-events-none">
                   <div className="flex justify-between items-start">
                     {img.is_private && <EyeSlash size={14} weight="bold" className="text-falla-paper/60" />}
-                    <MapTrifold size={16} weight="bold" className="text-falla-paper/40 ml-auto" />
+                    <MapTrifold size={16} weight="bold" className="text-falla-paper/70 ml-auto" />
                   </div>
                   <p className="text-[8px] text-falla-paper font-black uppercase tracking-widest truncate">
                     #{img.fallas?.number} {img.fallas?.name}
@@ -100,7 +100,7 @@ export function ActivityView() {
       <div className="space-y-8 text-falla-ink">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-3xl italic">Your Notes</h2>
-          <div className="brutal-pill px-4 py-1 text-[10px] font-black uppercase text-falla-fire shadow-none border-2">
+          <div className="brutal-pill px-4 py-1 text-[10px] font-black uppercase text-falla-fire-ink shadow-none border-2">
             {comments.length} Shared
           </div>
         </div>
@@ -118,13 +118,13 @@ export function ActivityView() {
                   <CardBody className="p-6">
                     <div className="flex items-center justify-between mb-3 text-falla-ink">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-falla-fire-ink">
                           {SITE.nouns.monument} #{comment.fallas?.number}
                         </span>
                         {comment.is_private && <EyeSlash size={14} weight="bold" className="opacity-20" />}
                       </div>
                       <div className="flex items-center gap-3">
-                        <MapTrifold size={16} weight="bold" className="opacity-10 group-hover:text-falla-fire transition-colors" />
+                        <MapTrifold size={16} weight="bold" className="opacity-10 group-hover:text-falla-fire-ink transition-colors" />
                         <CheckCircle size={16} weight="fill" className="text-falla-sage" />
                       </div>
                     </div>

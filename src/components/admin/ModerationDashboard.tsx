@@ -12,14 +12,14 @@ export default function ModerationDashboard() {
           className="mb-16"
         >
           <div className="brutal-pill inline-block mb-6 bg-falla-paper border-falla-ink shadow-solid-sm px-4 py-1.5 border-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire-ink flex items-center gap-2">
               Admin HQ
             </span>
           </div>
           <h1 className="text-4xl md:text-8xl font-display text-falla-ink mb-6 leading-tight italic lowercase tracking-tighter">
-            Moderation <span className="text-falla-fire">HQ</span>
+            Moderation <span className="text-falla-fire-ink">HQ</span>
           </h1>
-          <p className="text-falla-ink/60 font-medium text-lg md:text-xl max-w-lg tracking-normal">
+          <p className="text-falla-ink/65 font-medium text-lg md:text-xl max-w-lg tracking-normal">
             Review community submissions before they go live on the map.
           </p>
         </motion.div>

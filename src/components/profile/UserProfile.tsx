@@ -32,7 +32,7 @@ export default function UserProfile() {
           ) : (
             <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center bg-falla-paper ink-border shadow-solid mb-6 border-4">
               {isLoaded ? (
-                <Fingerprint size={40} weight="bold" className="text-falla-fire" />
+                <Fingerprint size={40} weight="bold" className="text-falla-fire-ink" />
               ) : (
                 <div className="w-full h-full bg-falla-ink/10 animate-pulse" aria-hidden="true" />
               )}
@@ -40,9 +40,9 @@ export default function UserProfile() {
           )}
           <h1 className="text-4xl md:text-6xl font-display mb-2 text-falla-ink">
             {signedIn ? (
-              <>{SITE.profile.greeting}, <span className="text-falla-fire">{user?.firstName || SITE.profile.defaultName}</span></>
+              <>{SITE.profile.greeting}, <span className="text-falla-fire-ink">{user?.firstName || SITE.profile.defaultName}</span></>
             ) : isLoaded ? (
-              <>Your <span className="text-falla-fire">journey</span></>
+              <>Your <span className="text-falla-fire-ink">journey</span></>
             ) : (
               <span className="inline-block h-12 w-64 max-w-full rounded-full bg-falla-ink/10 animate-pulse" aria-hidden="true" />
             )}
@@ -58,7 +58,7 @@ export default function UserProfile() {
               transition={{ delay: 0.1 }}
               className="mt-8 w-full max-w-md bg-falla-paper/60 ink-border rounded-3xl border-2 border-falla-ink/10 p-6"
             >
-              <p className="text-sm font-bold text-falla-ink/60 mb-5">
+              <p className="text-sm font-bold text-falla-ink/65 mb-5">
                 Sign in to sync stamps, favourites and photos across devices.
                 Everything you mark here stays saved on this device meanwhile.
               </p>

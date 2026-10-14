@@ -9,12 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-falla-fire text-white ink-border soft-shadow hover:bg-falla-fire/90",
+        default: "bg-falla-fire text-falla-on-fire ink-border soft-shadow hover:bg-falla-fire/90",
         destructive: "bg-red-500 text-white ink-border soft-shadow hover:bg-red-600",
         outline: "bg-falla-paper text-falla-ink ink-border soft-shadow hover:bg-falla-paper",
         secondary: "bg-falla-sage text-white ink-border soft-shadow hover:bg-falla-sage/90",
         ghost: "text-falla-ink hover:bg-falla-ink/5",
-        link: "text-falla-fire underline-offset-4 hover:underline",
+        link: "text-falla-fire-ink underline-offset-4 hover:underline",
         neutral: "bg-falla-paper text-falla-ink ink-border hover:bg-falla-paper",
       },
       size: {

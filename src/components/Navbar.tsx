@@ -152,7 +152,7 @@ export default function AppNavbar() {
                     />
                   </svg>
                 </motion.div>
-                <p className="font-display text-base md:text-3xl text-falla-fire leading-none lowercase flex-shrink-0">
+                <p className="font-display text-base md:text-3xl text-falla-fire-ink leading-none lowercase flex-shrink-0">
                   {SITE.brand.name}
                 </p>
               </Link>
@@ -161,7 +161,7 @@ export default function AppNavbar() {
 
           {/* Mobile Center Brand - No Flame */}
           <NavbarContent className="sm:hidden" justify="center">
-            <p className="font-display text-2xl text-falla-fire leading-none lowercase select-none">
+            <p className="font-display text-2xl text-falla-fire-ink leading-none lowercase select-none">
               {SITE.brand.name}
             </p>
           </NavbarContent>
@@ -174,8 +174,8 @@ export default function AppNavbar() {
                   to={item.path}
                   className={({ isActive }) => 
                     cn(
-                      "text-[10px] md:text-sm font-black uppercase tracking-[0.1em] md:tracking-[0.3em] transition-all hover:text-falla-fire flex items-center gap-1 md:gap-2 relative group py-1 md:py-2 whitespace-nowrap",
-                      isActive ? "text-falla-fire" : "text-falla-ink/40"
+                      "text-[10px] md:text-sm font-black uppercase tracking-[0.1em] md:tracking-[0.3em] transition-all hover:text-falla-fire-ink flex items-center gap-1 md:gap-2 relative group py-1 md:py-2 whitespace-nowrap",
+                      isActive ? "text-falla-fire-ink" : "text-falla-ink/65"
                     )
                   }
                   onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}
@@ -213,7 +213,7 @@ export default function AppNavbar() {
                       className="w-8 h-8 flex-shrink-0 rounded-full border-2 active:scale-95 shadow-solid-sm hover:shadow-none transition-all"
                       aria-label="Journey"
                     >
-                      <Fingerprint size={16} weight="bold" className="text-falla-fire" />
+                      <Fingerprint size={16} weight="bold" className="text-falla-fire-ink" />
                     </Button>
                   </Link>
 
@@ -258,7 +258,7 @@ export default function AppNavbar() {
                   <Link to="/sign-up" className="flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
                     <Button 
                       size="sm" 
-                      className="bg-falla-fire text-white font-black uppercase tracking-widest text-[8px] md:text-[10px] rounded-lg md:rounded-xl px-2 md:px-8 h-8 md:h-11 ink-border shadow-solid active:shadow-none transition-all border-1.5 md:border-2 flex-shrink-0 active:scale-95"
+                      className="bg-falla-fire text-falla-on-fire font-black uppercase tracking-widest text-[8px] md:text-[10px] rounded-lg md:rounded-xl px-2 md:px-8 h-8 md:h-11 ink-border shadow-solid active:shadow-none transition-all border-1.5 md:border-2 flex-shrink-0 active:scale-95"
                     >
                       {SITE.nav.join}
                     </Button>
@@ -288,7 +288,7 @@ export default function AppNavbar() {
                     className={({ isActive }) => 
                       cn(
                         "w-full text-4xl md:text-6xl font-display uppercase py-3 md:py-4 transition-all flex items-center gap-4 rounded-2xl px-4",
-                        isActive ? "text-falla-fire bg-falla-fire/5 translate-x-2" : "text-falla-ink/40 hover:text-falla-ink/70 hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
+                        isActive ? "text-falla-fire-ink bg-falla-fire/5 translate-x-2" : "text-falla-ink/65 hover:text-falla-ink/70 hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
                       )
                     }
                     onClick={() => {
