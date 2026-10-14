@@ -98,6 +98,7 @@ Missing/invalid values degrade rather than white-screen:
 | `npm run dev` | Dev server on http://localhost:5173 |
 | `npm run build` | `tsc && vite build` → `dist/` |
 | `npm run lint` | ESLint 9 flat config, `--max-warnings 0` (must stay clean) |
+| `npm test` | Unit tests for search highlighting, navbar scroll stability, saved event plans, and auth-step recovery |
 | `npm run test:search` | Unit tests for literal-safe, repeatable autocomplete highlighting |
 | `npm run seed` | Apply `scripts/schema.sql` + seed data (needs `SUPABASE_DB_URL`) |
 | `npm run verify:schema` | Local schema/seed/RLS smoke tests (needs Docker) |
@@ -116,7 +117,7 @@ src/
     MapPage.tsx            map route (markers, clustering, search pill)
     MapComponent.tsx       Mapbox GL wrapper + POI markers
     ui/FallaDetails.tsx    monument/POI detail drawer
-    SchedulePage.tsx       official programme (timeline, day tabs, ICS export)
+    SchedulePage.tsx       official programme, saved local itinerary, and ICS export
     HomePage.tsx, ArchivePage.tsx, ContactPage.tsx, Navbar.tsx, …
     profile/               user profile: ActivityView, CollectionView, PassportView
     admin/                 moderation dashboard (image/comment review)
