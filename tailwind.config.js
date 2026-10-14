@@ -22,12 +22,17 @@ export default {
         'fluid-2xl': ['clamp(2.25rem, 7vw, 4.5rem)', { lineHeight: '0.85' }],
       },
       colors: {
+        // NOTE: these must stay channel-triplet based (`rgb(var(--x-rgb) / <alpha-value>)`).
+        // Defining them as raw hex/`var()` silently breaks EVERY `/opacity` utility
+        // (bg-falla-paper/95, text-falla-ink/40, border-falla-ink/5 …) — they compile to
+        // nothing, which flattens the type hierarchy, drops tints and turns hairline
+        // borders into Tailwind's default gray. The `-rgb` vars live in globals.css.
         falla: {
-          paper: "var(--falla-paper)", 
-          ink: "var(--falla-ink)",
-          fire: "var(--falla-fire)",
-          sage: "var(--falla-sage)",
-          sand: "var(--falla-sand)",
+          paper: "rgb(var(--falla-paper-rgb) / <alpha-value>)",
+          ink: "rgb(var(--falla-ink-rgb) / <alpha-value>)",
+          fire: "rgb(var(--falla-fire-rgb) / <alpha-value>)",
+          sage: "rgb(var(--falla-sage-rgb) / <alpha-value>)",
+          sand: "rgb(var(--falla-sand-rgb) / <alpha-value>)",
         },
       },
       borderWidth: {
@@ -117,7 +122,12 @@ export default {
 function addVariablesForColors({ addBase, theme }) {
   let allColors = flattenColorPalette(theme("colors"));
   let newVars = Object.fromEntries(
-    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+    // The `falla` palette resolves to `rgb(var(--…-rgb) / <alpha-value>)`; emitting that
+    // as a literal custom property would produce an invalid value and shadow the real
+    // hex/`-rgb` variables declared in globals.css. Those keys are owned there.
+    Object.entries(allColors)
+      .filter(([key]) => !key.startsWith("falla-"))
+      .map(([key, val]) => [`--${key}`, val])
   );
 
   addBase({

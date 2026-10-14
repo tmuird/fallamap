@@ -33,6 +33,15 @@
   --falla-sage: #8B9467;
   --falla-sand: #E6D5B8;
   --falla-shadow: #1A1A1A;
+  /* Channel triplets (R G B) for the same colours. Tailwind can only build
+     opacity modifiers (`bg-falla-paper/95`, `text-falla-ink/40`) from a value it
+     can inject <alpha-value> into — a raw `#hex`/`var()` makes every `/opacity`
+     utility compile to nothing. Keep these in sync with the hex values above. */
+  --falla-paper-rgb: 250 247 242;
+  --falla-ink-rgb: 26 26 26;
+  --falla-fire-rgb: 255 112 67;
+  --falla-sage-rgb: 139 148 103;
+  --falla-sand-rgb: 230 213 184;
   --marker-scale: 1;
   --hub-scale: 1;
 }
@@ -44,6 +53,11 @@
   --falla-sage: #8B9467;
   --falla-sand: #2D2D2D;
   --falla-shadow: #000000;
+  --falla-paper-rgb: 26 26 26;
+  --falla-ink-rgb: 250 247 242;
+  --falla-fire-rgb: 255 112 67;
+  --falla-sage-rgb: 139 148 103;
+  --falla-sand-rgb: 45 45 45;
   --marker-scale: 1;
   --hub-scale: 1;
 }
