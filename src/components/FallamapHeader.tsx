@@ -31,7 +31,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.3 }}
-      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
+      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper border-[1.5px] md:border-2"
      >
       {/* T2.8: count derived from the dataset, not hardcoded */}
       <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">{fallas.length} {SITE.nouns.monumentPlural}</p>
@@ -41,7 +41,7 @@ export function FallamapHeader({ isVisible }: FallamapHeaderProps) {
       initial={{ opacity: 0, x: 10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.4 }}
-      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper backdrop-blur-sm border-[1.5px] md:border-2"
+      className="brutal-pill px-3 py-1 md:px-5 md:py-2 bg-falla-paper border-[1.5px] md:border-2"
      >
       <p className="text-[8px] md:text-xs uppercase tracking-widest text-falla-ink font-black whitespace-nowrap">{SITE.header.programLabel}</p>
      </motion.div>

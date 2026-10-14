@@ -58,10 +58,10 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="flex items-center gap-2 px-4 py-1.5 bg-falla-paper/80 backdrop-blur-md rounded-full border-2 border-falla-ink/10 shadow-sm mt-1 text-falla-ink"
+                className="flex items-center gap-2 px-4 py-1.5 bg-falla-paper/90 rounded-full border-2 border-falla-ink/15 shadow-sm mt-1 text-falla-ink"
               >
                 <Sparkle size={14} weight="fill" className="text-falla-fire animate-spin-slow" />
-                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-falla-ink/60">
+                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-falla-ink/70">
                   <span className="text-falla-fire">{SITE.hero.pulseHighlight}</span> {SITE.hero.pulseSuffix}
                 </span>
               </motion.div>
@@ -94,7 +94,7 @@ export default function HomePage() {
                   size="lg"
                   className="bg-falla-paper text-falla-ink h-12 md:h-14 px-8 rounded-full text-sm md:text-base shadow-solid border-2 border-falla-ink flex items-center justify-center gap-2 w-full hover:translate-y-[-2px] hover:shadow-solid-lg hover:-rotate-1 active:translate-y-0 transition-all font-black uppercase tracking-widest"
                 >
-                  Schedule <CalendarBlank size={20} weight="bold" />
+                  {SITE.nav.program} <CalendarBlank size={20} weight="bold" />
                 </Button>
               </Link>
             </motion.div>
@@ -124,11 +124,11 @@ export default function HomePage() {
             transition={{ delay: 0.6 }}
             className="hidden md:flex gap-12 items-center text-falla-ink/40 font-black uppercase text-[11px] tracking-[0.4em]"
           >
-            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><MapTrifold size={20} weight="bold" /> Map</Link>
+            <Link to="/map" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><MapTrifold size={20} weight="bold" /> {SITE.nav.map}</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><CalendarBlank size={20} weight="bold" /> Program</Link>
+            <Link to="/schedule" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><CalendarBlank size={20} weight="bold" /> {SITE.nav.program}</Link>
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
-            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> Archive</Link>
+            <Link to="/archive" className="hover:text-falla-fire transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> {SITE.nav.archive}</Link>
           </motion.div>
         </main>
 

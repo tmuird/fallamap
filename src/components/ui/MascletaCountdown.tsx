@@ -50,7 +50,7 @@ export function MascletaCountdown() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn(
-        "fixed z-[90] pointer-events-none md:pointer-events-auto transition-all duration-500",
+        "fixed z-[90] pointer-events-none md:pointer-events-auto",
         isMap 
           ? "bottom-6 right-6" 
           : "bottom-24 right-6 md:bottom-10"

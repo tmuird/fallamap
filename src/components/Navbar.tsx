@@ -19,7 +19,24 @@ import {
 import { cn } from "@/utils/cn";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { motion, AnimatePresence } from "framer-motion";
+import { advanceNavbarScrollState, createNavbarScrollState } from "@/lib/navbarScroll";
 import { SITE } from "@/lib/siteConfig";
+
+/**
+ * Frosted-surface rules (flicker fix, T2.14):
+ * - Exactly ONE element may carry `backdrop-filter` in the navbar. Nesting two
+ *   (HeroUI's own `backdrop-blur` inside our pill) forces the browser to re-rasterise
+ *   the backdrop twice per frame while the page scrolls, which reads as a flicker.
+ * - The element that carries the frosting must not also be CSS-transitioned on
+ *   `all`: the hide/show animation is owned by framer-motion, and a CSS transition on
+ *   the same transform/opacity fights it frame-by-frame.
+ * - Nothing on the scroll path may change layout (the old `pt-*` swap on `scrolled`
+ *   re-laid-out the blurred pill on every threshold crossing).
+ */
+const NAVBAR_FROSTED_SURFACE = "backdrop-blur-xl";
+const NAVBAR_NO_NESTED_BLUR = { backdropFilter: "none", WebkitBackdropFilter: "none" } as const;
+/** Taller than the pill (max ~118px incl. padding) so nothing peeks when hidden. */
+const NAVBAR_HIDE_OFFSET = 140;
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,25 +44,19 @@ export default function AppNavbar() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
+  const scrollState = useRef(createNavbarScrollState());
 
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   useEffect(() => {
+    scrollState.current = createNavbarScrollState(window.scrollY);
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 20);
-
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        if (!isMenuOpen) setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      }
-      lastScrollY.current = currentScrollY;
+      const nextState = advanceNavbarScrollState(scrollState.current, currentScrollY, isMenuOpen);
+      scrollState.current = nextState;
+      setIsVisible(nextState.visible);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -53,11 +64,11 @@ export default function AppNavbar() {
   }, [isMenuOpen]);
 
   const menuItems = [
-    { label: "Home", path: "/", icon: <House size={20} weight="bold" /> },
-    { label: "Map", path: "/map", icon: <MapTrifold size={20} weight="bold" /> },
-    { label: "Schedule", path: "/schedule", icon: <CalendarBlank size={20} weight="bold" /> },
-    { label: "Archive", path: "/archive", icon: <Archive size={20} weight="bold" /> },
-    { label: "Journey", path: "/profile", icon: <Fingerprint size={20} weight="bold" /> },
+    { label: SITE.nav.home, path: "/", icon: <House size={20} weight="bold" /> },
+    { label: SITE.nav.map, path: "/map", icon: <MapTrifold size={20} weight="bold" /> },
+    { label: SITE.nav.program, path: "/schedule", icon: <CalendarBlank size={20} weight="bold" /> },
+    { label: SITE.nav.archive, path: "/archive", icon: <Archive size={20} weight="bold" /> },
+    { label: SITE.nav.journey, path: "/profile", icon: <Fingerprint size={20} weight="bold" /> },
   ];
 
   const handleMenuClose = () => {
@@ -68,21 +79,20 @@ export default function AppNavbar() {
     <motion.div 
       initial={{ y: 0 }}
       animate={{ 
-        y: isVisible || isMenuOpen ? 0 : -120,
+        y: isVisible || isMenuOpen ? 0 : -NAVBAR_HIDE_OFFSET,
         opacity: isVisible || isMenuOpen ? 1 : 0
       }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(
-        "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out px-2 md:px-12 pointer-events-none flex flex-col items-center",
-        scrolled ? "pt-2 md:pt-6" : "pt-4 md:pt-10"
-      )}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed top-0 left-0 right-0 z-[100] px-2 md:px-12 pt-3 md:pt-8 pointer-events-none flex flex-col items-center transform-gpu"
     >
       {/* Unified Custom Wrapper for Seamless Aesthetic */}
+      {/* Frosting lives in this ONE element (see NAVBAR_FROSTED_SURFACE); animating or
+          double-stacking backdrop-filter is what made the pill flicker on scroll. */}
       <motion.div 
         className={cn(
-          "w-full transition-colors duration-500 ease-in-out shadow-solid pointer-events-auto flex flex-col overflow-hidden relative border-2 border-falla-ink",
-          scrolled || isMenuOpen ? "bg-falla-paper/95 backdrop-blur-xl" : "bg-falla-paper/80 backdrop-blur-md",
-          isMenuOpen ? "rounded-[1.5rem] md:rounded-[2.5rem]" : "rounded-[1.5rem] md:rounded-[2.5rem]"
+          "w-full transition-colors duration-200 ease-out shadow-solid pointer-events-auto flex flex-col overflow-hidden relative border-2 border-falla-ink rounded-[1.5rem] md:rounded-[2.5rem]",
+          NAVBAR_FROSTED_SURFACE,
+          scrolled || isMenuOpen ? "bg-falla-paper/95" : "bg-falla-paper/80"
         )}
       >
         <Navbar 
@@ -90,6 +100,7 @@ export default function AppNavbar() {
           onMenuOpenChange={setIsMenuOpen} 
           maxWidth="full" 
           className="bg-transparent h-14 md:h-20"
+          style={NAVBAR_NO_NESTED_BLUR}
           classNames={{
             wrapper: "px-2 md:px-8 gap-1 md:gap-4 bg-transparent",
           }}
@@ -157,7 +168,7 @@ export default function AppNavbar() {
 
           {/* Desktop Nav */}
           <NavbarContent className="hidden sm:flex gap-2 md:gap-8 lg:gap-12 flex-shrink min-w-0" justify="center">
-            {menuItems.filter(item => !["Home", "Journey"].includes(item.label)).map((item, index) => (
+            {menuItems.filter(item => !["/", "/profile"].includes(item.path)).map((item, index) => (
               <NavbarItem key={index} className="flex-shrink min-w-0">
                 <NavLink
                   to={item.path}
@@ -241,7 +252,7 @@ export default function AppNavbar() {
                       size="sm" 
                       className="text-falla-ink font-black uppercase tracking-widest text-[8px] md:text-[10px] h-8 md:h-11 px-1.5 md:px-4 flex-shrink-0 active:scale-95"
                     >
-                      Sign In
+                      {SITE.nav.signIn}
                     </Button>
                   </Link>
                   <Link to="/sign-up" className="flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
@@ -249,7 +260,7 @@ export default function AppNavbar() {
                       size="sm" 
                       className="bg-falla-fire text-white font-black uppercase tracking-widest text-[8px] md:text-[10px] rounded-lg md:rounded-xl px-2 md:px-8 h-8 md:h-11 ink-border shadow-solid active:shadow-none transition-all border-1.5 md:border-2 flex-shrink-0 active:scale-95"
                     >
-                      Join
+                      {SITE.nav.join}
                     </Button>
                   </Link>
                 </div>
