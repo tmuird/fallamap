@@ -50,6 +50,20 @@ export interface SiteConfig {
     /** Header live-location prefix ("Live from …"). */
     livePrefix: string;
   };
+  /**
+   * Primary navigation labels. One term per destination: the nav, the landing
+   * quick links and the header pill must never disagree (the app used to say
+   * "Schedule" in the nav and "Program" everywhere else).
+   */
+  nav: {
+    home: string;
+    map: string;
+    program: string;
+    archive: string;
+    journey: string;
+    signIn: string;
+    join: string;
+  };
   hero: {
     /** Landing headline, split around the animated highlight word. */
     headlineBefore: string;
@@ -134,6 +148,15 @@ export const SITE: SiteConfig = {
   header: {
     programLabel: "Official Program",
     livePrefix: "Live from",
+  },
+  nav: {
+    home: "Home",
+    map: "Map",
+    program: "Program",
+    archive: "Archive",
+    journey: "Journey",
+    signIn: "Sign In",
+    join: "Join",
   },
   hero: {
     headlineBefore: "Feel the",
