@@ -38,11 +38,30 @@ const PageFallback = () => (
   >
     <div className="h-2 w-40 rounded-full bg-falla-ink/10 animate-pulse" />
     <div className="h-2 w-24 rounded-full bg-falla-ink/10 animate-pulse" />
+    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/35">Loading page…</p>
   </div>
 );
 
-const RouteSuspense = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<PageFallback />}>{children}</Suspense>
+const AuthRouteFallback = () => (
+  <div className="w-full flex-grow flex items-center justify-center px-4 pt-32 pb-16 md:pt-40" role="status" aria-label="Loading secure account page">
+    <div className="grid w-full max-w-4xl gap-8 rounded-[2rem] border-2 border-falla-ink bg-falla-paper p-8 shadow-solid md:grid-cols-2 md:p-12">
+      <div className="space-y-4">
+        <div className="h-3 w-28 animate-pulse rounded bg-falla-ink/10" />
+        <div className="h-12 w-4/5 animate-pulse rounded bg-falla-ink/10" />
+        <div className="h-4 w-full animate-pulse rounded bg-falla-ink/10" />
+      </div>
+      <div className="space-y-4">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-falla-fire">Loading secure account access…</p>
+        <div className="h-12 animate-pulse rounded-xl bg-falla-sand/30" />
+        <div className="h-12 animate-pulse rounded-xl bg-falla-sand/30" />
+        <div className="h-12 animate-pulse rounded-xl bg-falla-fire/20" />
+      </div>
+    </div>
+  </div>
+);
+
+const RouteSuspense = ({ children, fallback = <PageFallback /> }: { children: React.ReactNode; fallback?: React.ReactNode }) => (
+  <Suspense fallback={fallback}>{children}</Suspense>
 );
 
 // T2.4: fail fast when the Clerk key is missing. The old `||` fallback
@@ -83,6 +102,9 @@ export default function App() {
   const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const routeTransitionKey = /^\/(sign-in|sign-up)(?:\/|$)/.test(location.pathname)
+    ? location.pathname.split("/").slice(0, 2).join("/")
+    : location.pathname;
   // T2.3: the splash used to be a fixed 1.2s timer. It now gates on real
   // readiness — initial assets (fonts + window load) here, Clerk via
   // ClerkReadyGate — with a 300ms minimum so it can't flash open and a 3s
@@ -205,15 +227,15 @@ export default function App() {
         <main className="flex-grow flex flex-col relative">
           <ErrorBoundary>
           <AnimatePresence mode="wait" initial={false}>
-            <Routes location={location} key={location.pathname}>
+            <Routes location={location} key={routeTransitionKey}>
               <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
               <Route path="/map" element={<PageWrapper><RouteSuspense><MapPage /></RouteSuspense></PageWrapper>} />
               <Route path="/schedule" element={<PageWrapper><RouteSuspense><SchedulePage /></RouteSuspense></PageWrapper>} />
               <Route path="/archive" element={<PageWrapper><RouteSuspense><ArchivePage /></RouteSuspense></PageWrapper>} />
               <Route path="/contact" element={<PageWrapper><RouteSuspense><ContactPage /></RouteSuspense></PageWrapper>} />
               <Route path="/profile" element={<PageWrapper><RouteSuspense><UserProfile /></RouteSuspense></PageWrapper>} />
-              <Route path="/sign-in" element={<PageWrapper><RouteSuspense><SignInPage /></RouteSuspense></PageWrapper>} />
-              <Route path="/sign-up" element={<PageWrapper><RouteSuspense><SignUpPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/sign-in/*" element={<PageWrapper><RouteSuspense fallback={<AuthRouteFallback />}><SignInPage /></RouteSuspense></PageWrapper>} />
+              <Route path="/sign-up/*" element={<PageWrapper><RouteSuspense fallback={<AuthRouteFallback />}><SignUpPage /></RouteSuspense></PageWrapper>} />
               <Route path="/dashboard" element={<PageWrapper><RouteSuspense><ModerationDashboard /></RouteSuspense></PageWrapper>} />
             </Routes>
           </AnimatePresence>
