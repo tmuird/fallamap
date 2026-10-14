@@ -42,8 +42,10 @@ export function MascletaCountdown() {
 
   if (!timeLeft && !isLive) return null;
   if (isHome) return null;
-  // Auth pages are a centered card — the floating countdown covers the submit button
-  if (location.pathname === "/sign-in" || location.pathname === "/sign-up") return null;
+  // Auth pages are a centred card — the floating countdown covers the submit button.
+  // Clerk renders its own subroutes (/sign-in/reset-password, /sign-up/verify-email-address),
+  // so match the whole prefix rather than the two exact paths.
+  if (location.pathname.startsWith("/sign-in") || location.pathname.startsWith("/sign-up")) return null;
 
   return (
     <motion.div 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, ArrowsClockwise } from "@phosphor-icons/react";
+import { ArrowsClockwise } from "@phosphor-icons/react";
 import {
   AUTH_STEP_RENDER_GRACE_MS,
   CLERK_STEP_SELECTOR,
@@ -55,20 +55,13 @@ export default function AuthStepGuard({ mode, children }: AuthStepGuardProps) {
         Verification and reset links only work while the step is active in this browser.
         Start again to get a fresh one.
       </p>
-      <div className="mt-5 flex flex-wrap items-center gap-3">
+      <div className="mt-5">
         <Link
           to={isSignUp ? "/sign-up" : "/sign-in"}
           className="inline-flex items-center gap-2 rounded-xl border-2 border-falla-ink bg-falla-fire px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-solid transition-all hover:shadow-none"
         >
           <ArrowsClockwise size={16} weight="bold" aria-hidden="true" />
           {isSignUp ? "Create your account" : "Sign in again"}
-        </Link>
-        <Link
-          to={isSignUp ? "/sign-in" : "/sign-up"}
-          className="inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-falla-fire underline decoration-falla-fire/30 underline-offset-4 hover:decoration-falla-fire"
-        >
-          {isSignUp ? "Sign in instead" : "Create an account"}
-          <ArrowRight size={14} weight="bold" aria-hidden="true" />
         </Link>
       </div>
     </div>

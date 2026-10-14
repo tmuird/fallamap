@@ -62,7 +62,7 @@ export default function AuthPageShell({ mode, children }: AuthPageShellProps) {
 
             {children}
 
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-2 border-t border-falla-ink/10 pt-5 text-sm font-semibold text-falla-ink/55">
+            <div className="mt-7 flex flex-wrap items-center gap-x-2 border-t border-falla-ink/10 pt-5 text-sm font-semibold text-falla-ink/55">
               <span>{isSignIn ? "New here?" : "Already have an account?"}</span>
               <Link
                 to={isSignIn ? "/sign-up" : "/sign-in"}
