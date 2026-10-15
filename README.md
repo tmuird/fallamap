@@ -174,6 +174,29 @@ event and the map, schedule, drawers, and profile views follow:
 - **`src/styles/globals.css` + `tailwind.config.js`** — the `--falla-*` design
   tokens (paper/ink/fire/sage/sand), fonts, `ink-border` / `soft-shadow` styles.
 
+### Page frame and fluid layout
+
+Pages do **not** carry hardcoded top padding. `globals.css` derives the frame from
+what chrome is actually on screen:
+
+| Token | Meaning |
+|---|---|
+| `--nav-h` | the navbar's visual bottom (3.5rem, 7.125rem from `md`) — its pill overhangs its own height |
+| `--banner-h` | published by `CommunityOfflineBanner` while it is on screen (0 otherwise) |
+| `--content-top` | `calc(--nav-h + --banner-h)` — the bottom of all fixed chrome |
+| `--page-top-gap` / `--page-bottom-pad` / `--section-gap` | `clamp()` values with an `svh` term, so spacing answers the viewport height |
+
+Use `.page-shell` on a page root (min-height = `100svh − --content-top`, plus the
+fluid paddings), `.under-chrome` for a bar that should stick below the chrome, and
+`.fluid-title` / `.fluid-title-xl` for display headings. The `fluid-*` type scale in
+`tailwind.config.js` is capped by `min(vw, svh)`, so a wide-but-short window gets
+proportionally smaller type rather than the desktop size crammed into less height.
+
+One trap worth knowing: **`overflow-x-hidden` computes to `overflow-y: auto`, which
+makes the wrapper a scroll container and silently disables `position: sticky` (and
+unpins the navbar) for everything inside it.** The app root uses `overflow-x-clip`,
+which clips without creating a scroll container.
+
 Remaining hardcoded strings are generic UI copy only (buttons, form labels)
 plus the brand-voice sign-in/sign-up headings ("Join the Tribe", "…through
 the flames") in `SignInPage.tsx`/`SignUpPage.tsx` — no event, city, or

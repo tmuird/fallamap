@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function ModerationDashboard() {
   return (
-    <div className="min-h-screen bg-falla-paper py-20 px-4 md:px-8">
+    <div className="page-shell bg-falla-paper px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -16,7 +16,7 @@ export default function ModerationDashboard() {
               Admin HQ
             </span>
           </div>
-          <h1 className="text-4xl md:text-8xl font-display text-falla-ink mb-6 leading-tight italic lowercase tracking-tighter">
+          <h1 className="fluid-title font-display text-falla-ink mb-6 italic lowercase tracking-tighter">
             Moderation <span className="text-falla-fire-ink">HQ</span>
           </h1>
           <p className="text-falla-ink/65 font-medium text-lg md:text-xl max-w-lg tracking-normal">

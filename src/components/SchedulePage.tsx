@@ -597,20 +597,20 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="min-h-screen bg-falla-paper pt-32 md:pt-48 pb-20 px-4 md:px-8 transition-colors duration-300">
+    <div className="page-shell bg-falla-paper px-4 md:px-8 transition-colors duration-300">
       <div className="max-w-4xl mx-auto antialiased relative">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center section-gap"
         >
           <div className="brutal-pill inline-block mb-6">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-falla-fire-ink flex items-center gap-2">
               <CalendarBlank size={14} weight="bold" /> {showMyPlan ? "Your saved itinerary" : "The Official Program"}
             </span>
           </div>
-          <h1 className="text-4xl md:text-8xl font-display text-falla-ink mb-6 leading-[0.85] lowercase">
+          <h1 className="fluid-title font-display text-falla-ink mb-6 lowercase">
             {showMyPlan ? "your event plan" : "festival timeline"}
           </h1>
         </motion.div>
@@ -645,7 +645,7 @@ export default function SchedulePage() {
 
         {/* Sticky day selector */}
         {!showMyPlan && (
-          <div className="sticky top-24 md:top-36 z-40 mb-16 py-4 bg-falla-paper/80 backdrop-blur-md flex justify-center">
+          <div className="sticky under-chrome z-40 mb-[var(--section-gap)] py-3 bg-falla-paper/80 backdrop-blur-md flex justify-center">
             <div className="flex bg-falla-sand/20 p-1.5 rounded-[2rem] border-2 border-falla-ink shadow-solid-sm overflow-x-auto scrollbar-hide max-w-full">
               {schedule.map((day) => (
                 <button

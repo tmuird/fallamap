@@ -56,10 +56,19 @@
   --falla-sage-rgb: 139 148 103;
   --falla-sand-rgb: 230 213 184;
   --marker-scale: 1;
-  /* Vertical space the navbar occupies. Full-bleed pages (the map) start below it, and the
-     offline banner raises this to its own bottom edge — otherwise the fixed map layer draws
-     straight over the banner on small screens. */
-  --content-top: 3.5rem;
+  /* --- Page frame --------------------------------------------------------------
+     Static rem paddings (`pt-32 md:pt-48`) meant every page opened ~290px down the screen
+     on desktop — 39% of a 900px viewport gone before any content, and the schedule's day
+     tabs sat at y=638. These give pages a chrome-aware frame instead: --nav-h is the
+     navbar's visual bottom (its pill overhangs its own height), the offline banner adds
+     itself via --banner-h, and a page then starts a fluid gap below whatever chrome is
+     actually on screen. */
+  --nav-h: 4.375rem;
+  --banner-h: 0px;
+  --content-top: calc(var(--nav-h) + var(--banner-h));
+  --page-top-gap: clamp(1.25rem, 3.5svh, 2.75rem);
+  --page-bottom-pad: clamp(2.5rem, 7svh, 5rem);
+  --section-gap: clamp(1.5rem, 3.5svh, 3rem);
   --hub-scale: 1;
 }
 
@@ -85,11 +94,50 @@
   --hub-scale: 1;
 }
 
-/* The navbar is taller from the md breakpoint up, and so is the content offset below it. */
+/* The navbar tree is taller from the md breakpoint up, and its pill overhangs further. */
 @media (min-width: 768px) {
   :root {
-    --content-top: 5rem;
+    --nav-h: 7.125rem;
   }
+}
+
+/* Chrome-aware page frame: fills what the fixed navbar (and the offline banner, when it is
+   up) leaves of the viewport, so a page does not start a screen below the fold. */
+.page-shell {
+  min-height: calc(100vh - var(--content-top));
+  min-height: calc(100svh - var(--content-top));
+  padding-top: var(--page-top-gap);
+  padding-bottom: var(--page-bottom-pad);
+}
+
+.page-top-gap {
+  padding-top: var(--page-top-gap);
+}
+
+.page-bottom-pad {
+  padding-bottom: var(--page-bottom-pad);
+}
+
+.section-gap {
+  margin-bottom: var(--section-gap);
+}
+
+/* Sticks a bar just under whatever chrome is on screen, instead of a guessed offset. */
+.under-chrome {
+  top: calc(var(--content-top) + 0.5rem);
+}
+
+/* Display titles that scale with the viewport HEIGHT as well as its width, so a headline
+   cannot push the real content below the fold on a short laptop screen. The lower bounds
+   keep the current mobile sizes exactly; the caps are what change on desktop. */
+.fluid-title {
+  font-size: clamp(2.25rem, min(6.5vw, 10svh), 6rem);
+  line-height: 0.88;
+}
+
+.fluid-title-xl {
+  font-size: clamp(3.75rem, min(9vw, 13svh), 9rem);
+  line-height: 0.85;
 }
 
 body {

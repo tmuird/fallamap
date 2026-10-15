@@ -16,10 +16,12 @@ export default {
         display: ["MatzyFood", "cursive"],
       },
       fontSize: {
-        'fluid-display': ['clamp(2.5rem, 8vw, 6rem)', { lineHeight: '0.8' }],
-        'fluid-lg': ['clamp(1.5rem, 4vw, 2.5rem)', { lineHeight: '1' }],
-        'fluid-xl': ['clamp(1.75rem, 5vw, 3rem)', { lineHeight: '0.9' }],
-        'fluid-2xl': ['clamp(2.25rem, 7vw, 4.5rem)', { lineHeight: '0.85' }],
+        // min(vw, svh) so the type answers BOTH the width and the height of the window:
+        // a 1440x900 and a 1440x600 screen no longer get the same headline size.
+        'fluid-display': ['clamp(2.5rem, min(8vw, 12svh), 6rem)', { lineHeight: '0.8' }],
+        'fluid-lg': ['clamp(1.5rem, min(4vw, 6svh), 2.5rem)', { lineHeight: '1' }],
+        'fluid-xl': ['clamp(1.75rem, min(5vw, 7.5svh), 3rem)', { lineHeight: '0.9' }],
+        'fluid-2xl': ['clamp(2.25rem, min(7vw, 11svh), 4.5rem)', { lineHeight: '0.85' }],
       },
       colors: {
         // NOTE: these must stay channel-triplet based (`rgb(var(--x-rgb) / <alpha-value>)`).

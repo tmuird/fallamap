@@ -8,7 +8,7 @@ import { SITE } from "@/lib/siteConfig";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-falla-paper flex flex-col items-center relative overflow-x-hidden selection:bg-falla-fire selection:text-falla-on-fire pb-20">
+    <div className="page-shell bg-falla-paper flex flex-col items-center relative overflow-x-clip selection:bg-falla-fire selection:text-falla-on-fire">
       {/* Subtle "Senyera" / Valencian Flag Gradient Hint at top edge */}
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-falla-fire via-yellow-400 to-falla-fire opacity-50" />
       
@@ -28,10 +28,10 @@ export default function HomePage() {
         />
       </div>
       
-      <div className="z-10 w-full flex flex-col items-center px-4 relative">
+      <div className="z-10 w-full flex-1 min-h-0 flex flex-col items-center px-4 relative">
         <FallamapHeader isVisible={true} />
 
-        <main className="w-full max-w-6xl flex flex-col items-center justify-center gap-[3vh] md:gap-[4vh] pb-12">
+        <main className="w-full max-w-6xl flex-1 min-h-0 flex flex-col items-center justify-center gap-[2.5vh] md:gap-[3vh] pb-4">
           {/* Main Content */}
           <div className="flex flex-col items-center text-center gap-[2vh] md:gap-[4vh] w-full">
             <motion.div 
@@ -105,7 +105,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, type: "spring", damping: 20 }}
-            className="w-full h-[22vh] md:h-[35vh] rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden ink-border shadow-solid bg-[url('/plaza.jpg')] bg-cover bg-center relative group max-w-4xl mx-auto shrink-0 mt-2"
+            className="w-full flex-1 min-h-[7rem] max-h-[42svh] rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden ink-border shadow-solid bg-[url('/plaza.jpg')] bg-cover bg-center relative group max-w-4xl mx-auto mt-2"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-falla-ink/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700" />
             <div className="absolute bottom-[2vh] left-[2vw] md:bottom-8 md:left-8 text-left">

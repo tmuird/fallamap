@@ -173,6 +173,13 @@ const MapComponent = () => {
 
     mapRef.current = map;
 
+    // Keep the canvas the same size as its container. The container's height changes when the
+    // offline banner appears or disappears (it publishes --banner-h, which --content-top adds
+    // to the navbar), and Mapbox only listens for *window* resizes by default — a stale canvas
+    // is what leaves a strip of empty container at the bottom of the map.
+    const resizeObserver = new ResizeObserver(() => map.resize());
+    if (mapContainerRef.current) resizeObserver.observe(mapContainerRef.current);
+
     map.on('load', () => {
       // Add 3D buildings layer (only if composite source is available)
       try {
@@ -299,6 +306,7 @@ const MapComponent = () => {
 
     return () => {
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      resizeObserver.disconnect();
       Object.values(markersRef.current).forEach(m => m.remove());
       markersRef.current = {};
       markerElsRef.current = {};

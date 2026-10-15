@@ -7,9 +7,10 @@ import { CloudSlash } from "@phosphor-icons/react";
  * community features (comments, photos, likes) are unavailable, everything
  * local (map, schedule, archive) keeps working. See T1.1 in PLAN.md.
  *
- * While it is on screen it publishes its own bottom edge as `--content-top`, which is what
- * full-bleed pages use to start below it: the map is `position: fixed`, so without this the
- * map layer painted straight over the banner on phones and its message was unreadable.
+ * It sits in normal flow directly under the navbar (`margin-top: var(--nav-h)`) and publishes
+ * its own height as `--banner-h`, which `--content-top` adds to `--nav-h`. Everything
+ * chrome-aware — the map's fixed layer, page frames, sticky bars — reads `--content-top`, so
+ * the layout is correct whether this banner is up or not, and nothing can be painted over.
  */
 export function CommunityOfflineBanner() {
   const status = useBackendStatus();
@@ -18,13 +19,13 @@ export function CommunityOfflineBanner() {
   useEffect(() => {
     const root = document.documentElement;
     if (status !== "offline") {
-      root.style.removeProperty("--content-top");
+      root.style.removeProperty("--banner-h");
       return;
     }
 
     const publish = () => {
-      const bottom = bannerRef.current?.getBoundingClientRect().bottom ?? 0;
-      if (bottom > 0) root.style.setProperty("--content-top", `${Math.round(bottom)}px`);
+      const height = bannerRef.current?.getBoundingClientRect().height ?? 0;
+      if (height > 0) root.style.setProperty("--banner-h", `${Math.round(height)}px`);
     };
 
     publish();
@@ -35,7 +36,7 @@ export function CommunityOfflineBanner() {
     return () => {
       window.removeEventListener("resize", publish);
       observer.disconnect();
-      root.style.removeProperty("--content-top");
+      root.style.removeProperty("--banner-h");
     };
   }, [status]);
 
@@ -45,7 +46,7 @@ export function CommunityOfflineBanner() {
     <div
       ref={bannerRef}
       role="status"
-      className="w-full bg-falla-fire/10 border-b-2 border-falla-fire/30 text-falla-ink mt-[76px] md:mt-[124px]"
+      className="w-full bg-falla-fire/10 border-b-2 border-falla-fire/30 text-falla-ink mt-[var(--nav-h)]"
     >
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-3 text-center">
         <CloudSlash size={18} weight="bold" className="text-falla-fire-ink shrink-0" />

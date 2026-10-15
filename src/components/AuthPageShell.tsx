@@ -14,7 +14,7 @@ export default function AuthPageShell({ mode, children }: AuthPageShellProps) {
   const isSignIn = mode === "sign-in";
 
   return (
-    <section className="w-full flex-1 flex items-center justify-center px-4 pt-20 pb-16 md:pt-[148px] md:pb-24">
+    <section className="w-full flex-1 flex items-center justify-center px-4 page-top-gap page-bottom-pad">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

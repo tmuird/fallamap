@@ -45,7 +45,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-falla-paper pt-32 md:pt-48 pb-20 px-4 md:px-8 transition-colors duration-300">
+    <div className="page-shell bg-falla-paper px-4 md:px-8 transition-colors duration-300">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,7 @@ export default function ContactPage() {
               <ChatCircleDots size={14} weight="bold" /> Get in touch
             </span>
           </div>
-          <h1 className="text-5xl md:text-8xl font-display text-falla-ink mb-6 leading-tight lowercase">
+          <h1 className="fluid-title font-display text-falla-ink mb-6 lowercase">
             {SITE.contact.headlineBefore} <span className="text-falla-fire-ink">{SITE.contact.headlineHighlight}</span>
           </h1>
           <p className="text-falla-ink/65 font-medium text-lg md:text-xl max-w-lg mx-auto tracking-normal">

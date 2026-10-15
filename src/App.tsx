@@ -161,7 +161,7 @@ export default function App() {
   useEffect(() => startBackendMonitor(), []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans transition-colors duration-300 selection:bg-falla-fire selection:text-falla-on-fire overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-falla-paper text-falla-ink font-sans transition-colors duration-300 selection:bg-falla-fire selection:text-falla-on-fire overflow-x-clip">
       <Toaster 
         position="top-center" 
         richColors 

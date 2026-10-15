@@ -4,7 +4,7 @@ import { SITE } from "@/lib/siteConfig";
 
 export default function ArchivePage() {
   return (
-    <div className="min-h-screen bg-falla-paper pt-32 md:pt-48 pb-24 px-4 md:px-8 transition-colors duration-300">
+    <div className="page-shell bg-falla-paper px-4 md:px-8 transition-colors duration-300">
       <div className="max-w-5xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -17,7 +17,7 @@ export default function ArchivePage() {
             </span>
           </div>
           
-          <h1 className="text-6xl md:text-[10rem] font-display text-falla-ink mb-8 leading-[0.85] lowercase">
+          <h1 className="fluid-title-xl font-display text-falla-ink mb-8 lowercase">
             coming <span className="text-falla-fire-ink">soon</span>
           </h1>
           
