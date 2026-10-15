@@ -12,6 +12,10 @@
  *   3. low contrast     — text below WCAG AA (4.5:1, or 3:1 for large text) against
  *                         its effective background
  *   4. overflow         — horizontal scrolling introduced by a child
+ *   5. fold economy     — content starting too far down the first screen (the page opens
+ *                         with fixed padding, so a person scrolls before seeing anything;
+ *                         every element can be present, unclipped and legible and this
+ *                         still reads as broken). Reported every run, not just on failure.
  *
  * Usage:
  *   npm run audit:ui                                  # against http://127.0.0.1:4173
@@ -35,6 +39,12 @@ const WIDTHS = arg("widths", "1440,768,390").split(",").map(Number);
 // before the app boots. Contrast is measured against the *effective* background either way.
 const THEMES = arg("themes", "light,dark").split(",");
 const SETTLE_MS = Number(arg("settle", 3500));
+// Content must begin above this fraction of the viewport height. Measured, not guessed:
+// before the page-frame rework every route started its content at 39% (y=352 on a 900px
+// screen) because of static `pt-32 md:pt-48`; after it, the worst is 27% — the auth card on
+// mobile, which is vertically centred on purpose. 32% catches the old bug with margin on both
+// sides instead of flapping against an intentional layout.
+const FOLD_RATIO_MAX = Number(arg("fold-ratio", 0.32));
 
 /** Runs inside the page. Keep it dependency-free. */
 function auditPage() {
@@ -275,6 +285,73 @@ function auditPage() {
     }
   }
 
+  // ── 5. fold economy — how far down the screen the page's *content* starts
+  // Everything above caught a defect in an element. None of them could see the defect the
+  // user actually reported: every page opened 288px down the screen (static `pt-32 md:pt-48`
+  // padding), so content began at y=352 on a 900px viewport — 39% of the screen spent before
+  // anything rendered — while every element was present, unclipped and legible. Content is
+  // measured below the chrome band (`--content-top`), so a full-bleed page or the offline
+  // banner is never mistaken for content.
+  const inFixedLayer = (el) => {
+    let node = el;
+    while (node && node !== document.documentElement) {
+      if (getComputedStyle(node).position === "fixed") return true;
+      node = node.parentElement;
+    }
+    return false;
+  };
+  // `--content-top` is `calc(var(--nav-h) + var(--banner-h))`, and getPropertyValue returns
+  // that raw token rather than a number — so resolve it by measuring it instead of parsing it.
+  const probe = document.createElement("div");
+  probe.style.cssText =
+    "position:absolute;top:0;left:0;width:0;height:var(--content-top);pointer-events:none;visibility:hidden";
+  document.body.appendChild(probe);
+  const chromeBottom = probe.getBoundingClientRect().height;
+  probe.remove();
+  // Measured over `main` rather than `leaves`, because the first thing a page shows is not
+  // always text: /profile opens with an 85px avatar icon before its heading, and a text-only
+  // definition reported that page as starting 114px lower than it does.
+  const scope = document.querySelector("main") ? "main *" : "body *";
+  const seen = new Set();
+  const contentTops = [];
+  for (const el of document.querySelectorAll(scope)) {
+    if (seen.has(el)) continue;
+    seen.add(el);
+    if (el.closest(SKIP_SELECTOR)) continue;
+    if (!isRendered(el) || inFixedLayer(el)) continue;
+    const pr = paintedRect(el);
+    if (pr.y < chromeBottom - 2 || pr.h < 8 || pr.w < 8) continue;
+    if (/^(NAV|HEADER|FOOTER)$/.test(el.tagName) || el.closest("[role='status']")) continue;
+    // Direct text nodes only: `innerText` on a container returns every descendant string, so
+    // the page root itself would qualify and report content at the chrome's own edge.
+    const ownText = [...el.childNodes].some(
+      (n) => n.nodeType === 3 && n.textContent.trim().length >= 2
+    );
+    const isControl = /^(INPUT|BUTTON|A|SELECT|TEXTAREA|IMG)$/.test(el.tagName);
+    const textLed = ownText || (isControl && (el.innerText || el.value || "").trim().length >= 2);
+    // An icon can be the first content (the profile avatar). It counts only when the icon is
+    // itself >= 32px and its wrapper is a small block — not any large container that happens
+    // to hold an icon somewhere inside.
+    let iconLed = false;
+    const icon = el.querySelector("svg,img");
+    if (icon && !icon.closest("[aria-hidden='true']") && pr.h <= 220 && pr.w <= 420) {
+      const ir = icon.getBoundingClientRect();
+      iconLed = ir.width >= 32 && ir.height >= 32;
+    }
+    if (textLed || iconLed) contentTops.push(pr.y);
+  }
+  const firstContentY = contentTops.length ? Math.round(Math.min(...contentTops)) : null;
+  const viewportHeight = window.innerHeight;
+  const fold = firstContentY === null
+    ? null
+    : {
+        firstContentY,
+        chromeBottom: Math.round(chromeBottom),
+        headroom: firstContentY - Math.round(chromeBottom),
+        ratio: Math.round((firstContentY / viewportHeight) * 1000) / 1000,
+        screens: Math.round((document.documentElement.scrollHeight / viewportHeight) * 100) / 100,
+      };
+
   return {
     leaves: leaves.length,
     clipped,
@@ -284,6 +361,7 @@ function auditPage() {
     horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
     scrollWidth: document.documentElement.scrollWidth,
     innerWidth: window.innerWidth,
+    fold,
   };
 }
 
@@ -332,7 +410,13 @@ async function main() {
       }
       await context.close();
 
-      const defects = result.clipped.length + result.overlaps.length + result.lowContrast.length + (result.horizontalOverflow ? 1 : 0);
+      const foldDefect = Boolean(result.fold && result.fold.ratio > FOLD_RATIO_MAX);
+      const defects =
+        result.clipped.length +
+        result.overlaps.length +
+        result.lowContrast.length +
+        (result.horizontalOverflow ? 1 : 0) +
+        (foldDefect ? 1 : 0);
       if (defects > 0) failures++;
       report.push({ route, width, theme, ...result, pageErrors });
 
@@ -358,6 +442,11 @@ async function main() {
         if (pageErrors.length) {
           console.log(`   ${YELLOW}pageerror${RESET} ${pageErrors[0]}`);
         }
+        if (result.fold) {
+          const f = result.fold;
+          const line = `fold   content starts at y=${f.firstContentY} (${Math.round(f.ratio * 100)}% of the viewport, ${f.headroom}px below the chrome) · page is ${f.screens} screens tall`;
+          console.log(foldDefect ? `   ${RED}${line}${RESET} — over the ${Math.round(FOLD_RATIO_MAX * 100)}% budget` : `   ${DIM}${line}${RESET}`);
+        }
         if (defects === 0 && pageErrors.length === 0) console.log(`   ${DIM}clean${RESET}`);
       }
     }
@@ -370,7 +459,12 @@ async function main() {
     console.log(JSON.stringify(report, null, 2));
   } else {
     const total = report.reduce(
-      (sum, r) => sum + (r.clipped?.length ?? 0) + (r.overlaps?.length ?? 0) + (r.lowContrast?.length ?? 0),
+      (sum, r) =>
+        sum +
+        (r.clipped?.length ?? 0) +
+        (r.overlaps?.length ?? 0) +
+        (r.lowContrast?.length ?? 0) +
+        (r.fold && r.fold.ratio > FOLD_RATIO_MAX ? 1 : 0),
       0
     );
     console.log(
