@@ -16,6 +16,44 @@
 
 <body class="bg-[#FAF7F2]">
   <div id="root"></div>
+  <script>
+    // Boot watchdog. If this page's own JavaScript never arrives — a stale tab whose asset
+    // hashes were replaced by a new deploy, or a dropped request — React never mounts and all
+    // that is left is a white page. Nothing inside the app can report that, so it is reported
+    // from here: a plain, self-contained card with a Reload button, using inline styles
+    // because the stylesheet itself may be the thing that failed.
+    (function () {
+      var shown = false;
+      function show() {
+        if (shown) return;
+        var root = document.getElementById("root");
+        if (!root || root.children.length > 0) return; // the app booted — stand down
+        shown = true;
+        root.innerHTML =
+          '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#FAF7F2;color:#1A1A1A;font-family:system-ui,-apple-system,\'Segoe UI\',sans-serif">' +
+            '<div style="max-width:26rem;width:100%;border:2px solid #1A1A1A;border-radius:2rem;padding:2.5rem;text-align:center;background:#FAF7F2;box-shadow:6px 6px 0 0 #1A1A1A">' +
+              '<div style="width:3.5rem;height:3.5rem;border-radius:9999px;background:#FF7043;border:2px solid #1A1A1A;margin:0 auto 1.25rem"></div>' +
+              '<h1 style="font-size:1.15rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin:0 0 .75rem">This page is out of date</h1>' +
+              '<p style="font-size:.875rem;font-weight:600;line-height:1.6;margin:0 0 1.5rem;color:rgba(26,26,26,.65)">Part of the site could not be downloaded &mdash; this usually means it was updated while this tab was open. Reloading picks up the new version. Your saved events stay on this device.</p>' +
+              '<button onclick="location.reload()" style="padding:.75rem 1.5rem;border-radius:.75rem;border:2px solid #1A1A1A;background:#FF7043;color:#1A1A1A;font-weight:900;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;box-shadow:2px 2px 0 0 #1A1A1A">Reload</button>' +
+            "</div>" +
+          "</div>";
+      }
+      window.__fallamapBootTimeout = 6000;
+      // A script this page depends on failing is the earliest reliable signal.
+      window.addEventListener(
+        "error",
+        function (event) {
+          var target = event.target;
+          if (target && target.tagName === "SCRIPT" && target.src && target.src.indexOf("/assets/") !== -1) {
+            setTimeout(show, 1500);
+          }
+        },
+        true
+      );
+      setTimeout(show, 6000);
+    })();
+  </script>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

@@ -5,7 +5,8 @@ import AppNavbar from "@/components/Navbar.tsx";
 import { neobrutalism } from "@clerk/themes";
 import { ClerkProvider, useUser } from "@clerk/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { lazyRoute } from "@/lib/lazyRoute";
 import { useTheme } from "@/context/ThemeContext.tsx";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Toaster } from "sonner";
@@ -17,18 +18,20 @@ import { startBackendMonitor } from "./lib/backendStatus";
 import { SITE } from "./lib/siteConfig";
 
 // T2.7: route-level code splitting. The landing page stays eager (no first-paint
-// flash); every other route loads its chunk on demand.
-const MapPage = lazy(() => import("./components/MapPage"));
-const SchedulePage = lazy(() => import("./components/SchedulePage.tsx"));
-const ArchivePage = lazy(() => import("./components/ArchivePage"));
-const ContactPage = lazy(() => import("@/components/ContactPage.tsx"));
-const UserProfile = lazy(() => import("./components/profile/UserProfile"));
-const ModerationDashboard = lazy(
-  () => import("./components/admin/ModerationDashboard")
+// flash); every other route loads its chunk on demand. lazyRoute reloads once if the chunk
+// itself fails, because a stale tab's chunk hash 404s and React caches that failure forever.
+const MapPage = lazyRoute(() => import("./components/MapPage"), "MapPage");
+const SchedulePage = lazyRoute(() => import("./components/SchedulePage.tsx"), "SchedulePage");
+const ArchivePage = lazyRoute(() => import("./components/ArchivePage"), "ArchivePage");
+const ContactPage = lazyRoute(() => import("@/components/ContactPage.tsx"), "ContactPage");
+const UserProfile = lazyRoute(() => import("./components/profile/UserProfile"), "UserProfile");
+const ModerationDashboard = lazyRoute(
+  () => import("./components/admin/ModerationDashboard"),
+  "ModerationDashboard"
 );
-const SignInPage = lazy(() => import("@/components/SignInPage.tsx"));
-const SignUpPage = lazy(() => import("@/components/SignUpPage.tsx"));
-const SsoCallback = lazy(() => import("@/components/SsoCallback.tsx"));
+const SignInPage = lazyRoute(() => import("@/components/SignInPage.tsx"), "SignInPage");
+const SignUpPage = lazyRoute(() => import("@/components/SignUpPage.tsx"), "SignUpPage");
+const SsoCallback = lazyRoute(() => import("@/components/SsoCallback.tsx"), "SsoCallback");
 
 // Shown while a route chunk is still loading (cold cache / slow network).
 const PageFallback = () => (

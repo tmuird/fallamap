@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSignIn } from "@clerk/react/legacy";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 import { AuthAlert, AuthDivider, AuthField, AuthLinkButton, AuthOAuthButton, AuthSubmit } from "./AuthControls";
+import { AuthServiceLoading } from "./AuthServiceState";
 import {
   describeClerkError,
   validateCode,
@@ -202,15 +203,8 @@ export default function SignInForm() {
     setNotice("");
   };
 
-  if (!isLoaded) {
-    return (
-      <div className="space-y-3" aria-busy="true">
-        <div className="h-12 w-full animate-pulse rounded-xl bg-falla-ink/5" />
-        <div className="h-12 w-full animate-pulse rounded-xl bg-falla-ink/5" />
-        <div className="h-12 w-full animate-pulse rounded-xl bg-falla-ink/5" />
-      </div>
-    );
-  }
+  // Clerk unreachable used to mean three grey bars forever, with no fields to fill in.
+  if (!isLoaded) return <AuthServiceLoading />;
 
   const passwordToggle = (
     <button
