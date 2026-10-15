@@ -6,9 +6,9 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="worker-src 'self' blob:; child-src 'self' blob: https:; frame-src 'self' blob: https:; img-src 'self' data: blob: https:; connect-src 'self' https://*.mapbox.com https://*.clerk.com https://clerk.com https://*.clerk.accounts.dev https://clerk-telemetry.com https://*.supabase.co https://*.googleapis.com;">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+  <!-- Self-hosted: no third-party font origin, no render-blocking stylesheet. The preload
+       warms the subset every page needs; latin-ext follows only if a glyph asks for it. -->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/bricolage-grotesque-latin.woff2" crossorigin>
   <!-- Placeholder only — replaced with SITE.pageTitle (src/lib/siteConfig.ts)
        by the siteTitle plugin in vite.config.ts on serve and on build. -->
   <title>fallamap</title>

@@ -333,7 +333,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
         </header>
         
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain bg-falla-paper relative pb-48">
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')] z-0" />
+          <div className="paper-tooth absolute inset-0 opacity-[0.03] pointer-events-none z-0" />
           
           <AnimatePresence mode="wait">
             <motion.div 
@@ -377,7 +377,7 @@ export function FallaDetails({ falla, className, onNext, onPrev, onClose, onInte
                   </div>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center p-12 text-center bg-falla-paper relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/felt.png')] z-0" />
+                    <div className="paper-tooth absolute inset-0 opacity-[0.03] z-0" />
                     <div className="relative z-10 flex flex-col items-center">
                       <div className="w-20 h-20 rounded-full bg-falla-fire/5 border-2 border-falla-fire/10 flex items-center justify-center mb-6 shadow-soft-sm">
                         <Camera size={40} weight="thin" className="text-falla-fire-ink/70" />

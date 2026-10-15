@@ -15,7 +15,7 @@ export default function HomePage() {
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-falla-fire via-yellow-400 to-falla-fire opacity-50" />
       
       {/* Background Texture Overlay */}
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" />
+      <div className="paper-tooth absolute inset-0 opacity-[0.02] pointer-events-none" />
       
       {/* Background Sparkles (representing 'Pólvora' / Gunpowder). Not rendered at all under
           reduced motion: CSS can shorten a transition, but a moving particle field is the
