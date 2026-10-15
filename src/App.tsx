@@ -81,6 +81,20 @@ if (!PUBLISHABLE_KEY) {
   );
 }
 
+/**
+ * A route change should start at the top of the new page. Without this, tapping a link from
+ * halfway down a long schedule drops you halfway down the next page — and on a link that
+ * targets an element (`#main-content`), that target is respected instead.
+ */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (hash) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname, hash]);
+  return null;
+}
+
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
@@ -217,6 +231,7 @@ export default function App() {
           },
         }}
       >
+        <ScrollToTop />
         <SupabaseAuthBridge />
         <ClerkReadyGate onReady={setClerkReady} />
         {/* Before the navbar: the first Tab stop on every route. */}

@@ -234,6 +234,14 @@ h2, h3, h4 {
   transform: scale(var(--marker-scale));
 }
 
+/* Mapbox markers are real controls now: their focus ring has to read against map tiles,
+   not against our own backgrounds, so it gets its own heavier ring. */
+.marker:focus-visible {
+  outline: 3px solid var(--falla-fire-ink);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgb(var(--falla-paper-rgb) / 0.85), 2px 2px 0 0 var(--falla-shadow);
+}
+
 .marker.hub {
   width: 38px !important;
   height: 38px !important;

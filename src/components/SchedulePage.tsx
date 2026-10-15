@@ -455,6 +455,26 @@ export default function SchedulePage() {
     searchParams.get("day") || "mar-19"
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // Focus management for the event drawer, done explicitly because Radix does neither half
+  // correctly here. Opening: nothing moved focus into the dialog, so a keyboard user's next
+  // Tab walked the page behind it. Closing: Radix restores focus to the dialog content it is
+  // about to unmount, which lands on <body> — measured, not assumed. So we capture whatever
+  // had focus before opening and hand it back on close.
+  const drawerContentRef = useRef<HTMLDivElement | null>(null);
+  const drawerTriggerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (isDrawerOpen) {
+      const previous = document.activeElement;
+      drawerTriggerRef.current =
+        previous instanceof HTMLElement && previous !== document.body ? previous : null;
+      // One frame later: the portal has mounted but Vaul is still animating the sheet in.
+      const frame = requestAnimationFrame(() => drawerContentRef.current?.focus());
+      return () => cancelAnimationFrame(frame);
+    }
+    const trigger = drawerTriggerRef.current;
+    if (trigger?.isConnected) trigger.focus();
+    drawerTriggerRef.current = null;
+  }, [isDrawerOpen]);
   const [showMyPlan, setShowMyPlan] = useState(false);
   const [savedEventIds, setSavedEventIds] = useState<string[]>(() => {
     try {
@@ -872,7 +892,11 @@ export default function SchedulePage() {
         >
           <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100]" />
-            <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center">
+            <Drawer.Content
+              ref={drawerContentRef}
+              tabIndex={-1}
+              className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 z-[101] outline-none items-center"
+            >
               <Drawer.Title className="sr-only">{selectedEvent?.title ?? "Event details"}</Drawer.Title>
               <Drawer.Description className="sr-only">
                 {selectedEvent?.description ?? "Details for this schedule event."}

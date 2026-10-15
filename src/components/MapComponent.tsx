@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -94,7 +94,29 @@ const MapComponent = () => {
   const [visitedNumbers, setVisitedNumbers] = useState<string[]>([]);
   const [likedNumbers, setLikedNumbers] = useState<string[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // Same contract as the schedule drawer: capture what had focus, move focus into the
+  // monument sheet, and hand focus back on close (Radix otherwise drops it on <body>).
+  const drawerContentRef = useRef<HTMLDivElement | null>(null);
+  const drawerTriggerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (isDrawerOpen) {
+      const previous = document.activeElement;
+      drawerTriggerRef.current =
+        previous instanceof HTMLElement && previous !== document.body ? previous : null;
+      // Focus the container itself, not its first control: the gallery's "Previous" arrow
+      // happened to be first, which announced a scroll button before the monument's name.
+      const frame = requestAnimationFrame(() => drawerContentRef.current?.focus());
+      return () => cancelAnimationFrame(frame);
+    }
+    const trigger = drawerTriggerRef.current;
+    if (trigger?.isConnected) trigger.focus();
+    drawerTriggerRef.current = null;
+  }, [isDrawerOpen]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  // Which result the keyboard is on. Focus stays in the input (the ARIA combobox pattern), so
+  // you can keep typing while arrowing through the list — previously ArrowDown moved DOM focus
+  // into the result buttons and typing stopped dead.
+  const [activeOptionIndex, setActiveOptionIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const autocompleteRef = useRef<HTMLDivElement | null>(null);
   const [mapUnavailable, setMapUnavailable] = useState(false);
@@ -371,13 +393,36 @@ const MapComponent = () => {
           el.innerHTML = `<div class="hub-icon"><svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.41,134.55a8,8,0,0,0,9.18,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z" fill="white"/></svg></div>`;
         }
 
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
+        // A marker is a control, not decoration. It was a bare <div> with a click listener,
+        // so a keyboard user could not reach a single monument on the map and a screen reader
+        // did not know the markers existed. Now it is a named button in the tab order, and
+        // Enter/Space do exactly what a tap does.
+        const openDetails = () => {
           if (poi.number) {
             setSearchParams({ falla: poi.number }, { replace: true });
           } else {
             setSearchParams({ hub: poi.id as string }, { replace: true });
           }
+        };
+
+        el.setAttribute("role", "button");
+        el.setAttribute("tabindex", "0");
+        el.setAttribute(
+          "aria-label",
+          poi.is_hub
+            ? `${poi.name} — official event location, open details`
+            : `Monument ${poi.number ? `#${poi.number} ` : ""}${poi.name} — open details`
+        );
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openDetails();
+        });
+        el.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          // Space scrolls the page by default; a focused button must not do that.
+          event.preventDefault();
+          event.stopPropagation();
+          openDetails();
         });
 
         marker = new mapboxgl.Marker(el)
@@ -461,25 +506,18 @@ const MapComponent = () => {
     }
   };
 
-  const handleAutocompleteKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
-    const options = Array.from(
-      autocompleteRef.current?.querySelectorAll<HTMLButtonElement>("[data-autocomplete-option]") || []
-    );
-    const currentIndex = options.indexOf(event.currentTarget);
+  // A new query means a new list: nothing is active until the keyboard says so.
+  useEffect(() => {
+    setActiveOptionIndex(-1);
+  }, [searchQuery]);
 
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      options[Math.min(currentIndex + 1, options.length - 1)]?.focus();
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      if (currentIndex <= 0) searchInputRef.current?.focus();
-      else options[currentIndex - 1]?.focus();
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      searchInputRef.current?.focus();
-      setIsSearchFocused(false);
-    }
-  };
+  // Keep the highlighted row in view as the keyboard moves through a long list.
+  useEffect(() => {
+    if (activeOptionIndex < 0) return;
+    document
+      .getElementById(`map-search-option-${activeOptionIndex}`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [activeOptionIndex]);
 
   const handleAutocompleteClick = (poi: POI) => {
     setSearchQuery("");
@@ -543,19 +581,44 @@ const MapComponent = () => {
                     setIsSearchFocused(false);
                   }}
                   onKeyDown={(event) => {
-                    if (event.key === "ArrowDown" && autocompleteResults.length > 0) {
+                    const last = autocompleteResults.length - 1;
+                    if (event.key === "ArrowDown" && last >= 0) {
                       event.preventDefault();
-                      autocompleteRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+                      setActiveOptionIndex((index) => Math.min(index + 1, last));
+                    } else if (event.key === "ArrowUp" && last >= 0) {
+                      event.preventDefault();
+                      setActiveOptionIndex((index) => Math.max(index - 1, -1));
+                    } else if (event.key === "Enter" && activeOptionIndex >= 0) {
+                      const chosen = autocompleteResults[activeOptionIndex];
+                      if (chosen) {
+                        event.preventDefault();
+                        handleAutocompleteClick(chosen);
+                      }
                     } else if (event.key === "Escape") {
+                      event.preventDefault();
                       setIsSearchFocused(false);
+                      setActiveOptionIndex(-1);
                     }
                   }}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   aria-label="Search monuments and events"
                   role="combobox"
-                  aria-expanded={autocompleteResults.length > 0}
+                  aria-autocomplete="list"
+                  aria-controls="map-search-listbox"
+                  aria-activedescendant={
+                    activeOptionIndex >= 0 ? `map-search-option-${activeOptionIndex}` : undefined
+                  }
+                  autoComplete="off"
+                  aria-expanded={isSearchFocused && autocompleteResults.length > 0}
                   className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/65 text-falla-ink h-full min-w-0"
                 />
+                {/* Announced while typing: screen-reader users get the result count without
+                    having to leave the field. */}
+                <span role="status" aria-live="polite" className="sr-only">
+                  {searchQuery.length >= 2
+                    ? `${autocompleteResults.length} result${autocompleteResults.length === 1 ? "" : "s"} for ${searchQuery}`
+                    : ""}
+                </span>
                 <AnimatePresence>
                   {searchQuery && (
                     <motion.button
@@ -622,19 +685,32 @@ const MapComponent = () => {
                 animate={{ height: 'auto', opacity: 1 }}
                 className="relative z-10 bg-transparent"
               >
-                <div className="flex flex-col max-h-[40vh] overflow-y-auto scrollbar-hide py-2">
-                  {autocompleteResults.map((result) => {
+                <div
+                  id="map-search-listbox"
+                  role="listbox"
+                  aria-label="Search results"
+                  className="flex flex-col max-h-[40vh] overflow-y-auto scrollbar-hide py-2"
+                >
+                  {autocompleteResults.map((result, index) => {
                     const segments = getHighlightSegments(result.name, searchQuery);
                     const key = result.number || result.id || result.name;
-                    
+                    const isActive = index === activeOptionIndex;
+
                     return (
-                      <button
+                      <div
                         key={key}
-                        data-autocomplete-option
+                        id={`map-search-option-${index}`}
+                        role="option"
+                        aria-selected={isActive}
+                        // The input keeps DOM focus, so these rows are deliberately not
+                        // focusable; the pointer only ever moves the highlight.
                         onPointerDown={(event) => event.preventDefault()}
-                        onKeyDown={handleAutocompleteKeyDown}
+                        onMouseEnter={() => setActiveOptionIndex(index)}
                         onClick={() => handleAutocompleteClick(result)}
-                        className="w-full px-6 py-3 md:py-4 flex items-center justify-between hover:bg-falla-ink/5 dark:hover:bg-white/5 transition-all group relative bg-transparent border-none active:scale-[0.98] gap-4"
+                        className={cn(
+                          "w-full px-6 py-3 md:py-4 flex items-center justify-between transition-all group relative cursor-pointer active:scale-[0.98] gap-4",
+                          isActive ? "bg-falla-ink/5 dark:bg-white/5" : "hover:bg-falla-ink/5 dark:hover:bg-white/5"
+                        )}
                       >
                         <div className="flex items-center gap-4 min-w-0 flex-1">
                           <div className="w-10 h-10 rounded-xl bg-falla-ink/5 dark:bg-white/5 flex items-center justify-center font-display text-lg text-falla-fire-ink group-hover:scale-110 transition-all shrink-0">
@@ -658,7 +734,7 @@ const MapComponent = () => {
                             <CheckCircle size={20} weight="fill" className="text-falla-sage drop-shadow-sm" />
                           )}
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -670,7 +746,11 @@ const MapComponent = () => {
       <Drawer.Root open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()} autoFocus={false}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[4px] drawer-overlay" />
-          <Drawer.Content className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh] drawer-content">
+          <Drawer.Content
+            ref={drawerContentRef}
+            tabIndex={-1}
+            className="bg-transparent flex flex-col fixed bottom-0 left-0 right-0 outline-none items-center justify-center pointer-events-none md:p-8 h-[100dvh] drawer-content"
+          >
             <Drawer.Title className="sr-only">POI Details</Drawer.Title>
             <Drawer.Description className="sr-only">Details, photos and community notes for the selected place.</Drawer.Description>
             <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-falla-ink/10 my-4 md:hidden pointer-events-auto" />

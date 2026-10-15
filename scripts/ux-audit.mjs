@@ -13,7 +13,11 @@
  *   3. names          — an interactive element with no accessible name at all
  *   4. keyboard       — a focus stop with no visible focus indicator (outline/ring),
  *                       or Tab landing on nothing
- *   5. tap targets    — a button/control smaller than 40x40 at phone widths
+ *   5. tap targets    — a button/control smaller than 24x24 at phone widths. 24px is the
+ *                       WCAG 2.5.8 (AA) conformance floor; anything under 44px (2.5.5, AAA
+ *                       and the comfortable-thumb size) is reported as advisory, not a defect
+ *                       — otherwise the map's 24px pins, which are legitimate map features
+ *                       with an equivalent accessible control (the search list), fail a build
  *   6. labels         — a form control with no label, aria-label or aria-labelledby
  *   7. images         — an <img> with no alt attribute (alt="" is valid: decorative)
  *   8. ids            — duplicate ids in the document
@@ -42,11 +46,16 @@ const ROUTES = arg(
 const WIDTHS = arg("widths", "1440,390").split(",").map(Number);
 const AS_JSON = args.includes("--json");
 const SETTLE_MS = Number(arg("settle", 3500));
-const TAP_MIN = Number(arg("tap-min", 40));
+// WCAG 2.5.8 (AA) is 24x24 CSS px; 2.5.5 (AAA) is 44x44 and is also the comfortable
+// thumb size. A shortfall against the floor is a defect; against the comfort size it is
+// reported as information, because some controls are legitimately small (map pins).
+const TAP_MIN = Number(arg("tap-min", 24));
+const TAP_COMFORT = Number(arg("tap-comfort", 44));
 
 /** Runs inside the page. Keep it dependency-free. */
-function auditPage(tapMin) {
+function auditPage([tapMin, tapComfort]) {
   const out = {
+    tapAdvisory: [],
     landmarks: [],
     headings: [],
     names: [],
@@ -216,11 +225,10 @@ function auditPage(tapMin) {
     const r = el.getBoundingClientRect();
     const hit = hitRect(el, r);
     const inlineLink = el.tagName === "A" && el.getAttribute("role") !== "button" && !el.closest("nav");
-    if (!inlineLink && (hit.w < tapMin || hit.h < tapMin)) {
-      out.tapTargets.push({
-        el: describe(el, name),
-        size: [Math.round(hit.w), Math.round(hit.h)],
-      });
+    if (!inlineLink && (hit.w < tapComfort || hit.h < tapComfort)) {
+      const entry = { el: describe(el, name), size: [Math.round(hit.w), Math.round(hit.h)] };
+      if (hit.w < tapMin || hit.h < tapMin) out.tapTargets.push(entry);
+      else out.tapAdvisory.push(entry);
     }
   }
 
@@ -400,7 +408,7 @@ async function main() {
       try {
         await page.goto(`${BASE}${route}`, { waitUntil: "load", timeout: 45000 });
         await page.waitForTimeout(SETTLE_MS);
-        result = await page.evaluate(auditPage, TAP_MIN);
+        result = await page.evaluate(auditPage, [TAP_MIN, TAP_COMFORT]);
         // Real key events, after the baseline pass above.
         result.keyboard = await walkFocus(page);
       } catch (error) {
@@ -422,6 +430,12 @@ async function main() {
           `\n${mark} ${route} ${DIM}@ ${width}px${RESET}  ${DIM}(main x${result.landmarks.main}, h1 x${result.headings.h1}, ${result.live.regions} live region(s))${RESET}`
         );
         for (const d of defects) console.log(`   ${RED}${d}${RESET}`);
+        if (result.tapAdvisory?.length) {
+          const sample = result.tapAdvisory[0];
+          console.log(
+            `   ${DIM}advisory: ${result.tapAdvisory.length} control(s) under ${TAP_COMFORT}px but at or above the ${TAP_MIN}px WCAG AA floor — e.g. ${sample.size[0]}x${sample.size[1]} ${sample.el}${RESET}`
+          );
+        }
         if (pageErrors.length) console.log(`   ${YELLOW}pageerror${RESET} ${pageErrors[0]}`);
         if (!defects.length && !pageErrors.length) console.log(`   ${DIM}clean${RESET}`);
       }
