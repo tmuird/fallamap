@@ -622,7 +622,7 @@ export default function SchedulePage() {
               aria-pressed={!showMyPlan}
               onClick={() => setShowMyPlan(false)}
               className={cn(
-                "rounded-full px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors",
+                "inline-flex min-h-[44px] items-center rounded-full px-5 text-[10px] font-black uppercase tracking-widest transition-colors",
                 !showMyPlan ? "bg-falla-ink text-falla-paper" : "text-falla-ink/65 hover:text-falla-ink"
               )}
             >
@@ -633,7 +633,7 @@ export default function SchedulePage() {
               aria-pressed={showMyPlan}
               onClick={() => setShowMyPlan(true)}
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors",
+                "inline-flex min-h-[44px] items-center gap-2 rounded-full px-5 text-[10px] font-black uppercase tracking-widest transition-colors",
                 showMyPlan ? "bg-falla-fire text-falla-on-fire" : "text-falla-ink/65 hover:text-falla-ink"
               )}
             >
@@ -850,7 +850,7 @@ export default function SchedulePage() {
                           aria-label={savedEventIds.includes(event.id) ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
                           aria-pressed={savedEventIds.includes(event.id)}
                           title={savedEventIds.includes(event.id) ? "Remove from My Plan" : "Add to My Plan"}
-                          className="mr-3 h-9 w-9 shrink-0 text-falla-fire-ink hover:bg-falla-fire/10"
+                          className="mr-3 h-11 w-11 shrink-0 text-falla-fire-ink hover:bg-falla-fire/10"
                           onClick={() => handleToggleSaved(event.id)}
                         >
                           <BookmarkSimple size={18} weight={savedEventIds.includes(event.id) ? "fill" : "bold"} />

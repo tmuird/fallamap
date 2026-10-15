@@ -70,7 +70,7 @@ export default function ContactPage() {
           <div className="md:col-span-5 space-y-8">
             <Card className="bg-falla-fire text-falla-on-fire border-falla-ink border-2 shadow-solid">
               <CardBody className="p-8">
-                <h3 className="text-4xl font-display mb-8 leading-none lowercase">{SITE.location.city}</h3>
+                <h2 className="text-4xl font-display mb-8 leading-none lowercase">{SITE.location.city}</h2>
                 <div className="space-y-8">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-falla-on-fire/10 flex items-center justify-center border border-falla-on-fire/30">
@@ -156,7 +156,7 @@ export default function ContactPage() {
                           classNames={{
                             inputWrapper:
                               "bg-falla-paper rounded-2xl h-14 border-2 border-falla-ink/5 focus-within:border-falla-fire transition-all px-6 text-falla-ink",
-                            input: "text-sm font-bold text-falla-ink",
+                            input: "text-sm font-bold text-falla-ink min-h-[44px]",
                           }}
                         />
                       </div>
@@ -174,7 +174,7 @@ export default function ContactPage() {
                           classNames={{
                             inputWrapper:
                               "bg-falla-paper rounded-2xl h-14 border-2 border-falla-ink/5 focus-within:border-falla-fire transition-all px-6 text-falla-ink",
-                            input: "text-sm font-bold text-falla-ink",
+                            input: "text-sm font-bold text-falla-ink min-h-[44px]",
                           }}
                         />
                       </div>

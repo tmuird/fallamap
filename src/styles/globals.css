@@ -43,16 +43,25 @@
   /* Fire as TEXT. The brand #FF7043 is only 2.57:1 on paper — fine as a fill, not as
      type. This is the same hue taken dark enough to pass WCAG AA (5.39:1 on paper). */
   --falla-fire-ink-rgb: 178 64 28;
+  --falla-fire-ink: #B2401C;
+  /* Every colour token exists TWICE: a channel triplet (`-rgb`) for Tailwind's
+     `rgb(var(--x-rgb) / <alpha-value>)` utilities, and a hex alias for raw CSS. Writing
+     `var(--falla-x)` for a token that only has `--falla-x-rgb` makes the whole declaration
+     invalid at computed-value time — it fails SILENTLY (the property falls back to `unset`),
+     which is how a focus-ring rule can look correct, match the element, and paint nothing. */
   /* Type sitting ON a fire fill. Fire stays bright in both themes, so this stays dark in
      both: white on #FF7043 is only 2.74:1, dark is 6.34:1. */
   --falla-on-fire-rgb: 26 26 26;
+  --falla-on-fire: #1A1A1A;
   /* Liked/saved accent. Tailwind's red-500 is 3.52:1 on paper; this is that red taken dark
      enough to pass AA with margin (6.05:1). Dark theme lifts it instead (6.29:1). */
   --falla-like-rgb: 185 28 28;
+  --falla-like: #B91C1C;
   /* Brand orange on an INVERTED surface (the auth page's promo panel paints `bg-ink`, which
      is dark here but light in dark theme). Fire-as-text has to invert with it, so this is
      the opposite of --falla-fire-ink: 6.34:1 on ink here, 5.39:1 on paper in dark theme. */
   --falla-inverse-accent-rgb: 255 112 67;
+  --falla-inverse-accent: #FF7043;
   --falla-sage-rgb: 139 148 103;
   --falla-sand-rgb: 230 213 184;
   --marker-scale: 1;
@@ -85,9 +94,12 @@
   /* On the dark surface the brand orange already reads at 6.34:1, so fire-as-text only
      needs a small lift to clear AA with margin (7.51:1). */
   --falla-fire-ink-rgb: 255 138 99;
+  --falla-fire-ink: #FF8A63;
   --falla-inverse-accent-rgb: 178 64 28;
+  --falla-inverse-accent: #B2401C;
   --falla-on-fire-rgb: 26 26 26;
   --falla-like-rgb: 248 113 113;
+  --falla-like: #F87171;
   --falla-sage-rgb: 139 148 103;
   --falla-sand-rgb: 45 45 45;
   --marker-scale: 1;
@@ -346,4 +358,50 @@ h2, h3, h4 {
 
 .PhotoView__Photo {
   cursor: zoom-out !important;
+}
+
+/* Mapbox ships a 24x24 attribution toggle. Rather than resize the control (which would move
+   the attribution block), extend what the finger can hit to 44x44 with a transparent overlay. */
+.mapboxgl-ctrl-attrib-button {
+  position: relative;
+}
+
+.mapboxgl-ctrl-attrib-button::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+}
+
+/* ── Keyboard focus ────────────────────────────────────────────────────────────
+   Every focus stop must show where focus is (WCAG 2.4.7). This lives in `base`, so a
+   component's own focus utility still wins, but an element that styles nothing gets a
+   visible ring instead of the browser default that the heavy borders often swallow. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--falla-fire-ink);
+    outline-offset: 2px;
+  }
+
+  /* The skip link's destination: clear the fixed navbar when it scrolls into view. A ring
+     around the entire page would be noise, and it is the skip link itself that shows one. */
+  #main-content {
+    scroll-margin-top: calc(var(--content-top) + 1rem);
+    outline: none;
+  }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────────
+   Honoured in four places, because one is not enough: this rule kills CSS
+   animations/transitions, `MotionConfig reducedMotion="user"` (main.tsx) covers every
+   framer-motion animation, the map jumps instead of flying, and the hero's particles are
+   not rendered at all. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

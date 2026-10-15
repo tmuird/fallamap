@@ -67,9 +67,11 @@ export function MascletaCountdown() {
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-falla-ink/65 leading-none mb-1">
               {isLive ? SITE.countdown.liveLabel : SITE.countdown.idleLabel}
             </p>
-            <h4 className="text-base font-display lowercase leading-none text-falla-ink">
+            {/* Not a heading: this is a floating widget, and its h4 was injecting a level jump into
+           every page that showed a h2 (profile, dashboard, archive). */}
+          <p className="text-base font-display lowercase leading-none text-falla-ink">
               {isLive ? SITE.countdown.liveTitle : SITE.countdown.idleTitle}
-            </h4>
+            </p>
           </div>
         </div>
 

@@ -50,7 +50,7 @@ export default function ArchivePage() {
                 {item.icon}
               </div>
               <div>
-                <h3 className="text-xs font-black uppercase tracking-[0.4em] text-falla-ink mb-2">{item.title}</h3>
+                <h2 className="text-xs font-black uppercase tracking-[0.4em] text-falla-ink mb-2">{item.title}</h2>
                 <p className="text-sm font-medium text-falla-ink/65">{item.desc}</p>
               </div>
             </motion.div>

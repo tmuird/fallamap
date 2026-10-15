@@ -110,7 +110,7 @@ export default function AppNavbar() {
             <Button
               isIconOnly
               variant="neutral"
-              className="sm:hidden w-9 h-9 flex items-center justify-center rounded-full ink-border bg-falla-paper shadow-solid-sm active:shadow-none transition-all p-0 flex-shrink-0 relative overflow-hidden border-2"
+              className="sm:hidden w-11 h-11 flex items-center justify-center rounded-full ink-border bg-falla-paper shadow-solid-sm active:shadow-none transition-all p-0 flex-shrink-0 relative overflow-hidden border-2"
               onClick={() => {
                 if (navigator.vibrate) navigator.vibrate(50);
                 setIsMenuOpen(!isMenuOpen);
@@ -210,7 +210,7 @@ export default function AppNavbar() {
                       variant="neutral"
                       size="sm"
                       isIconOnly
-                      className="w-8 h-8 flex-shrink-0 rounded-full border-2 active:scale-95 shadow-solid-sm hover:shadow-none transition-all"
+                      className="w-11 h-11 flex-shrink-0 rounded-full border-2 active:scale-95 shadow-solid-sm hover:shadow-none transition-all"
                       aria-label="Journey"
                     >
                       <Fingerprint size={16} weight="bold" className="text-falla-fire-ink" />
@@ -223,7 +223,7 @@ export default function AppNavbar() {
                         variant="default"
                         size="sm"
                         isIconOnly
-                        className="w-8 h-8 flex-shrink-0 rounded-full border-2 active:scale-95 shadow-solid-sm hover:shadow-none transition-all"
+                        className="w-11 h-11 flex-shrink-0 rounded-full border-2 active:scale-95 shadow-solid-sm hover:shadow-none transition-all"
                         aria-label="Admin"
                       >
                         <ShieldCheck size={16} weight="bold" />
@@ -232,7 +232,7 @@ export default function AppNavbar() {
                   )}
                   
                   {/* Profile Pill Wrapper */}
-                  <div className="rounded-full p-0.5 md:p-1 bg-falla-paper shadow-solid-sm border-2 border-falla-ink overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer flex items-center justify-center h-8 w-8 md:h-11 md:w-11 flex-shrink-0 active:scale-95">
+                  <div className="rounded-full p-0.5 md:p-1 bg-falla-paper shadow-solid-sm border-2 border-falla-ink overflow-hidden hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer flex items-center justify-center h-11 w-11 flex-shrink-0 active:scale-95">
                     <UserButton 
                       appearance={{ 
                         elements: { 
@@ -250,7 +250,7 @@ export default function AppNavbar() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-falla-ink font-black uppercase tracking-widest text-[8px] md:text-[10px] h-8 md:h-11 px-1.5 md:px-4 flex-shrink-0 active:scale-95"
+                      className="text-falla-ink font-black uppercase tracking-widest text-[8px] md:text-[10px] h-11 px-3 md:px-4 inline-flex items-center flex-shrink-0 active:scale-95"
                     >
                       {SITE.nav.signIn}
                     </Button>
@@ -258,7 +258,7 @@ export default function AppNavbar() {
                   <Link to="/sign-up" className="flex-shrink-0" onClick={() => { if (navigator.vibrate) navigator.vibrate(30); }}>
                     <Button 
                       size="sm" 
-                      className="bg-falla-fire text-falla-on-fire font-black uppercase tracking-widest text-[8px] md:text-[10px] rounded-lg md:rounded-xl px-2 md:px-8 h-8 md:h-11 ink-border shadow-solid active:shadow-none transition-all border-1.5 md:border-2 flex-shrink-0 active:scale-95"
+                      className="bg-falla-fire text-falla-on-fire font-black uppercase tracking-widest text-[8px] md:text-[10px] rounded-lg md:rounded-xl px-3 md:px-8 h-11 ink-border shadow-solid active:shadow-none transition-all border-1.5 md:border-2 flex-shrink-0 active:scale-95"
                     >
                       {SITE.nav.join}
                     </Button>

@@ -145,7 +145,7 @@ export function AuthLinkButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "text-xs font-black uppercase tracking-widest text-falla-fire-ink underline decoration-falla-fire/40 underline-offset-4",
+        "inline-flex min-h-[44px] items-center justify-center px-3 text-xs font-black uppercase tracking-widest text-falla-fire-ink underline decoration-falla-fire/40 underline-offset-4",
         "hover:decoration-falla-fire-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-falla-fire",
         className
       )}

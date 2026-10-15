@@ -10,7 +10,7 @@ export function ThemeSwitcher() {
       isIconOnly
       variant="neutral"
       onClick={toggleTheme}
-      className="w-8 h-8 md:w-11 md:h-11 rounded-xl border-1.5 md:border-2 shadow-solid-sm hover:shadow-none transition-all"
+      className="w-11 h-11 rounded-xl border-1.5 md:border-2 shadow-solid-sm hover:shadow-none transition-all"
       aria-label="Toggle theme"
     >
       {isDarkMode ? (

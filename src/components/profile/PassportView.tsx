@@ -104,7 +104,7 @@ export function PassportView() {
           <Trophy size={40} weight="fill" />
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Discovery Progress</p>
-            <h3 className="text-4xl font-display italic leading-none">{visitedData.length} Stamps</h3>
+            <h2 className="text-4xl font-display italic leading-none">{visitedData.length} Stamps</h2>
           </div>
         </div>
         

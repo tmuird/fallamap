@@ -9,6 +9,7 @@ import { useEffect, useState, Suspense } from "react";
 import { lazyRoute } from "@/lib/lazyRoute";
 import { useTheme } from "@/context/ThemeContext.tsx";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SkipToContent } from "./components/ui/SkipToContent";
 import { Toaster } from "sonner";
 import { MascletaCountdown } from "./components/ui/MascletaCountdown";
 import { ErrorBoundary } from "./components/ui/ErrorBoundary";
@@ -218,10 +219,14 @@ export default function App() {
       >
         <SupabaseAuthBridge />
         <ClerkReadyGate onReady={setClerkReady} />
+        {/* Before the navbar: the first Tab stop on every route. */}
+        <SkipToContent />
         <AppNavbar />
         <CommunityOfflineBanner />
-        
-        <main className="flex-grow flex flex-col relative">
+
+        {/* tabIndex={-1} lets the skip link move focus here; outline-none because a ring around
+            the whole page is noise — the skip link that put focus here shows its own ring. */}
+        <main id="main-content" tabIndex={-1} className="flex-grow flex flex-col relative focus:outline-none">
           <ErrorBoundary>
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={routeTransitionKey}>

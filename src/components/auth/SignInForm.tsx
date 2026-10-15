@@ -211,7 +211,7 @@ export default function SignInForm() {
       type="button"
       onClick={() => setShowPassword((value) => !value)}
       aria-label={showPassword ? "Hide password" : "Show password"}
-      className="mr-1 flex h-9 w-9 items-center justify-center rounded-lg text-falla-ink/65 hover:text-falla-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-falla-fire"
+      className="mr-1 flex h-11 w-11 items-center justify-center rounded-lg text-falla-ink/65 hover:text-falla-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-falla-fire"
     >
       {showPassword ? <EyeSlash size={18} weight="bold" /> : <Eye size={18} weight="bold" />}
     </button>

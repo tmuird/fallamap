@@ -1,5 +1,5 @@
 import { FallamapHeader } from "@/components/FallamapHeader.tsx";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MapTrifold, CalendarBlank, Archive, Sparkle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -7,6 +7,8 @@ import { SparklesCore } from "@/components/ui/sparkles";
 import { SITE } from "@/lib/siteConfig";
 
 export default function HomePage() {
+  // The particle field is decorative motion: absent entirely, not just slower.
+  const prefersReducedMotion = useReducedMotion();
   return (
     <div className="page-shell bg-falla-paper flex flex-col items-center relative overflow-x-clip selection:bg-falla-fire selection:text-falla-on-fire">
       {/* Subtle "Senyera" / Valencian Flag Gradient Hint at top edge */}
@@ -15,7 +17,10 @@ export default function HomePage() {
       {/* Background Texture Overlay */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" />
       
-      {/* Background Sparkles (representing 'Pólvora' / Gunpowder) */}
+      {/* Background Sparkles (representing 'Pólvora' / Gunpowder). Not rendered at all under
+          reduced motion: CSS can shorten a transition, but a moving particle field is the
+          entire point of this element, so it is simply absent. */}
+      {!prefersReducedMotion && (
       <div className="w-full absolute inset-0 h-1/2 pointer-events-none">
         <SparklesCore
           id="tsparticleshome"
@@ -27,11 +32,12 @@ export default function HomePage() {
           particleColor="#FF7043"
         />
       </div>
+      )}
       
       <div className="z-10 w-full flex-1 min-h-0 flex flex-col items-center px-4 relative">
         <FallamapHeader isVisible={true} />
 
-        <main className="w-full max-w-6xl flex-1 min-h-0 flex flex-col items-center justify-center gap-[2.5vh] md:gap-[3vh] pb-4">
+        <div className="w-full max-w-6xl flex-1 min-h-0 flex flex-col items-center justify-center gap-[2.5vh] md:gap-[3vh] pb-4">
           {/* Main Content */}
           <div className="flex flex-col items-center text-center gap-[2vh] md:gap-[4vh] w-full">
             <motion.div 
@@ -130,7 +136,7 @@ export default function HomePage() {
             <div className="w-1 h-1 rounded-full bg-falla-ink/20" />
             <Link to="/archive" className="hover:text-falla-fire-ink transition-all hover:scale-110 flex items-center gap-2"><Archive size={20} weight="bold" /> {SITE.nav.archive}</Link>
           </motion.div>
-        </main>
+        </div>
 
         {/* Minimal Footer */}
         <div className="pb-6 text-center flex flex-col items-center gap-2 shrink-0">

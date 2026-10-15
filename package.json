@@ -13,7 +13,8 @@
     "audit:ui": "node scripts/ui-audit.mjs",
     "seed": "node scripts/seed_supabase.js",
     "verify:schema": "bash scripts/verify_schema_local.sh",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "audit:ux": "node scripts/ux-audit.mjs"
   },
   "dependencies": {
     "@clerk/react": "^6.0.1",

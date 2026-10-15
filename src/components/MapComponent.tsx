@@ -3,10 +3,12 @@ import { useSearchParams } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useTheme } from "../context/ThemeContext";
+import { useReducedMotion } from "framer-motion";
 import { FallaDetails } from "./ui/FallaDetails";
 import { supabase } from "@/lib/supabase";
 import localFallas from "./fallas.json";
 import { hubs as officialHubs } from "@/lib/eventData";
+import { SITE } from "@/lib/siteConfig";
 import { Drawer } from "vaul";
 import { MagnifyingGlass, Target, CheckCircle, X, Star, Heart, CalendarBlank } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,42 @@ interface POI {
 
 const MapComponent = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Camera moves follow the OS motion setting. A 2s `flyTo` is exactly the animation that
+  // makes people motion-sick, so under `prefers-reduced-motion: reduce` the map jumps to the
+  // same place instead. The flag is read through a ref so toggling the OS setting never
+  // re-creates the callback and re-triggers an effect that moves the camera again.
+  const prefersReducedMotion = useReducedMotion();
+  const reducedMotionRef = useRef(prefersReducedMotion);
+  useEffect(() => {
+    reducedMotionRef.current = prefersReducedMotion;
+  }, [prefersReducedMotion]);
+
+  const moveCamera = useCallback(
+    (options: {
+      center?: [number, number];
+      zoom?: number;
+      pitch?: number;
+      duration?: number;
+      essential?: boolean;
+    }) => {
+      const map = mapRef.current;
+      if (!map) return;
+      if (reducedMotionRef.current) {
+        // jumpTo takes no duration: drop it rather than pass a no-op.
+        // `essential` is a flyTo-only flag; jumpTo does not animate, so there is nothing to
+        // exempt from the reduced-motion rule.
+        map.jumpTo({
+          center: options.center,
+          zoom: options.zoom,
+          pitch: options.pitch,
+        });
+      } else {
+        map.flyTo(options);
+      }
+    },
+    []
+  );
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: string]: mapboxgl.Marker }>({});
   const markerElsRef = useRef<{ [key: string]: HTMLDivElement }>({});
@@ -290,7 +328,7 @@ const MapComponent = () => {
           }
 
           if (!initialZoomDone) {
-            map.flyTo({
+            moveCamera({
               center: [longitude, latitude],
               zoom: 15,
               duration: 2000,
@@ -312,7 +350,8 @@ const MapComponent = () => {
       markerElsRef.current = {};
       map.remove();
     };
-  }, [isDarkMode, mapUnavailable]);
+    // moveCamera is a stable useCallback([]), so listing it cannot re-run this effect.
+  }, [isDarkMode, mapUnavailable, moveCamera]);
 
   // 4. Reactive Markers
   useEffect(() => {
@@ -369,7 +408,7 @@ const MapComponent = () => {
   useEffect(() => {
     if (selectedPOI) {
       setIsDrawerOpen(true);
-      mapRef.current?.flyTo({
+      moveCamera({
         center: [selectedPOI.coordinates.lng, selectedPOI.coordinates.lat],
         zoom: 16,
         pitch: 60,
@@ -379,7 +418,7 @@ const MapComponent = () => {
     } else {
       setIsDrawerOpen(false);
     }
-  }, [selectedPOI]);
+  }, [selectedPOI, moveCamera]);
 
   const handleDrawerClose = () => {
     setSearchParams({}, { replace: true });
@@ -413,7 +452,7 @@ const MapComponent = () => {
   const handleGeolocateUser = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((pos) => {
-        mapRef.current?.flyTo({
+        moveCamera({
           center: [pos.coords.longitude, pos.coords.latitude],
           zoom: 15,
           essential: true
@@ -457,6 +496,9 @@ const MapComponent = () => {
       className="w-full h-full relative font-sans overflow-hidden transition-colors duration-500"
       data-drawer-open={isDrawerOpen}
     >
+      {/* The map is a full-bleed canvas with no readable page title, so the route had no h1
+          at all. Screen-reader users navigating by heading had nothing to land on. */}
+      <h1 className="sr-only">{SITE.nav.map} — {SITE.brand.name}</h1>
       {mapUnavailable ? (
         <div className="w-full h-full z-0 flex items-center justify-center bg-falla-paper dark:bg-zinc-950 p-6">
           <div className="max-w-md w-full bg-falla-paper dark:bg-zinc-900 border-2 border-falla-ink dark:border-white/80 rounded-[2rem] shadow-solid p-8 flex flex-col items-center gap-4 text-center">
@@ -487,7 +529,7 @@ const MapComponent = () => {
           )}
         >
           <div className="p-2 md:p-3 flex flex-col gap-2 md:gap-3 shrink-0 z-20 bg-transparent">
-            <div className="flex items-center gap-2 md:gap-3 h-10 md:h-12">
+            <div className="flex items-center gap-2 md:gap-3 h-11 md:h-12">
               <div className="flex-1 flex items-center relative text-falla-ink bg-falla-ink/5 dark:bg-white/5 rounded-[1.25rem] border border-transparent focus-within:border-falla-fire/30 transition-all px-3 md:px-4 h-full overflow-hidden">
                 <MagnifyingGlass size={18} weight="bold" className="opacity-30 shrink-0 md:size-[22px]" />
                 <input
@@ -509,6 +551,9 @@ const MapComponent = () => {
                     }
                   }}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search monuments and events"
+                  role="combobox"
+                  aria-expanded={autocompleteResults.length > 0}
                   className="flex-1 bg-transparent px-2 md:px-3 font-bold text-xs md:text-sm outline-none placeholder:text-falla-ink/65 text-falla-ink h-full min-w-0"
                 />
                 <AnimatePresence>
@@ -528,8 +573,10 @@ const MapComponent = () => {
               <Button 
                 isIconOnly 
                 variant="ghost" 
+                aria-label="Find my location"
+                title="Find my location"
                 onClick={handleGeolocateUser} 
-                className="h-10 w-10 md:h-12 md:w-12 rounded-[1.25rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm transition-all shrink-0 border-2 active:scale-95"
+                className="h-11 w-11 md:h-12 md:w-12 rounded-[1.25rem] text-falla-ink bg-falla-paper ink-border shadow-solid-sm transition-all shrink-0 border-2 active:scale-95"
               >
                 <Target size={22} weight="bold" />
               </Button>
@@ -557,7 +604,7 @@ const MapComponent = () => {
                     onClick={() => setFilterMode(mode.id)}
                     startContent={mode.icon}
                     className={cn(
-                      "h-8 md:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0 active:scale-95", 
+                      "h-11 sm:h-9 rounded-full px-3 md:px-4 text-[9px] md:text-[11px] font-black uppercase transition-all flex-grow sm:flex-grow-0 min-w-0 active:scale-95", 
                       filterMode === mode.id ? "bg-falla-fire text-falla-on-fire shadow-none border-falla-fire" : "text-falla-ink/65 hover:bg-falla-ink/5"
                     )}
                   >
